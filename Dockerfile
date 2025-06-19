@@ -9,7 +9,7 @@ WORKDIR /app
 # Copy frontend project files necessary for build
 COPY package.json pnpm-lock.yaml ./
 # Assuming these are your main config/entry files for Vite
-COPY vite.config.ts tsconfig.json tsconfig.node.json index.html ./
+COPY vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html ./
 COPY src ./src
 COPY src/lib/docker.config.ts ./src/lib/config.ts
 COPY public ./public
