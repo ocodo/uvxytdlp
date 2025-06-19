@@ -1,4 +1,4 @@
-# uvxytdlp
+# uvxytdlp-ui
 
 built on Vite/React/Tailwind/ShadCN
 
