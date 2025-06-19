@@ -43,7 +43,7 @@ export const DownloadedUI: FC = () => {
             <VideoPlayer fileName={selectedFile} />
           </div>
         )}
-        <div className="text-lg py-4 font-semibold border-t">
+        <div className="text-lg py-4 m-2 font-semibold border-t">
           Downloaded Content
         </div>
         <div className="flex flex-col justify-items gap-2" >
