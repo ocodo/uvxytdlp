@@ -144,3 +144,70 @@ def download_via_ytdlp(json_data):
     except Exception as e:
         logger.exception(f"An unexpected error occurred while processing {url}: {e}")
         return f"Server Error: {str(e)}", 500, {'Content-Type': 'text/plain'}
+
+@app.get('/downloaded/<path:filename>')
+def get_downloaded_content(json_data):
+    # check for the filename in the config download_dir
+    # and then stream it back to the caller
+    download_dir = app.config.get("download_dir", None)
+    if not download_dir:
+        logger.warning("Download directory not configured.")
+        return "Download directory not configured", 500, {'Content-Type': 'text/plain'}
+
+    filename = json_data['filename']
+    if not filename:
+        logger.warning("No filename provided.")
+        return "No filename provided", 400, {'Content-Type': 'text/plain'}
+
+    full_path = os.path.join(download_dir, filename)
+
+    # Basic security check: prevent directory traversal
+    if not os.path.abspath(full_path).startswith(os.path.abspath(download_dir)):
+        logger.warning(f"Attempted directory traversal: {filename}")
+        return "Invalid filename", 400, {'Content-Type': 'text/plain'}
+
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        logger.warning(f"File not found: {full_path}")
+        return "File not found", 404, {'Content-Type': 'text/plain'}
+
+    try:
+        # Use send_file to stream the file
+        from flask import send_file # type: ignore
+        logger.info(f"Serving file: {full_path}")
+        return send_file(full_path)
+    except Exception as e:
+        logger.exception(f"Error serving file {full_path}: {e}")
+        return f"Server Error: Could not serve file: {str(e)}", 500, {'Content-Type': 'text/plain'}
+
+# --- API Route to list downloaded files ---
+
+
+@app.get('/downloaded')
+def get_downloaded():
+    download_dir = app.config.get("download_dir", None)
+    if not download_dir or not os.path.isdir(download_dir):
+        logger.warning(f"Download directory not configured or does not exist: {download_dir}")
+        return [], 200
+
+    try:
+        files = []
+        for entry in os.scandir(download_dir):
+            if entry.is_file():
+                try:
+                    stat_info = entry.stat()
+                    files.append({
+                        "name": entry.name,
+                        "mtime": datetime.fromtimestamp(stat_info.st_mtime).isoformat(),
+                        "size": stat_info.st_size
+                    })
+                except Exception as e:
+                    logger.error(f"Error getting info for file {entry.name}: {e}")
+        # Optional: Sort files by modification time, newest first
+        files.sort(key=lambda x: x['mtime'], reverse=True)
+        return files, 200
+    except Exception as e:
+        logger.exception(f"Error listing files in download directory {download_dir}: {e}")
+        return f"Server Error: Could not list files: {str(e)}", 500
+
+
+
