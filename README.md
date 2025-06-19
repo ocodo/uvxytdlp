@@ -36,3 +36,14 @@ uv venv
 source .venv/bin/activate
 apiflask -A app.py -p <your port|default 5000> -h <your host|default localhost>
 ```
+
+### Running in Docker/Podman
+
+To run with docker using the supplied `Dockerfile` (note downloads in the container are at is `/ytdlp-downloads/`). It's recommended to use `-v your_dir:/ytdlp-downloads/` in you podman/docker run command.
+
+```
+docker build -t uvxytdlp-ui .
+```
+
+(for Podman it's the same, replace `docker` with `podman`)
+
