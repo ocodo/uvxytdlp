@@ -1,18 +1,18 @@
-import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { DownloadIcon, Loader2Icon } from "lucide-react";
-import { formatTemplates } from "@/lib/template-formats"; // Assuming this path is correct
+import React from 'react'
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DownloadIcon, Loader2Icon } from "lucide-react"
+import { formatTemplates } from "@/lib/template-formats"
 
 interface UrlInputCardProps {
-  url: string;
-  setUrl: (url: string) => void;
-  format: string;
-  setFormat: (format: string) => void;
-  urlValid: () => boolean;
-  ytdlpFromURL: () => Promise<void>;
-  isLoading: boolean;
+  url: string
+  setUrl: (url: string) => void
+  format: string
+  setFormat: (format: string) => void
+  urlValid: () => boolean
+  ytdlpFromURL: () => Promise<void>
+  isLoading: boolean
 }
 
 export const UrlInputCard: React.FC<UrlInputCardProps> = ({
@@ -36,15 +36,15 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
       />
       {urlValid() && (
         <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex items-center">
-          <Button variant='ghost' onClick={ytdlpFromURL} disabled={isLoading} aria-label="Download">
+          <Button onClick={ytdlpFromURL} disabled={isLoading} aria-label="Download">
             {isLoading
               ? <Loader2Icon className="h-4 w-4 animate-spin" />
               : <DownloadIcon className="h-4 w-4" />}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="ml-2">
-                (as {format})
+              <Button className="ml-2 w-14">
+                {format}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -58,5 +58,5 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
