@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import { formatTemplates } from "@/lib/template-formats"
+import { useDownloaded } from './downloaded-context' // Import useDownloaded
 import { config } from '@/lib/config'
 
 interface YtdlpContextType {
@@ -15,6 +16,7 @@ interface YtdlpContextType {
   urlValid: () => boolean
   ytdlpFromURL: () => Promise<void>
   isLoading: boolean
+  clearLog: () => void
 }
 
 const YtdlpContext = createContext<YtdlpContextType | undefined>(undefined)
@@ -37,8 +39,11 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [cliArgs, setCliArgs] = useState<string>("-t mp4") // Default from App.tsx
   const [format, setFormat] = useState<string>("mp4") // Default from App.tsx
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { fetchDownloadedFiles } = useDownloaded(); // Get fetchDownloadedFiles from DownloadedContext
 
   const urlValid: () => boolean = () => !!url && url.startsWith("https://")
+
+  const clearLog = () => setLog("");
 
   const ytdlpFromURL = async () => {
     if (!urlValid()) {
@@ -60,6 +65,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       const text = await response.text()
       if (response.ok) {
         setLog(prevLog => prevLog + text)
+        fetchDownloadedFiles(); // Refresh downloaded files list
       } else {
         setLog(prevLog => prevLog + `Error: ${response.status}\n${text}`)
       }
@@ -79,7 +85,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
 
   const value = {
     url, setUrl, log, setLog, cliArgs, setCliArgs, format, setFormat,
-    urlValid, ytdlpFromURL, isLoading,
+    urlValid, ytdlpFromURL, isLoading, clearLog,
   }
 
   return <YtdlpContext.Provider value={value}>{children}</YtdlpContext.Provider>

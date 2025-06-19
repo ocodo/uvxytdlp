@@ -13,7 +13,7 @@ backend is built with APIFlask
 
 # Run
 
-### Front End 
+### Front End
 
 run from project root:
 

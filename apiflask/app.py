@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 # --- Configuration for daily cache refresh --- always use a fresh yt-dlp everyday
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "last_ytdlprefresh.txt")
 REFRESH_INTERVAL = timedelta(days=1)
-UVX_EXPECTED_PATH = os.path.expanduser("~/.cargo/bin/uvx")
+UVX_EXPECTED_PATH = os.environ.get("UVX_EXPECTED_PATH", os.path.expanduser("~/.cargo/bin/uvx"))
 
 
 def should_refresh_cache() -> bool:
@@ -136,7 +136,9 @@ def download_via_ytdlp(json_data):
     if download_dir:
         full_command = (
             uvx_command_parts
-            + ["yt-dlp", "-k", "-o", f"{download_dir}/%(title)s.%(ext)s"]
+            + ["yt-dlp",
+               "-o",
+               f"{download_dir}/%(title)s.%(ext)s"]
             + parsed_yt_dlp_args
             + [url]
         )
@@ -160,6 +162,7 @@ def download_via_ytdlp(json_data):
                 f"yt-dlp process for {url} exited with code {process.returncode}. stderr: {process.stderr[:500]}"
             )
         logger.info(f"Successfully processed URL: {url}")
+
         return output_log, 200, {"Content-Type": "text/plain"}
     # No longer need FileNotFoundError here as we explicitly check UVX_EXPECTED_PATH
     except Exception as e:
@@ -237,3 +240,37 @@ def get_downloaded():
             f"Error listing files in download directory {download_dir}: {e}"
         )
         return f"Server Error: Could not list files: {str(e)}", 500
+
+
+@app.delete("/downloaded/<path:filename>")
+def delete_downloaded_file(filename: str):
+    """
+    Deletes a specific file from the download directory.
+    """
+    download_dir = app.config.get("download_dir", None)
+    if not download_dir:
+        logger.warning("Download directory not configured. Cannot delete file.")
+        return "Download directory not configured", 500, {"Content-Type": "text/plain"}
+
+    full_path = os.path.join(download_dir, filename)
+
+    # Security check: prevent directory traversal
+    if not os.path.abspath(full_path).startswith(os.path.abspath(download_dir)):
+        logger.warning(f"Attempted directory traversal for deletion: {filename}")
+        return "Invalid filename", 400, {"Content-Type": "text/plain"}
+
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        logger.warning(f"File not found for deletion: {full_path}")
+        return "File not found", 404, {"Content-Type": "text/plain"}
+
+    try:
+        os.remove(full_path)
+        logger.info(f"Successfully deleted file: {full_path}")
+        return {"message": f"File '{filename}' deleted successfully."}, 200
+    except Exception as e:
+        logger.exception(f"Error deleting file {full_path}: {e}")
+        return (
+            f"Server Error: Could not delete file: {str(e)}",
+            500,
+            {"Content-Type": "text/plain"},
+        )
