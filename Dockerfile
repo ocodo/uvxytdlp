@@ -21,10 +21,15 @@ RUN pnpm exec vite build
 
 # ---- Stage 2: Setup Backend ----
 FROM python:3.12-slim-bookworm AS backend-builder
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Add uv to PATH
-ENV PATH="/root/.cargo/bin:$PATH"
+# The installer requires curl (and certificates) to download the release archive
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+# Download the latest installer
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+# Run the installer then remove it
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+# Ensure the installed binary is on the `PATH`
+ENV PATH="/root/.local/bin/:$PATH"
 
 WORKDIR /app/apiflask
 
@@ -32,11 +37,9 @@ WORKDIR /app/apiflask
 COPY apiflask/ ./
 COPY apiflask/docker.config.toml ./config.toml
 
-
 # Create virtual environment and install dependencies
 # Assuming app.py uses apiflask and relies on uvx for yt-dlp
-RUN uv venv .venv
-RUN .venv/bin/uv pip install apiflask
+RUN pip install apiflask
 
 # ---- Stage 3: Final Image ----
 FROM debian:bullseye-slim
@@ -44,12 +47,7 @@ FROM debian:bullseye-slim
 # Install runtime dependencies: lighttpd, python3, curl (for uv)
 RUN apt-get update && \
     apt-get install -y lighttpd python3 curl procps && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install uv (which includes uvx for yt-dlp handling)
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:$PATH"
+    apt-get clean
 
 # --- Lighttpd Setup ---
 # Copy custom lighttpd configuration
@@ -69,8 +67,10 @@ COPY --from=backend-builder /app/apiflask/ /app/apiflask/
 # COPY apiflask/config.toml /app/apiflask/config.toml
 
 # --- Ports ---
-EXPOSE 80   # For lighttpd (frontend)
-EXPOSE 3000 # For APIFlask backend
+  # For lighttpd (frontend)
+EXPOSE 80
+# For APIFlask backend
+EXPOSE 3000
 
 # --- Startup ---
 # Copy and set executable for the startup script
