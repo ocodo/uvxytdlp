@@ -16,7 +16,6 @@ interface DowloadedFileProps {
 
 export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { file, handlePlay, handleDelete, isDeleting } = props;
-
   return (
     <div key={file.name}
       className="flex flex-row items-stretch justify-between
@@ -26,12 +25,12 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         {file.name}
       </div>
       <div className="flex items-center gap-x-2.5">
-        <Button onClick={() => handlePlay(file.name)} variant="outline" size="icon" aria-label={`Play ${file.name}`}>
-          <PlayIcon className="h-2 w-2" />
-        </Button>
+        <PlayIcon
+          className="h-4 w-4 cursor-pointer"
+          onClick={() => handlePlay(file.name)} />
         <Button
           onClick={() => handleDelete(file.name)}
-          variant="destructive"
+          variant="ghost"
           size="icon"
           disabled={isDeleting === file.name} // Disable button while this specific file is being deleted
         >

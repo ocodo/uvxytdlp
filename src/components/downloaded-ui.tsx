@@ -1,29 +1,34 @@
-import { type FC, useState } from "react";
-import { useDownloaded } from "@/contexts/downloaded-context";
-import { VideoPlayer } from "@/components/video-player";
-import { DowloadedFile } from "@/components/downloaded-file";
-import { Button } from "@/components/ui/button";
-import { CircleXIcon } from "lucide-react";
+import { type FC, useState } from "react"
+import { useDownloaded } from "@/contexts/downloaded-context"
+import { VideoPlayer } from "@/components/video-player"
+import { DowloadedFile } from "@/components/downloaded-file"
+import { Button } from "@/components/ui/button"
+import { CircleXIcon } from "lucide-react"
 
 export const DownloadedUI: FC = () => {
-  const { downloadedFiles, deleteFile } = useDownloaded(); // Added deleteFile and fetchDownloadedFiles
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null); // To track which file is being deleted
+  const { downloadedFiles, deleteFile } = useDownloaded() // Added deleteFile and fetchDownloadedFiles
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null) // To track which file is being deleted
 
   const handlePlay = (fileName: string) => {
-    setSelectedFile(fileName);
-  };
+    if (selectedFile != null) {
+      setSelectedFile(null)
+      setTimeout(() => setSelectedFile(fileName), 500)
+      return
+    }
+    setSelectedFile(fileName)
+  }
 
   const handleDelete = async (fileName: string) => {
-    setIsDeleting(fileName);
+    setIsDeleting(fileName)
     try {
-      await deleteFile(fileName);
+      await deleteFile(fileName)
     } catch (error) {
-      console.error("Error during delete operation in UI:", error);
+      console.error("Error during delete operation in UI:", error)
     } finally {
-      setIsDeleting(null);
+      setIsDeleting(null)
     }
-  };
+  }
 
   return (
     <div className="rounded-lg bg-card pb-4">
