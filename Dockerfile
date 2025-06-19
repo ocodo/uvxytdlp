@@ -20,13 +20,8 @@ RUN pnpm exec vite build
 # Frontend build output will be in /app/dist
 
 # ---- Stage 2: Setup Backend ----
-FROM python:3.11-slim AS backend-builder
-
-# Install curl for uv installation, then install uv
-RUN apt-get update && apt-get install -y curl && \
-    curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    apt-get purge -y --auto-remove curl && \
-    rm -rf /var/lib/apt/lists/*
+FROM python:3.12-slim-bookworm AS backend-builder
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Add uv to PATH
 ENV PATH="/root/.cargo/bin:$PATH"
