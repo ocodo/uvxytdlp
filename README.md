@@ -52,3 +52,14 @@ Optionally include the api server port, but it is not necessary to do so:
 -p <your port>:3000
 ```
 
+#### Start/Stop docker container
+
+```sh
+docker start uvxytdlp-ui-container
+```
+
+or
+
+```sh
+docker stop uvxytdlp-ui-container
+```
