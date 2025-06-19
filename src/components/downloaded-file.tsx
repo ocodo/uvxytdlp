@@ -19,9 +19,9 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   return (
     <div key={file.name}
       className="flex flex-row items-stretch justify-between
-                 even:bg-background/50 odd:bg-background/70
-                 align-bottom rounded-md">
-      <div className="pt-1 px-3">
+                 even:bg-background/40 odd:bg-background/60
+                 align-bottom rounded-sm">
+      <div className="py-1 px-3">
         {file.name}
       </div>
       <div className="flex items-center gap-x-2.5">
@@ -29,8 +29,9 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
           className="h-4 w-4 cursor-pointer"
           onClick={() => handlePlay(file.name)} />
         <Button
+          className="h-4 w-4 cursor-pointer mr-2"
           onClick={() => handleDelete(file.name)}
-          variant="ghost"
+          variant="outline"
           size="icon"
           disabled={isDeleting === file.name} // Disable button while this specific file is being deleted
         >
