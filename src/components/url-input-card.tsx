@@ -25,7 +25,7 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
   isLoading,
 }) => {
   return (
-    <>
+    <div className="flex items-center gap-2">
       <Input
         type="url"
         placeholder="Enter YouTube URL..."
@@ -57,6 +57,6 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
           </DropdownMenu>
         </div>
       )}
-    </>
+    </div>
   );
 };

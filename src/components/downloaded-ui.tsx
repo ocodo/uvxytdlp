@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { type FC, useState } from "react";
 import { useDownloaded } from "@/contexts/downloaded-context";
-import { PlayIcon, Trash2Icon } from "lucide-react";
-import React, { useState } from "react";
-// Dialog components are no longer needed here
-import { VideoPlayer } from "./video-player";
+import { VideoPlayer } from "@/components/video-player";
+import { DowloadedFile } from "@/components/downloaded-file";
 
-export const DownloadedUI: React.FC = () => {
+export const DownloadedUI: FC = () => {
   const { downloadedFiles, deleteFile } = useDownloaded(); // Added deleteFile and fetchDownloadedFiles
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null); // To track which file is being deleted
@@ -41,28 +39,13 @@ export const DownloadedUI: React.FC = () => {
           </div>
         )}
         {downloadedFiles?.map((file) => (
-          <Card key={file.name}>
-            <CardContent className="flex flex-row items-stretch justify-between gap-2">
-              {file.name}
-              <div className="flex items-center gap-2">
-                <Button onClick={() => handlePlay(file.name)} variant="outline" size="icon" aria-label={`Play ${file.name}`}>
-                  <PlayIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  onClick={() => handleDelete(file.name)}
-                  variant="destructive"
-                  size="icon"
-                  disabled={isDeleting === file.name} // Disable button while this specific file is being deleted
-                >
-                  {isDeleting === file.name ? (
-                    <Trash2Icon className="h-4 w-4 animate-pulse" /> // Optional: visual feedback
-                  ) : (
-                    <Trash2Icon className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <DowloadedFile
+            handleDelete={handleDelete}
+            handlePlay={handlePlay}
+            isDeleting={isDeleting}
+            selectedFile={selectedFile}
+            key={file.name}
+            file={file} />
         ))}
       </CardContent>
     </Card>

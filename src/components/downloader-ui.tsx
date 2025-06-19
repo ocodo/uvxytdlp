@@ -1,9 +1,8 @@
 import { Presto } from "@/components/presto";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UrlInputCard } from "@/components/url-input-card";
 import { useYtdlp } from "@/contexts/ytdlp-service-context";
 import { Button } from "./ui/button";
-import { XIcon } from "lucide-react";
+import { XCircleIcon } from "lucide-react";
 
 export function DownloaderUI() {
   const {
@@ -22,17 +21,15 @@ export function DownloaderUI() {
         isLoading={isLoading}
       />
       {log && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between py-2 px-4 border-b">
-            <CardTitle className="text-md">Download Log</CardTitle>
+        <div className="border rounded-lg">
+          <div className="flex flex-row items-center justify-between">
+            <div className="text-md py-2 px-4">Download Log</div>
             <Button variant="ghost" size="icon" onClick={clearLog} aria-label="Clear log">
-              <XIcon className="h-4 w-4" />
+              <XCircleIcon className="h-6 w-6" />
             </Button>
-          </CardHeader>
-          <CardContent>
-            <Presto text={log} />
-          </CardContent>
-        </Card>
+          </div>
+          <Presto text={log} />
+        </div>
       )}
     </div>
   )

@@ -43,14 +43,13 @@ function App() {
     return (
       <ThemeProvider>
         <Heading title="YouTube Downloader" />
-        <div className="px-4 grid grid-cols-1 gap-1">
           <Card>
             <CardHeader>
               <CardTitle>
                 Download from YouTube
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col md:flex-row items-center gap-2">
+            <CardContent className="px-4 grid grid-cols-1 gap-1">
               <>
                 <DownloaderUI />
                 {downloadedFiles && downloadedFiles.length > 0 && (
@@ -59,18 +58,17 @@ function App() {
               </>
             </CardContent>
           </Card>
-        </div>
         <Toaster />
-      </ThemeProvider>
+      </ThemeProvider >
     )
-  }
+}
 
-  return (
-    <DownloadedProvider>
-      <YtdlpProvider>
-        <AppContent />
-      </YtdlpProvider>
-    </DownloadedProvider>
-  )
+return (
+  <DownloadedProvider>
+    <YtdlpProvider>
+      <AppContent />
+    </YtdlpProvider>
+  </DownloadedProvider>
+)
 }
 export default App
