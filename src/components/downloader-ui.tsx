@@ -9,7 +9,7 @@ export function DownloaderUI() {
   } = useYtdlp();
 
   return (
-    <div className="px-4 gap-2 grid grid-cols-1">
+    <div className="gap-2 grid grid-cols-1">
       <UrlInputCard
         url={url}
         setUrl={setUrl}

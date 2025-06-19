@@ -12,8 +12,10 @@ function App() {
       <YtdlpProvider>
         <ThemeProvider>
           <Heading title="YouTube Downloader" />
+          <div className="px-4 grid grid-cols-1">
           <DownloaderUI />
           <DownloadedUI />
+          </div>
           <Toaster />
         </ThemeProvider>
       </YtdlpProvider>

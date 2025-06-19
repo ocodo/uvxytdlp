@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { config } from '@/lib/config';
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
 interface DownloadedFile {
   name: string;
@@ -41,6 +41,10 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       // setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDownloadedFiles()
+  }, [])
 
   return (
     <DownloadedContext.Provider value={{ downloadedFiles, fetchDownloadedFiles }}>
