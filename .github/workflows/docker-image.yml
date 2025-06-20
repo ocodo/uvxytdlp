@@ -21,8 +21,14 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Format tagname
+      id: format-tagname
+      run: |
+        export tagname="$(echo "${{ github.ref_name }}" | sed -E -e 's/([a-z]*)-([a-z]*).*/\1-\2/')
+        echo "tagname=$tagname" >> $GITHUB_OUTPUT
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ${{  github.ref_name }}"
+        tags: ${{  steps.format-tagname.outputs.tagname }}"
