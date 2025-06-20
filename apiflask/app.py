@@ -90,8 +90,8 @@ def record_refresh_timestamp() -> None:
 
 
 class YtdlpInput(Schema):
-    url = String(required=True, description="The URL of the video to download.")
-    args = String(required=True, description="Command line arguments for yt-dlp.")
+    url = String(required=True)
+    args = String(required=True)
 
 @app.post("/ytdlp")
 @app.input(YtdlpInput, location="json")
