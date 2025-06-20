@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button"
 import { CircleXIcon } from "lucide-react"
 
 export const DownloadedUI: FC = () => {
-  const { downloadedFiles, deleteFile } = useDownloaded() // Added deleteFile and fetchDownloadedFiles
+  const { downloadedFiles, deleteFile } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [isDeleting, setIsDeleting] = useState<string | null>(null) // To track which file is being deleted
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
   const handlePlay = (fileName: string) => {
     if (selectedFile != null) {
