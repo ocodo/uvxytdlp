@@ -35,7 +35,7 @@ WORKDIR /app/apiflask
 RUN uv venv
 RUN uv pip install -r requirements.txt
 
-EXPOSE 80
 EXPOSE 5000
+EXPOSE 80
 
-CMD ["/bin/bash", "-c", "apiflask -A app.py run --host=0.0.0.0 --port=5000 &", "lighttpd -D -f /etc/lighttpd/lighttpd.conf"]
+CMD ["/bin/bash", "-c", "apiflask -A app.py run --host=0.0.0.0 --port=5000 & lighttpd -D -f /etc/lighttpd/lighttpd.conf"]

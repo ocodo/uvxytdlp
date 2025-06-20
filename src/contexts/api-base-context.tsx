@@ -93,6 +93,10 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   const initializeApiBase = useCallback(async () => {
+    if (apiBase) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setApiBase(null);
@@ -113,15 +117,20 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
       }
       setLoading(false);
     }
-  }, []);
+  }, [apiBase]);
 
   useEffect(() => {
-    initializeApiBase();
-  }, [initializeApiBase]);
+    if (!apiBase) {
+      initializeApiBase();
+    }
+  }, [initializeApiBase, apiBase]);
 
   const retryInitialization = useCallback(() => {
-    initializeApiBase();
-  }, [initializeApiBase]);
+    if (!apiBase) {
+      initializeApiBase();
+    }
+  }, [apiBase, initializeApiBase])
+
 
   const apiFetch = useCallback(async (path: string, options?: RequestInit): Promise<Response> => {
     if (!apiBase) {

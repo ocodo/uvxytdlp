@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useApiBase } from '@/contexts/api-base-context'
+import { useThrottle } from '@/hooks/use-throttle '
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 interface DownloadedFile {
@@ -16,6 +17,7 @@ interface DownloadedContextType {
   error: Error | null
 }
 
+
 const DownloadedContext = createContext<DownloadedContextType | undefined>(undefined)
 
 export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -23,7 +25,6 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const { apiFetch } = useApiBase()
-
 
   const fetchDownloadedFiles = async () => {
     setIsLoading(true)
@@ -44,6 +45,8 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
     }
   }
 
+  const throttledFetchDownloadedFiles = useThrottle( fetchDownloadedFiles, 1000 )
+
   const deleteFile = async (fileName: string) => {
     try {
       const response = await apiFetch(`downloaded/${encodeURIComponent(fileName)}`, {
@@ -53,14 +56,14 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
         const errorText = await response.text()
         throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
       }
-      await fetchDownloadedFiles() // Refresh the list after successful deletion
+      await throttledFetchDownloadedFiles() // Refresh the list after successful deletion
     } catch (err) {
       console.error(`Failed to delete file ${fileName}:`, err)
     }
   }
 
   useEffect(() => {
-    fetchDownloadedFiles()
+    throttledFetchDownloadedFiles()
   })
 
   return (
