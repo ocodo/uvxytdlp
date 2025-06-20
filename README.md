@@ -1,8 +1,24 @@
 # uvxytdlp-ui
 
-Download and playback YouTube videos locally
+Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com), and [APIFlask](https://apiflask.com) providing the service and UI.
 
 # Run
+
+Using Docker or Podman... 
+
+```bash
+docker run -d \
+  -p YOUR_HOST_PORT:80 \
+  -v YOUR_LOCAL_DOWNLOAD_PATH:/ytdlp-downloads \
+  --name uvxytdlp-ui-container \
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:latest
+```
+
+- - -
+
+# Local Dev version
+
+## Run
 
 ### Front End
 
