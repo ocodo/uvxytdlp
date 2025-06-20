@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     tags: # on two-word codename-tags (e.g. mango-angioplasty, syrupy-containment)
-      - '*-*'
+      - "*-*"
 
 jobs:
   build_container:
@@ -24,8 +24,9 @@ jobs:
     - name: Format tagname
       id: format-tagname
       run: |
-        export tagname="$(echo "${{ github.ref_name }}" | tr -d '"\n\s')
-        echo "tagname=$tagname" >> $GITHUB_OUTPUT
+        export tagname=${{ github.ref_name }}
+        echo "$tagname" | tee -a $GITHUB_STEP_SUMMARY
+        echo tagname=$tagname | tr -d '"' >> $GITHUB_OUTPUT
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
