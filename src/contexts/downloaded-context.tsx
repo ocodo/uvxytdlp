@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { config } from '@/lib/config'
+import { useApiBase } from '@/contexts/api-base-context'
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 interface DownloadedFile {
@@ -22,12 +22,14 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFile[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
+  const { apiFetch } = useApiBase()
+
 
   const fetchDownloadedFiles = async () => {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch(`${config.API_BASE}/downloaded`)
+      const response = await apiFetch(`/downloaded`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -44,7 +46,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const deleteFile = async (fileName: string) => {
     try {
-      const response = await fetch(`${config.API_BASE}downloaded/${encodeURIComponent(fileName)}`, {
+      const response = await apiFetch(`downloaded/${encodeURIComponent(fileName)}`, {
         method: 'DELETE',
       })
       if (!response.ok) {
@@ -59,7 +61,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
 
   useEffect(() => {
     fetchDownloadedFiles()
-  }, [])
+  })
 
   return (
     <DownloadedContext.Provider value={{ downloadedFiles, fetchDownloadedFiles, deleteFile, isLoading, error }}>

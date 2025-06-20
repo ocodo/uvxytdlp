@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import { formatTemplates } from "@/lib/template-formats"
 import { useDownloaded } from './downloaded-context' // Import useDownloaded
-import { config } from '@/lib/config'
+import { useApiBase } from '@/contexts/api-base-context'
 
 interface YtdlpContextType {
   url: string
@@ -40,7 +40,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [format, setFormat] = useState<string>("mp4") // Default from App.tsx
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { fetchDownloadedFiles } = useDownloaded(); // Get fetchDownloadedFiles from DownloadedContext
-
+  const { apiFetch } = useApiBase()
   const urlValid: () => boolean = () => !!url && url.startsWith("https://")
 
   const clearLog = () => setLog("");
@@ -53,7 +53,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     setIsLoading(true)
     setLog("Starting download process...\n") // Initial log
     try {
-      const response = await fetch(`${config.API_BASE}ytdlp`, {
+      const response = await apiFetch(`/ytdlp`, {
         method: 'POST',
         body: JSON.stringify({
           args: cliArgs,
@@ -65,13 +65,13 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       const text = await response.text()
       if (response.ok) {
         setLog(prevLog => prevLog + text)
-        fetchDownloadedFiles(); // Refresh downloaded files list
+        fetchDownloadedFiles();
       } else {
         setLog(prevLog => prevLog + `Error: ${response.status}\n${text}`)
       }
     } catch (error) {
       console.error("Failed to fetch from ytdlp_from_url:", error)
-      setLog(prevLog => prevLog + `Network or server error: ${error instanceof Error ? error.message : String(error)}`)
+      setLog(prevLog => prevLog + `Network or server error: ${String(error)}`)
     } finally {
       setIsLoading(false)
     }

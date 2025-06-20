@@ -47,12 +47,7 @@ function App() {
 
     const handleRejection = (event: PromiseRejectionEvent) => {
       console.error("Unhandled promise rejection:", event.reason)
-      let message = "An unexpected error occurred (promise rejection)."
-      if (event.reason instanceof Error) {
-        message = `Error: ${event.reason.message}`
-      } else if (typeof event.reason === 'string') {
-        message = event.reason
-      }
+      const message = "An unexpected error occurred (promise rejection)" + event.reason
       toast.error(message)
     }
 
