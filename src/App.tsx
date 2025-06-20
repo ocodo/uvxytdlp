@@ -19,7 +19,7 @@ const AppContent = () => {
   }
 
   return (
-    <ThemeProvider>
+    <>
       <Heading title="YouTube Downloader" />
       <div className="border rounded-lg bg-card m-4 pb-2">
         <div className="px-4 py-2 text-lg font-bold">
@@ -34,7 +34,7 @@ const AppContent = () => {
         </div>
       </div>
       <Toaster />
-    </ThemeProvider >
+    </>
   )
 }
 
@@ -61,13 +61,15 @@ function App() {
   }, [])
 
   return (
-    <ApiBaseProvider>
-      <DownloadedProvider>
-        <YtdlpProvider>
-          <AppContent />
-        </YtdlpProvider>
-      </DownloadedProvider>
-    </ApiBaseProvider>
+    <ThemeProvider>
+      <ApiBaseProvider>
+        <DownloadedProvider>
+          <YtdlpProvider>
+            <AppContent />
+          </YtdlpProvider>
+        </DownloadedProvider>
+      </ApiBaseProvider>
+    </ThemeProvider >
   )
 }
 
