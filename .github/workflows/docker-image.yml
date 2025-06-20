@@ -31,4 +31,4 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ env.TAGNAME }}
+        tags: ${{ env.TAGNAME }}
