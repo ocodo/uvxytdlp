@@ -17,7 +17,7 @@ RUN pnpm exec vite build
 FROM debian:bullseye-slim
 
 RUN apt-get update && \
-    apt-get install -y lighttpd python3 curl ca-certificates procps && \
+    apt-get install -y lighttpd python3 curl ca-certificates procps ffmpeg && \
     apt-get clean
 
 COPY --from=frontend-builder /app/dist /var/www/html
