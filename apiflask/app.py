@@ -22,11 +22,17 @@ app = APIFlask(__name__)
 app.spec["info"]["title"] = "uvx ytdlp API"
 CORS(app)
 
+# Configure basic logging for the application
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
+print("Starting uvx ytdlp http/json api")
 
 # --- Load Configuration from config.toml ---
 config_path = os.path.join(os.path.dirname(__file__), "config.toml")
+
 if os.path.exists(config_path):
     try:
         config = toml.load(config_path)
@@ -39,16 +45,36 @@ else:
         f"Configuration file not found: {config_path}. Using default settings."
     )
 
-# Configure basic logging for the application
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+print(f"Local Download folder: {app.config.get('download_dir', None)}")
+print(os.listdir(app.config.get('download_dir', None)))
 
-# --- Configuration for daily cache refresh --- always use a fresh yt-dlp everyday
+# --- Configuration for daily cache refresh
+# --- always use a fresh yt-dlp everyday
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "last_ytdlprefresh.txt")
 REFRESH_INTERVAL = timedelta(days=1)
-UVX_EXPECTED_PATH = os.environ.get("UVX_EXPECTED_PATH", os.path.expanduser("~/.cargo/bin/uvx"))
+
+# --- locate uvx
+UVX_FALLBACK_PATHS = [
+    os.path.expanduser("~/.cargo/bin/uvx"),
+    os.path.expanduser("~/.local/bin/uvx"),
+]
+
+UVX_EXPECTED_PATH = None
+
+UVX_PATH_ENV = os.environ.get("UVX_EXPECTED_PATH")
+
+if UVX_PATH_ENV:
+    UVX_EXPECTED_PATH = UVX_PATH_ENV
+elif UVX_FALLBACK_PATHS:
+    for path in UVX_FALLBACK_PATHS:
+        if os.path.exists(path):
+            UVX_EXPECTED_PATH = path
+            break
+
+if UVX_EXPECTED_PATH:
+    print(f"\nSuccessfully determined uvx path: {UVX_EXPECTED_PATH}")
+else:
+    print("\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH.")
 
 
 def should_refresh_cache() -> bool:
