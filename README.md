@@ -1,12 +1,12 @@
 # uvxytdlp-ui
 
-[![](https://img.shields.io/badge/SHORTCAKE-PAYLOAD-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
+[![](https://img.shields.io/badge/mango-enforcer-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
 
 Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com), and [APIFlask](https://apiflask.com) providing the service and UI.
 
 # Run
 
-Using Docker or Podman... 
+Using Docker or Podman...
 
 ```bash
 docker run -d \

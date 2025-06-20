@@ -4,18 +4,18 @@ import type React from "react"
 
 interface DowloadedFileProps {
   file: {
-    name: string;
-    mtime: string;
-    size: number;
+    name: string
+    mtime: string
+    size: number
   }
-  handlePlay: (name: string) => void;
-  handleDelete: (name: string) => void;
-  selectedFile: string | null;
+  handlePlay: (name: string) => void
+  handleDelete: (name: string) => void
+  selectedFile: string | null
   isDeleting: string | null
 }
 
 export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
-  const { file, handlePlay, handleDelete, isDeleting } = props;
+  const { file, handlePlay, handleDelete, isDeleting } = props
   return (
     <div key={file.name}
       className="flex flex-row items-stretch justify-between
@@ -43,5 +43,5 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         </Button>
       </div>
     </div>
-  );
+  )
 }
