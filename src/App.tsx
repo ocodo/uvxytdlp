@@ -20,10 +20,10 @@ const AppContent = () => {
 
   return (
     <>
-      <Heading title="YouTube Downloader" />
-      <div className="border rounded-lg bg-card m-4 pb-2">
+      <Heading title="uvxytdlp-ui" />
+      <div className="border rounded-sm bg-card m-4 pb-2">
         <div className="px-4 py-2 text-lg font-bold">
-          Download from YouTube
+          download from youtube
         </div>
         <div className="px-4 grid grid-cols-1 gap-1">
           <>

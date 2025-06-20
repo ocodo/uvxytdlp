@@ -23,7 +23,7 @@ export function DownloaderUI() {
       {log && (
         <div className="border rounded-lg">
           <div className="flex flex-row items-center justify-between">
-            <div className="text-md py-2 px-4">Download Log</div>
+            <div className="text-md py-2 px-4">log output</div>
             <Button variant="ghost" size="icon" onClick={clearLog} aria-label="Clear log">
               <XCircleIcon className="h-6 w-6" />
             </Button>

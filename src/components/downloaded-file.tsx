@@ -19,12 +19,12 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   return (
     <div key={file.name}
       className="flex flex-row items-stretch justify-between
-                 even:bg-background/40 odd:bg-background/60
-                 align-bottom rounded-sm">
+                 even:bg-background/10 odd:bg-background/70
+                 align-bottom border-b">
       <div className="py-1 px-3">
         {file.name}
       </div>
-      <div className="flex items-center gap-x-2.5">
+      <div className="flex items-center gap-x-3">
         <PlayIcon
           className="h-4 w-4 cursor-pointer"
           onClick={() => handlePlay(file.name)} />

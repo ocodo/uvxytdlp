@@ -31,8 +31,8 @@ export const DownloadedUI: FC = () => {
   }
 
   return (
-    <div className="rounded-lg bg-card pb-4">
-      <div className="px-4 grid grid-cols-1 gap-1">
+    <div className="bg-card pb-2">
+      <div className="grid grid-cols-1 gap-1">
         {selectedFile && (
           <div className="my-4 relative">
             <div className="absolute z-10 top-1 right-1 opacity-0 hover:opacity-80">
@@ -43,10 +43,10 @@ export const DownloadedUI: FC = () => {
             <VideoPlayer fileName={selectedFile} />
           </div>
         )}
-        <div className="text-lg py-4 m-2 font-semibold border-t">
-          Downloaded Content
+        <div className="text-lg px-2 font-semibold border-t mt-2">
+          content
         </div>
-        <div className="flex flex-col justify-items gap-2" >
+        <div className="flex flex-col justify-items" >
           {downloadedFiles?.map((file) => (
             <DowloadedFile
               handleDelete={handleDelete}
