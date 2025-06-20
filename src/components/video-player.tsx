@@ -1,4 +1,4 @@
-import { config } from "@/lib/config"
+import { useApiBase } from "@/contexts/api-base-context";
 import { useRef, useState } from "react"
 
 interface VideoPlayerProps {
@@ -11,7 +11,9 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null)
   const title = fileToTitle(fileName)
-  const url = `${config.API_BASE}/downloaded/${fileName}`
+  const { apiBase } = useApiBase()
+
+  const url = `${apiBase}/downloaded/${fileName}`
 
   const handlePlay = () => {
     setIsPlaying(true);
