@@ -1,6 +1,6 @@
 # uvxytdlp-ui
 
-[![](https://img.shields.io/badge/mango-enforcer-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
+[![](https://img.shields.io/badge/daydream-consortium-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
 
 Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com), and [APIFlask](https://apiflask.com) providing the service and UI.
 
@@ -13,7 +13,7 @@ docker run -d \
   -p YOUR_HOST_PORT:80 \
   -v YOUR_LOCAL_DOWNLOAD_PATH:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:shortcake-payload
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:daydream-consortium
 ```
 
 - - -
