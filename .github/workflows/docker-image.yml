@@ -14,12 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - id: get-tagname    
-      run: |
-        export tagname=$(git tag --points-at=HEAD)
-        echo "tagname=$tagname" >> $GITHUB_OUTPUT
-
     - name: Log in to the Container registry
       uses: docker/login-action@v3
       with:
@@ -31,4 +25,4 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ${{ env.TAGNAME }}
+        tags: ${{  github.ref_name }}"
