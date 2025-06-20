@@ -13,7 +13,7 @@ docker run -d \
   -p YOUR_HOST_PORT:80 \
   -v YOUR_LOCAL_DOWNLOAD_PATH:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:latest
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:syrupy-containment
 ```
 
 - - -
