@@ -1,8 +1,8 @@
 # uvxytdlp-ui
 
-[![](https://img.shields.io/badge/daydream-consortium-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
+[![](https://img.shields.io/badge/binary-cheesecake-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
 
-Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com), and [APIFlask](https://apiflask.com) providing the service and UI.
+Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com), [APIFlask](https://apiflask.com) and [uvicorn](https://uvicorn.org) providing the WebUI and API Service.
 
 # Run
 
@@ -10,11 +10,16 @@ Using Docker or Podman...
 
 ```bash
 docker run -d \
-  -p YOUR_HOST_PORT:80 \
+  -p 8080:80 \
+  -p 5150:5000 \
   -v YOUR_LOCAL_DOWNLOAD_PATH:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:daydream-consortium
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:binary-cheesecake
 ```
+
+Then go to http://localhost:8080
+
+**Important Note:** The WebUI will look for the service on `5000` or `5150`, it'll then ask for the `host:port` if you have to use a different port. (open an [issue](https://github.com/ocodo/uvxytdlp/issues)) if you have to use a different port.)
 
 - - -
 
@@ -28,7 +33,7 @@ run from project root:
 
 ```sh
 pnpm install
-vite [--port <your port|5173++ default>] [--host <0.0.0.0|localhost default>
+vite [--port <your port>] [--host <0.0.0.0>]
 ```
 
 ### Back End
@@ -61,13 +66,7 @@ docker build -t uvxytdlp-ui .
 To run with `uvxytdlp-ui` note downloads in the container are at is `/ytdlp-downloads/`. use `-v your_dir:/ytdlp-downloads` in you podman/docker run command: e.g.:
 
 ```sh
-docker run -d -p 8080:80 -v /host/download_dir:/ytdlp-downloads --name uvxytdlp-ui-container uvxytdlp-ui
-```
-
-Optionally include the api server port, but it is not necessary to do so:
-
-```sh
--p <your port>:3000
+docker run -d -p 8080:80 -p 5150:5000 -v $local_download_dir:/ytdlp-downloads --name uvxytdlp-ui-container uvxytdlp-ui
 ```
 
 #### Start/Stop docker container
