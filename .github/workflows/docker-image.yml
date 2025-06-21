@@ -16,12 +16,8 @@ jobs:
         registry: https://ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GH_TOKEN_GHCR }}
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v3
-      with:
-        push: true
-        tags: ocodo/uvxytdlp:${{ github.ref_name }}
+    - name: Build Tag Push to ghcr.io
+      run: |
+        docker build -t uvxytdlp-ui .
+        docker tag uvxytdlp-ui ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ github.ref_name }}
+        docker push ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ github.ref_name }}
