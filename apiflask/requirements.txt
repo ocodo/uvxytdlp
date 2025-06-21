@@ -1,4 +1,3 @@
 apiflask
 flask_cors
 toml
-uvicorn
