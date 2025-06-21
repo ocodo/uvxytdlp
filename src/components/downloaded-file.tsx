@@ -1,5 +1,6 @@
-import { Button } from "@/components/ui/button"
+import LongPressButton from "@/components/long-press-button"
 import { PlayIcon, Trash2Icon } from "lucide-react"
+
 import type React from "react"
 
 interface DowloadedFileProps {
@@ -28,19 +29,20 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         <PlayIcon
           className="h-4 w-4 cursor-pointer"
           onClick={() => handlePlay(file.name)} />
-        <Button
-          className="h-4 w-4 cursor-pointer mr-2"
-          onClick={() => handleDelete(file.name)}
-          variant="outline"
-          size="icon"
-          disabled={isDeleting === file.name} // Disable button while this specific file is being deleted
-        >
+        <LongPressButton
+          onLongPress={() => handleDelete(file.name)}
+          longPressDuration={700}
+          fillUpColorClass="dark:bg-red-800 bg-red-400"
+          className="cursor-pointer"
+          variant={'ghost'}
+          >
           {isDeleting === file.name ? (
             <Trash2Icon className="animate-pulse" /> // Optional: visual feedback
           ) : (
             <Trash2Icon className="" />
           )}
-        </Button>
+
+        </LongPressButton>
       </div>
     </div>
   )

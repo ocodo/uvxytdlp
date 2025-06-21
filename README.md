@@ -19,7 +19,7 @@ docker run -d \
 
 Then go to http://localhost:8080
 
-**Important Note:** The WebUI will look for the service on `5000` or `5150`, it'll then ask for the `host:port` if you have to use a different port. (open an [issue](https://github.com/ocodo/uvxytdlp/issues)) if you have to use a different port.)
+**Important Note:** The WebUI will look for the service on `5000` or `5150`, (open an [issue](https://github.com/ocodo/uvxytdlp/issues)) if you have to use a different port.)
 
 - - -
 

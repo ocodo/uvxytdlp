@@ -1,1 +1,5 @@
+# APIFlask/Python
+__pycache__
+.venv
+
 config.toml

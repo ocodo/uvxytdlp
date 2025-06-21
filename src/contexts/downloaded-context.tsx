@@ -56,7 +56,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
         const errorText = await response.text()
         throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
       }
-      await throttledFetchDownloadedFiles() // Refresh the list after successful deletion
+      setDownloadedFiles(prevFiles => prevFiles.filter(file => file.name !== fileName));
     } catch (err) {
       console.error(`Failed to delete file ${fileName}:`, err)
     }
