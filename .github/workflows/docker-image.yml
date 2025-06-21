@@ -16,8 +16,11 @@ jobs:
         registry: https://ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GH_TOKEN_GHCR }}
-    - name: Build Tag Push to ghcr.io
-      run: |
-        docker build -t uvxytdlp-ui .
-        docker tag uvxytdlp-ui ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ github.ref_name }}
-        docker push ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ github.ref_name }}
+    - name: Docker Build and Push
+      uses: docker/build-push-action@v5.3.0
+      with:
+        context: app
+        push: true
+        tags: |
+          ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ github.ref_name }}
+          ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:latest              
