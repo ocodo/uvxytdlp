@@ -104,30 +104,22 @@ else:
 
 def should_refresh_cache() -> bool:
     """Checks if the uvx cache should be refreshed."""
-    if not os.path.exists(LAST_REFRESH_FILE):
-        logger.info("No refresh timestamp file found. Refreshing cache.")
-        return True
     try:
         with open(LAST_REFRESH_FILE, "r") as f:
-            last_refresh_time_str = f.read().strip()
-            if not last_refresh_time_str:
-                logger.info("Refresh timestamp file is empty. Refreshing cache.")
-                return True
-            last_refresh_time = datetime.fromisoformat(last_refresh_time_str)
-
-        if datetime.now() - last_refresh_time > REFRESH_INTERVAL:
+            last_refresh_time = datetime.fromisoformat(f.read().strip())
+        is_stale = datetime.now() - last_refresh_time > REFRESH_INTERVAL
+        if is_stale:
             logger.info(
-                f"More than {REFRESH_INTERVAL} passed since last refresh. Refreshing cache."
+                f"Cache is stale (older than {REFRESH_INTERVAL}). Refreshing."
             )
-            return True
-    except ValueError:
-        logger.error("Error parsing refresh timestamp. Refreshing cache.")
-        return True  # If file is corrupted
+        else:
+            logger.info("Cache is fresh. No refresh needed.")
+        return is_stale
     except Exception as e:
-        logger.error(f"Error checking refresh timestamp: {e}. Refreshing cache.")
+        logger.info(
+            f"Could not determine cache age ({type(e).__name__}). Refreshing as a precaution."
+        )
         return True
-    logger.info("Cache refresh not needed at this time.")
-    return False
 
 
 def record_refresh_timestamp() -> None:
@@ -270,8 +262,8 @@ def get_downloaded():
         )
 
 
-@app.delete("/downloaded/{filename:path}")
-async def delete_downloaded_file(filename: str):
+@app.delete("/downloaded/{filename:path}")  # fmt: skip
+def delete_downloaded_file(filename: str):
     """
     Deletes a specific file from the download directory.
     """
