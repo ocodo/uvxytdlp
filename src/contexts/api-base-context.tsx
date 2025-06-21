@@ -48,41 +48,83 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
         5000,
     ];
 
+    // Attempt to fetch a user-defined port from a configuration file.
+    const configUrl = '/server_config/server.json';
+    try {
+        console.debug(`ApiBaseProvider: Attempting to fetch server config from ${configUrl}`);
+        const response = await fetch(configUrl);
+        if (response.ok) {
+            const config = await response.json();
+            if (config && typeof config.port === 'number') {
+                console.info(`ApiBaseProvider: Found user-defined port ${config.port} from server.json`);
+                if (!possibleBackendPorts.includes(config.port)) {
+                    possibleBackendPorts.unshift(config.port);
+                }
+            } else {
+                console.warn(`ApiBaseProvider: server.json found but is malformed or missing 'port' property.`);
+            }
+        } else if (response.status === 404) {
+            console.info(`ApiBaseProvider: server.json not found (404), proceeding with default ports.`);
+        } else {
+            console.warn(`ApiBaseProvider: Fetching server.json failed with status: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.warn(`ApiBaseProvider: Error fetching server.json:`, error);
+    }
+
     console.info(`ApiBaseProvider: Attempting quick API_BASE check on ${hostname} with ports:`, possibleBackendPorts.join(', '));
 
     for (const port of possibleBackendPorts) {
         const probeUrl = `${protocol}//${hostname}:${port}${HEALTH_CHECK_PATH}`;
         console.debug(`ApiBaseProvider: Probing: ${probeUrl}`);
 
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => {
-                console.warn(`ApiBaseProvider: Probe to ${probeUrl} timed out after ${PROBE_TIMEOUT_MS}ms.`);
-                controller.abort();
-            }, PROBE_TIMEOUT_MS);
+        const doProbe = async (method: 'HEAD' | 'GET'): Promise<Response | null> => {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.warn(`ApiBaseProvider: ${method} probe to ${probeUrl} timed out after ${PROBE_TIMEOUT_MS}ms.`);
+                    controller.abort();
+                }, PROBE_TIMEOUT_MS);
 
-            const response = await fetch(probeUrl, { method: 'HEAD', signal: controller.signal });
-            clearTimeout(timeoutId);
+                const response = await fetch(probeUrl, { method, signal: controller.signal });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error: unknown) {
+                if (error instanceof DOMException && error.name === 'AbortError') {
+                    console.warn(`ApiBaseProvider: ${method} probe to ${probeUrl} aborted by timeout.`);
+                } else if (error instanceof Error) {
+                    console.warn(`ApiBaseProvider: ${method} probe to ${probeUrl} failed with error:`, error.message);
+                } else {
+                    console.warn(`ApiBaseProvider: ${method} probe to ${probeUrl} failed with unknown error.`);
+                }
+                return null;
+            }
+        };
 
-            if (response.ok) {
+        const headResponse = await doProbe('HEAD');
+
+        if (headResponse?.ok) {
+            _cachedApiBase = `${protocol}//${hostname}:${port}`;
+            console.info(`ApiBaseProvider: API_BASE successfully determined via HEAD: ${_cachedApiBase}`);
+            return _cachedApiBase;
+        }
+
+        if (headResponse?.status === 405) {
+            console.info(`ApiBaseProvider: HEAD probe to ${probeUrl} returned 405 (Method Not Allowed). Retrying with GET.`);
+            const getResponse = await doProbe('GET');
+            if (getResponse?.ok) {
                 _cachedApiBase = `${protocol}//${hostname}:${port}`;
-                console.info(`ApiBaseProvider: API_BASE successfully determined: ${_cachedApiBase}`);
+                console.info(`ApiBaseProvider: API_BASE successfully determined on retry with GET: ${_cachedApiBase}`);
                 return _cachedApiBase;
-            } else {
-                console.warn(`ApiBaseProvider: Probe to ${probeUrl} returned non-OK status: ${response.status} ${response.statusText}`);
+            } else if (getResponse) {
+                console.warn(`ApiBaseProvider: GET probe to ${probeUrl} returned non-OK status: ${getResponse.status} ${getResponse.statusText}`);
             }
-        } catch (error: unknown) {
-            if (error instanceof DOMException && error.name === 'AbortError') {
-                console.warn(`ApiBaseProvider: Probe to ${probeUrl} aborted by timeout.`);
-            } else if (error instanceof Error) {
-                console.warn(`ApiBaseProvider: Probe to ${probeUrl} failed with error:`, error.message);
-            } else {
-                console.warn(`ApiBaseProvider: Probe to ${probeUrl} failed with unknown error.`);
-            }
+        } else if (headResponse) {
+            console.warn(`ApiBaseProvider: HEAD probe to ${probeUrl} returned non-OK status: ${headResponse.status} ${headResponse.statusText}`);
         }
     }
 
-    console.error("ApiBaseProvider: Quick API_BASE check failed. Backend not found on 5150 or 5000.");
+    console.error("ApiBaseProvider: Quick API_BASE check failed. Backend not found on any probed ports.");
     throw new Error("Cannot connect to backend service. Please check URL or backend status.");
 };
 
