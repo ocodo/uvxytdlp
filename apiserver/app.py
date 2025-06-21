@@ -102,11 +102,6 @@ else:
     )
 
 
-def normalize_path_names(file_path: str) -> str:
-    """Ensure path names from url path type :path do not have spaces encoded"""
-    return file_path.replace("%20", " ")
-
-
 def should_refresh_cache() -> bool:
     """Checks if the uvx cache should be refreshed."""
     if not os.path.exists(LAST_REFRESH_FILE):
@@ -216,11 +211,10 @@ def download_via_ytdlp(body: YtdlpInput):
         raise HTTPException(status_code=500, detail=f"Server Error: {str(e)}")
 
 
-@app.get("/downloaded/{filename: path}")
+@app.get("/downloaded/{filename:path}")
 def get_downloaded_content(filename: str):
     # check for the filename in the config download_dir
     # and then stream it back to the caller
-    filename = normalize_path_names(filename)
     full_path = os.path.join(download_dir, filename)
     logger.info(f"Requested content: {full_path}")
 
@@ -281,7 +275,6 @@ async def delete_downloaded_file(filename: str):
     """
     Deletes a specific file from the download directory.
     """
-    filename = normalize_path_names(filename)
     full_path = os.path.join(download_dir, filename)
 
     # Security check: prevent directory traversal
