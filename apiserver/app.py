@@ -49,8 +49,18 @@ config_path = os.path.join(os.path.dirname(__file__), "config.toml")
 if os.path.exists(config_path):
     try:
         config = toml.load(config_path)
-        # app.config.update(config) # No direct equivalent in FastAPI, use config dict directly
         logger.info(f"Loaded configuration from {config_path}")
+        if not config.get("download_dir"):
+            logger.error("Download directory not configured in config.toml")
+            exit(1)
+        else:
+            download_dir = config["download_dir"]
+            if not os.path.exists(download_dir):
+                os.makedirs(download_dir, exist_ok=True)
+                logger.info(f"Created download directory: {download_dir}")
+            else:
+                logger.info(f"Using download directory: {download_dir}")
+
     except toml.TomlDecodeError as e:
         logger.error(f"Error decoding TOML in {config_path}: {e}")
 else:
@@ -90,6 +100,11 @@ else:
     print(
         "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
     )
+
+
+def normalize_path_names(file_path: str) -> str:
+    """Ensure path names from url path type :path do not have spaces encoded"""
+    return file_path.replace("%20", " ")
 
 
 def should_refresh_cache() -> bool:
@@ -141,8 +156,6 @@ def download_via_ytdlp(body: YtdlpInput):
     Downloads a video using yt-dlp via uvx.
     Accepts url and yt-dlp args.
     """
-
-    download_dir = config.get("download_dir", "./downloads")
     logger.info(f"download dir is: {download_dir}")
     logger.info(f"Received request for URL: {body.url} with args: {body.args}")
 
@@ -197,7 +210,9 @@ def download_via_ytdlp(body: YtdlpInput):
         return PlainTextResponse(output_log, status_code=200)
 
     except Exception as e:
-        logger.exception(f"An unexpected error occurred while processing {body.url}: {e}")
+        logger.exception(
+            f"An unexpected error occurred while processing {body.url}: {e}"
+        )
         raise HTTPException(status_code=500, detail=f"Server Error: {str(e)}")
 
 
@@ -205,12 +220,9 @@ def download_via_ytdlp(body: YtdlpInput):
 def get_downloaded_content(filename: str):
     # check for the filename in the config download_dir
     # and then stream it back to the caller
-    download_dir = config.get("download_dir", None)
-    if not download_dir:
-        logger.warning("Download directory not configured.")
-        raise HTTPException(status_code=500, detail="Download directory not configured")
-
+    filename = normalize_path_names(filename)
     full_path = os.path.join(download_dir, filename)
+    logger.info(f"Requested content: {full_path}")
 
     # Basic security check: prevent directory traversal
     if not os.path.abspath(full_path).startswith(os.path.abspath(download_dir)):
@@ -235,10 +247,6 @@ def get_downloaded_content(filename: str):
 # --- API Route to list downloaded files ---
 @app.get("/downloaded")
 def get_downloaded():
-    download_dir = config.get("download_dir", "./downloads")
-    if not os.path.isdir(download_dir):
-        os.makedirs(download_dir, exist_ok=True)
-
     try:
         files = []
         for entry in os.scandir(download_dir):
@@ -268,16 +276,12 @@ def get_downloaded():
         )
 
 
-@app.delete("/downloaded/<path:filename>")
+@app.delete("/downloaded/{filename:path}")
 async def delete_downloaded_file(filename: str):
     """
     Deletes a specific file from the download directory.
     """
-    download_dir = config.get("download_dir", None)
-    if not download_dir:
-        logger.warning("Download directory not configured. Cannot delete file.")
-        raise HTTPException(status_code=500, detail="Download directory not configured")
-
+    filename = normalize_path_names(filename)
     full_path = os.path.join(download_dir, filename)
 
     # Security check: prevent directory traversal
