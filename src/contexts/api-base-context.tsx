@@ -8,6 +8,15 @@ import React, {
   type ReactNode
 } from 'react';
 
+// --- Constants ---
+const DEFAULT_BACKEND_PORTS = [5150, 5000];
+const SERVER_CONFIG_PATH = '/server_config/server.json';
+const HEALTH_CHECK_PATH = '/downloaded';
+const PROBE_TIMEOUT_MS = 300;
+const HTTP_STATUS_NOT_FOUND = 404;
+const HTTP_STATUS_METHOD_NOT_ALLOWED = 405;
+
+// --- Types ---
 interface ApiBaseContextType {
   apiBase: string | null;
   loading: boolean;
@@ -31,10 +40,6 @@ interface ApiBaseProviderProps {
 }
 
 let _cachedApiBase: string | null = null;
-
-const PROBE_TIMEOUT_MS = 300;
-const HEALTH_CHECK_PATH = '/downloaded';
-
 const determineApiBaseUrlInternal = async (): Promise<string> => {
     if (_cachedApiBase) {
         return _cachedApiBase;
@@ -43,15 +48,12 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
     const protocol = window.location.protocol;
     const hostname = window.location.hostname;
 
-    const possibleBackendPorts: number[] = [
-        5150,
-        5000,
-    ];
+    const possibleBackendPorts: number[] = [...DEFAULT_BACKEND_PORTS]; // Create a copy to avoid mutating the constant array
 
     // Attempt to fetch a user-defined port from a configuration file.
-    const configUrl = '/server_config/server.json';
+    const configUrl = SERVER_CONFIG_PATH;
     try {
-        console.debug(`ApiBaseProvider: Attempting to fetch server config from ${configUrl}`);
+        console.debug(`ApiBaseProvider: Attempting to fetch server config from ${SERVER_CONFIG_PATH}`);
         const response = await fetch(configUrl);
         if (response.ok) {
             const config = await response.json();
@@ -63,8 +65,8 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
             } else {
                 console.warn(`ApiBaseProvider: server.json found but is malformed or missing 'port' property.`);
             }
-        } else if (response.status === 404) {
-            console.info(`ApiBaseProvider: server.json not found (404), proceeding with default ports.`);
+        } else if (response.status === HTTP_STATUS_NOT_FOUND) {
+            console.info(`ApiBaseProvider: server.json not found (${HTTP_STATUS_NOT_FOUND}), proceeding with default ports.`);
         } else {
             console.warn(`ApiBaseProvider: Fetching server.json failed with status: ${response.status} ${response.statusText}`);
         }
@@ -110,14 +112,14 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
 
         const headResponse = await doProbe('HEAD');
 
-        if (headResponse?.ok) {
+        if (headResponse?.ok) { // Check for HTTP_STATUS_OK (200-299)
             return onSuccessfulProbe('HEAD');
         }
 
-        if (headResponse?.status === 405) {
-            console.info(`ApiBaseProvider: HEAD probe to ${probeUrl} returned 405 (Method Not Allowed). Retrying with GET.`);
+        if (headResponse?.status === HTTP_STATUS_METHOD_NOT_ALLOWED) { // Check for 405
+            console.info(`ApiBaseProvider: HEAD probe to ${probeUrl} returned ${HTTP_STATUS_METHOD_NOT_ALLOWED} (Method Not Allowed). Retrying with GET.`);
             const getResponse = await doProbe('GET');
-            if (getResponse?.ok) {
+            if (getResponse?.ok) { // Check for HTTP_STATUS_OK (200-299)
                 return onSuccessfulProbe('GET');
             } else if (getResponse) {
                 console.warn(`ApiBaseProvider: GET probe to ${probeUrl} returned non-OK status: ${getResponse.status} ${getResponse.statusText}`);
@@ -214,7 +216,17 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
         </svg>
         <h2 className="text-xl font-semibold mt-4 text-red-500">Backend Connection Failed</h2>
         <p className="text-foreground/90 mt-2">{error}</p>
-        <p className="text-foreground/70 mt-2 text-sm">This usually means the backend service isn't running or is on a different port.</p>
+        <p className="text-foreground/70 mt-2 text-sm">
+          This can happen if the backend service isn't running or is on a non-standard port. For setup instructions, see the{' '}
+          <a
+            href="https://github.com/ocodo/uvxytdlp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            project docs.
+          </a>.
+        </p>
         <button
           onClick={initializeApiBase}
           className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors duration-200"
