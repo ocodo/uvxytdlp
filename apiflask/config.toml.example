@@ -1,1 +1,2 @@
 download_dir = "."
+# IMPORTANT: Don't leave a "/" at the end of the download_dir setting.
