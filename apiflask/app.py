@@ -18,8 +18,12 @@ import subprocess
 import logging
 import toml  # type: ignore
 
-app = APIFlask(__name__)
-app.spec["info"]["title"] = "uvx ytdlp API"
+app = APIFlask(__name__,
+               title="API for uvxytdlp-ui",
+               version="binary-cheesecake",
+               docs_ui="elements"
+               )
+
 CORS(app)
 
 # Configure basic logging for the application
@@ -28,7 +32,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-print("Starting uvx ytdlp http/json api")
+print("Starting http/json api for uvxytdlp-ui")
 
 # --- Load Configuration from config.toml ---
 config_path = os.path.join(os.path.dirname(__file__), "config.toml")
@@ -234,12 +238,9 @@ def get_downloaded_content(filename: str):
 # --- API Route to list downloaded files ---
 @app.get("/downloaded")
 def get_downloaded():
-    download_dir = app.config.get("download_dir", None)
-    if not download_dir or not os.path.isdir(download_dir):
-        logger.warning(
-            f"Download directory not configured or does not exist: {download_dir}"
-        )
-        return [], 200
+    download_dir = app.config.get("download_dir", "./downloads")
+    if not os.path.isdir(download_dir):
+        os.makedirs(download_dir, exist_ok=True)
 
     try:
         files = []
