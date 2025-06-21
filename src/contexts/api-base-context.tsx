@@ -101,21 +101,24 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
             }
         };
 
+        const onSuccessfulProbe = (method: 'HEAD' | 'GET'): string => {
+            const baseUrl = `${protocol}//${hostname}:${port}`;
+            _cachedApiBase = baseUrl;
+            console.info(`ApiBaseProvider: API_BASE successfully determined via ${method}: ${baseUrl}`);
+            return baseUrl;
+        };
+
         const headResponse = await doProbe('HEAD');
 
         if (headResponse?.ok) {
-            _cachedApiBase = `${protocol}//${hostname}:${port}`;
-            console.info(`ApiBaseProvider: API_BASE successfully determined via HEAD: ${_cachedApiBase}`);
-            return _cachedApiBase;
+            return onSuccessfulProbe('HEAD');
         }
 
         if (headResponse?.status === 405) {
             console.info(`ApiBaseProvider: HEAD probe to ${probeUrl} returned 405 (Method Not Allowed). Retrying with GET.`);
             const getResponse = await doProbe('GET');
             if (getResponse?.ok) {
-                _cachedApiBase = `${protocol}//${hostname}:${port}`;
-                console.info(`ApiBaseProvider: API_BASE successfully determined on retry with GET: ${_cachedApiBase}`);
-                return _cachedApiBase;
+                return onSuccessfulProbe('GET');
             } else if (getResponse) {
                 console.warn(`ApiBaseProvider: GET probe to ${probeUrl} returned non-OK status: ${getResponse.status} ${getResponse.statusText}`);
             }
@@ -128,6 +131,13 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
     throw new Error("Cannot connect to backend service. Please check URL or backend status.");
 };
 
+const StatusDisplay: React.FC<{ children: ReactNode, className?: string }> = ({ children, className }) => (
+  <div className="flex items-center justify-center min-h-screen bg-background text-foreground p-4">
+    <div className={`bg-card rounded-lg p-8 shadow-lg text-center max-w-sm w-full ${className || ''}`}>
+      {children}
+    </div>
+  </div>
+);
 
 const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
   const [apiBase, setApiBase] = useState<string | null>(null);
@@ -147,7 +157,6 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
     try {
       const base = await determineApiBaseUrlInternal();
       setApiBase(base);
-      setLoading(false);
       console.log("ApiBaseProvider: Initialization successful.");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -157,6 +166,7 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
         setError("An unknown error occurred during API initialization.");
         console.error("ApiBaseProvider: Initialization failed with unknown error.");
       }
+    } finally {
       setLoading(false);
     }
   }, [apiBase]);
@@ -166,13 +176,6 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
       initializeApiBase();
     }
   }, [initializeApiBase, apiBase]);
-
-  const retryInitialization = useCallback(() => {
-    if (!apiBase) {
-      initializeApiBase();
-    }
-  }, [apiBase, initializeApiBase])
-
 
   const apiFetch = useCallback(async (path: string, options?: RequestInit): Promise<Response> => {
     if (!apiBase) {
@@ -186,43 +189,39 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
     apiBase,
     loading,
     error,
-    retryInitialization,
+    retryInitialization: initializeApiBase,
     apiFetch
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background text-foreground p-4">
-        <div className="bg-card rounded-lg p-8 shadow-lg text-center max-w-sm w-full animate-pulse">
-          <svg className="mx-auto h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h2 className="text-xl font-semibold mt-4">Connecting to Backend...</h2>
-          {error && <p className="text-orange-400 mt-2 text-sm">{error.replace('API service not reachable.', 'Searching for API...')}</p>}
-          <p className="mt-4 text-xs text-foreground/70">Please wait while the application attempts to locate the backend service.</p>
-        </div>
-      </div>
+      <StatusDisplay className="animate-pulse">
+        <svg className="mx-auto h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 className="text-xl font-semibold mt-4">Connecting to Backend...</h2>
+        {error && <p className="text-orange-400 mt-2 text-sm">{error.replace('API service not reachable.', 'Searching for API...')}</p>}
+        <p className="mt-4 text-xs text-foreground/70">Please wait while the application attempts to locate the backend service.</p>
+      </StatusDisplay>
     );
   }
 
   if (error && !apiBase) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background text-foreground p-4">
-        <div className="bg-card rounded-lg p-8 shadow-lg text-center max-w-sm w-full">
-          <svg className="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h2 className="text-xl font-semibold mt-4 text-red-500">Backend Connection Failed</h2>
-          <p className="text-foreground/90 mt-2">{error}</p>
-          <p className="text-foreground/70 mt-2 text-sm">This usually means the backend service isn't running or is on a different port.</p>
-          <button
-            onClick={retryInitialization}
-            className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors duration-200"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
+      <StatusDisplay>
+        <svg className="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 className="text-xl font-semibold mt-4 text-red-500">Backend Connection Failed</h2>
+        <p className="text-foreground/90 mt-2">{error}</p>
+        <p className="text-foreground/70 mt-2 text-sm">This usually means the backend service isn't running or is on a different port.</p>
+        <button
+          onClick={initializeApiBase}
+          className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors duration-200"
+        >
+          Try Again
+        </button>
+      </StatusDisplay>
     );
   }
 
