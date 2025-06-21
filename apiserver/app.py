@@ -1,30 +1,39 @@
 # /// script
 # dependencies = [
-#   "apiflask",
-#   "flask_cors",
+#   "fastapi",
+#   "pydantic",
+#   "python-multipart",
+#   "starlette",
 #   "toml",
 # ]
 # ///
 
 # uv run & .venv takes care of all this,
 # but ruff complains anyway
-from apiflask import APIFlask, Schema
-from flask_cors import CORS  # type: ignore
-from apiflask.fields import String  # type: ignore
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import os
 import shlex
 from datetime import datetime, timedelta
 import subprocess
 import logging
 import toml  # type: ignore
+from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse, PlainTextResponse
 
-app = APIFlask(__name__,
-               title="API for uvxytdlp-ui",
-               version="binary-cheesecake",
-               docs_ui="elements"
-               )
+app = FastAPI(
+    title="API for uvxytdlp-ui",
+    version="binary-cheesecake",
+    docs_url="/docs",  # FastAPI's default docs path
+    redoc_url="/redoc",  # FastAPI's default redoc path
+)
 
-CORS(app)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Configure basic logging for the application
 logging.basicConfig(
@@ -40,7 +49,7 @@ config_path = os.path.join(os.path.dirname(__file__), "config.toml")
 if os.path.exists(config_path):
     try:
         config = toml.load(config_path)
-        app.config.update(config)
+        # app.config.update(config) # No direct equivalent in FastAPI, use config dict directly
         logger.info(f"Loaded configuration from {config_path}")
     except toml.TomlDecodeError as e:
         logger.error(f"Error decoding TOML in {config_path}: {e}")
@@ -49,8 +58,8 @@ else:
         f"Configuration file not found: {config_path}. Using default settings."
     )
 
-print(f"Local Download folder: {app.config.get('download_dir', None)}")
-print(os.listdir(app.config.get('download_dir', None)))
+print(f"Local Download folder: {config.get('download_dir', None)}")
+print(os.listdir(config.get("download_dir", None)))
 
 # --- Configuration for daily cache refresh
 # --- always use a fresh yt-dlp everyday
@@ -78,7 +87,9 @@ elif UVX_FALLBACK_PATHS:
 if UVX_EXPECTED_PATH:
     print(f"\nSuccessfully determined uvx path: {UVX_EXPECTED_PATH}")
 else:
-    print("\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH.")
+    print(
+        "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
+    )
 
 
 def should_refresh_cache() -> bool:
@@ -119,25 +130,21 @@ def record_refresh_timestamp() -> None:
         logger.error(f"Failed to record refresh timestamp: {e}")
 
 
-class YtdlpInput(Schema):
-    url = String(required=True)
-    args = String(required=True)
+class YtdlpInput(BaseModel):
+    url: str
+    args: str
+
 
 @app.post("/ytdlp")
-@app.input(YtdlpInput, location="json")
-def download_via_ytdlp(json_data):
+def download_via_ytdlp(body: YtdlpInput):
     """
     Downloads a video using yt-dlp via uvx.
-    Accepts a URL and yt-dlp arguments.
+    Accepts url and yt-dlp args.
     """
-    url = json_data["url"]
 
-    download_dir = app.config.get("download_dir", None)  # Get download_dir from config
+    download_dir = config.get("download_dir", "./downloads")
     logger.info(f"download dir is: {download_dir}")
-
-    yt_dlp_args_str = json_data["args"]
-
-    logger.info(f"Received request for URL: {url} with args: {yt_dlp_args_str}")
+    logger.info(f"Received request for URL: {body.url} with args: {body.args}")
 
     # Check for uvx
     if not (
@@ -153,25 +160,19 @@ def download_via_ytdlp(json_data):
         uvx_command_parts.append("--no-cache")
         record_refresh_timestamp()
     try:
-        parsed_yt_dlp_args = shlex.split(yt_dlp_args_str)
+        parsed_args = shlex.split(body.args)
     except ValueError as e:
-        logger.error(f"Error splitting yt-dlp arguments '{yt_dlp_args_str}': {e}")
-        return (
-            f"Error: Invalid yt-dlp arguments format: {e}",
-            400,
-            {"Content-Type": "text/plain"},
+        logger.error(f"Error splitting yt-dlp arguments '{body.args}': {e}")  # type: ignore
+        raise HTTPException(
+            status_code=400, detail=f"Invalid yt-dlp arguments format: {e}"
         )
 
-    full_command = uvx_command_parts + ["yt-dlp"] + parsed_yt_dlp_args + [url]
-    if download_dir:
-        full_command = (
-            uvx_command_parts
-            + ["yt-dlp",
-               "-o",
-               f"{download_dir}/%(title)s.%(ext)s"]
-            + parsed_yt_dlp_args
-            + [url]
-        )
+    full_command = (
+        uvx_command_parts
+        + ["yt-dlp", "-o", f"{download_dir}/%(title)s.%(ext)s"]
+        + parsed_args
+        + [body.url]
+    )
 
     logger.info(
         f"Executing command: {' '.join(shlex.quote(part) for part in full_command)}"
@@ -189,56 +190,52 @@ def download_via_ytdlp(json_data):
                 f"--- yt-dlp process exited with code {process.returncode} ---\n"
             )
             logger.warning(
-                f"yt-dlp process for {url} exited with code {process.returncode}. stderr: {process.stderr[:500]}"
+                f"yt-dlp process for {body.url} exited with code {process.returncode}. stderr: {process.stderr[:500]}"
             )
-        logger.info(f"Successfully processed URL: {url}")
+        logger.info(f"Successfully processed URL: {body.url}")
 
-        return output_log, 200, {"Content-Type": "text/plain"}
-    # No longer need FileNotFoundError here as we explicitly check UVX_EXPECTED_PATH
+        return PlainTextResponse(output_log, status_code=200)
+
     except Exception as e:
-        logger.exception(f"An unexpected error occurred while processing {url}: {e}")
-        return f"Server Error: {str(e)}", 500, {"Content-Type": "text/plain"}
+        logger.exception(f"An unexpected error occurred while processing {body.url}: {e}")
+        raise HTTPException(status_code=500, detail=f"Server Error: {str(e)}")
 
 
 @app.get("/downloaded/<path:filename>")
 def get_downloaded_content(filename: str):
     # check for the filename in the config download_dir
     # and then stream it back to the caller
-    download_dir = app.config.get("download_dir", None)
+    download_dir = config.get("download_dir", None)
     if not download_dir:
         logger.warning("Download directory not configured.")
-        return "Download directory not configured", 500, {"Content-Type": "text/plain"}
+        raise HTTPException(status_code=500, detail="Download directory not configured")
 
     full_path = os.path.join(download_dir, filename)
 
     # Basic security check: prevent directory traversal
     if not os.path.abspath(full_path).startswith(os.path.abspath(download_dir)):
         logger.warning(f"Attempted directory traversal: {filename}")
-        return "Invalid filename", 400, {"Content-Type": "text/plain"}
+        raise HTTPException(status_code=400, detail="Invalid filename")
 
     if not os.path.exists(full_path) or not os.path.isfile(full_path):
         logger.warning(f"File not found: {full_path}")
-        return "File not found", 404, {"Content-Type": "text/plain"}
+        raise HTTPException(status_code=404, detail="File not found")
 
     try:
         # Use send_file to stream the file
-        from flask import send_file  # type: ignore
-
         logger.info(f"Serving file: {full_path}")
-        return send_file(full_path)
+        return FileResponse(full_path)
     except Exception as e:
         logger.exception(f"Error serving file {full_path}: {e}")
-        return (
-            f"Server Error: Could not serve file: {str(e)}",
-            500,
-            {"Content-Type": "text/plain"},
+        raise HTTPException(
+            status_code=500, detail=f"Server Error: Could not serve file: {str(e)}"
         )
 
 
 # --- API Route to list downloaded files ---
 @app.get("/downloaded")
 def get_downloaded():
-    download_dir = app.config.get("download_dir", "./downloads")
+    download_dir = config.get("download_dir", "./downloads")
     if not os.path.isdir(download_dir):
         os.makedirs(download_dir, exist_ok=True)
 
@@ -261,43 +258,40 @@ def get_downloaded():
                     logger.error(f"Error getting info for file {entry.name}: {e}")
         # Optional: Sort files by modification time, newest first
         files.sort(key=lambda x: x["mtime"], reverse=True)
-        return files, 200
+        return files
     except Exception as e:
         logger.exception(
             f"Error listing files in download directory {download_dir}: {e}"
         )
-        return f"Server Error: Could not list files: {str(e)}", 500
+        raise HTTPException(
+            status_code=500, detail=f"Server Error: Could not list files: {str(e)}"
+        )
 
 
 @app.delete("/downloaded/<path:filename>")
-def delete_downloaded_file(filename: str):
+async def delete_downloaded_file(filename: str):
     """
     Deletes a specific file from the download directory.
     """
-    download_dir = app.config.get("download_dir", None)
+    download_dir = config.get("download_dir", None)
     if not download_dir:
         logger.warning("Download directory not configured. Cannot delete file.")
-        return "Download directory not configured", 500, {"Content-Type": "text/plain"}
+        raise HTTPException(status_code=500, detail="Download directory not configured")
 
     full_path = os.path.join(download_dir, filename)
 
     # Security check: prevent directory traversal
     if not os.path.abspath(full_path).startswith(os.path.abspath(download_dir)):
         logger.warning(f"Attempted directory traversal for deletion: {filename}")
-        return "Invalid filename", 400, {"Content-Type": "text/plain"}
+        raise HTTPException(status_code=400, detail="Invalid filename")
 
     if not os.path.exists(full_path) or not os.path.isfile(full_path):
         logger.warning(f"File not found for deletion: {full_path}")
-        return "File not found", 404, {"Content-Type": "text/plain"}
+        raise HTTPException(status_code=404, detail="File not found")
 
     try:
         os.remove(full_path)
         logger.info(f"Successfully deleted file: {full_path}")
-        return {"message": f"File '{filename}' deleted successfully."}, 200
+        return {"message": f"File '{filename}' deleted successfully."}
     except Exception as e:
         logger.exception(f"Error deleting file {full_path}: {e}")
-        return (
-            f"Server Error: Could not delete file: {str(e)}",
-            500,
-            {"Content-Type": "text/plain"},
-        )

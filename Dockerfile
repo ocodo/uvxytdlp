@@ -22,20 +22,20 @@ RUN apt-get update && \
 
 COPY --from=frontend-builder /app/dist /var/www/html
 
-COPY apiflask/lighttpd.conf /etc/lighttpd/lighttpd.conf
-COPY apiflask/ /app/apiflask
-COPY apiflask/docker.config.toml /app/apiflask/config.toml
+COPY apiserver/lighttpd.conf /etc/lighttpd/lighttpd.conf
+COPY apiserver/ /app/apiserver
+COPY apiserver/docker.config.toml /app/apiserver/config.toml
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-ENV PATH="/app/apiflask/.venv/bin:$PATH"
+ENV PATH="/app/apiserver/.venv/bin:$PATH"
 ENV UVX_EXPECTED_PATH=/bin/uvx
 
-WORKDIR /app/apiflask
+WORKDIR /app/apiserver
 RUN uv venv
 RUN uv pip install -r requirements.txt
 
 EXPOSE 5000
 EXPOSE 80
 
-CMD ["/bin/bash", "-c", "apiflask -A app.py run --host=0.0.0.0 --port=5000 & lighttpd -D -f /etc/lighttpd/lighttpd.conf"]
+CMD ["/bin/bash", "-c", "fastapi run & lighttpd -D -f /etc/lighttpd/lighttpd.conf"]
