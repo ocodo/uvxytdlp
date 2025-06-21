@@ -19,7 +19,6 @@ jobs:
     - name: Docker Build and Push
       uses: docker/build-push-action@v5.3.0
       with:
-        context: app
         push: true
         tags: |
           ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:${{ github.ref_name }}
