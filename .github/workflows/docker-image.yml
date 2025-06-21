@@ -8,10 +8,6 @@ on:
 jobs:
   build_container:
     runs-on: ubuntu-latest
-
-    permissions:
-      packages: write
-
     steps:
     - uses: actions/checkout@v4
     - name: Log in to the Container registry
@@ -20,7 +16,10 @@ jobs:
         registry: https://ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GH_TOKEN_GHCR }}
-
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
