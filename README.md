@@ -45,9 +45,13 @@ Install `uv` (to get `uvx`)
 ```sh
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
-
 ```sh
 cd apiflask
+```
+
+Copy `config.example.toml` to `config.toml` and edit it to set the download folder.
+
+```sh
 uv venv
 source .venv/bin/activate
 apiflask -A app.py -p <your port|default 5000> -h <your host|default localhost>
