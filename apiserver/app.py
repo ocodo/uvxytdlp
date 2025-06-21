@@ -201,7 +201,7 @@ def download_via_ytdlp(body: YtdlpInput):
         raise HTTPException(status_code=500, detail=f"Server Error: {str(e)}")
 
 
-@app.get("/downloaded/<path:filename>")
+@app.get("/downloaded/{filename: path}")
 def get_downloaded_content(filename: str):
     # check for the filename in the config download_dir
     # and then stream it back to the caller
