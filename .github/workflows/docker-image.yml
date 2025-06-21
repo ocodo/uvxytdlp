@@ -8,6 +8,8 @@ on:
 jobs:
   build_container:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
     - uses: actions/checkout@v4
     - name: Log in to the Container registry
@@ -15,7 +17,7 @@ jobs:
       with:
         registry: https://ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GH_TOKEN_GHCR }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Docker Build and Push
       uses: docker/build-push-action@v5.3.0
       with:
