@@ -73,7 +73,7 @@ export const DownloadedUI: FC = () => {
           </div>
         )}
         <div className="p-2 border-t mt-2 flex flex-row items-center justify-between">
-          <div>downloaded content</div>
+          <div className="font-bold">downloaded content</div>
           {!searching
             ? (
               <Button
