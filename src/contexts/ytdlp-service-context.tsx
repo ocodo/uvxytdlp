@@ -36,14 +36,14 @@ interface YtdlpProviderProps {
 export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [url, setUrl] = useState<string>("")
   const [log, setLog] = useState<string>("")
-  const [cliArgs, setCliArgs] = useState<string>("-t mp4") // Default from App.tsx
-  const [format, setFormat] = useState<string>("mp4") // Default from App.tsx
+  const [cliArgs, setCliArgs] = useState<string>("-t mp4")
+  const [format, setFormat] = useState<string>("mp4")
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { fetchDownloadedFiles } = useDownloaded(); // Get fetchDownloadedFiles from DownloadedContext
+  const { fetchDownloadedFiles } = useDownloaded()
   const { apiFetch } = useApiBase()
   const urlValid: () => boolean = () => !!url && url.startsWith("https://")
 
-  const clearLog = () => setLog("");
+  const clearLog = () => setLog("")
 
   const ytdlpFromURL = async () => {
     if (!urlValid()) {
@@ -65,7 +65,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       const text = await response.text()
       if (response.ok) {
         setLog(prevLog => prevLog + text)
-        fetchDownloadedFiles();
+        fetchDownloadedFiles()
       } else {
         setLog(prevLog => prevLog + `Error: ${response.status}\n${text}`)
       }
