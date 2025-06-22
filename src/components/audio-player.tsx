@@ -12,6 +12,7 @@ export function AudioPlayer({ fileName }: AudioPlayerProps) {
 
   const url = `${apiBase}/downloaded/${fileName}`
   const fileExtension = fileName.split('.').pop() || 'mp3'
+
   // Mime type for m4a is audio/mp4
   const mimeType = `audio/${fileExtension === 'm4a' ? 'mp4' : fileExtension}`
 

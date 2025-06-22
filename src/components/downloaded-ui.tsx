@@ -12,7 +12,7 @@ const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
   if (['mp3', 'm4a', 'aac'].includes(extension ?? '')) {
     return 'audio'
   }
-  return 'video' // Default to video for other extensions like mp4, webm, etc.
+  return 'video'
 }
 
 export const DownloadedUI: FC = () => {
@@ -25,8 +25,11 @@ export const DownloadedUI: FC = () => {
       // If the same file is clicked, toggle it off.
       setSelectedFile(null)
     } else {
-      // If a different file is clicked (or no file is selected), play the new one.
-      // A small delay if switching to avoid UI jank.
+      // If a different file is clicked
+      // (or no file is selected),
+      // play the new one.
+      // A small delay if switching
+      // to avoid UI jank.
       if (selectedFile !== null) {
         setSelectedFile(null)
         setTimeout(() => setSelectedFile(fileName), 150)
