@@ -73,17 +73,19 @@ export const DownloadedUI: FC = () => {
           </div>
         )}
         <div className="p-2 border-t mt-2 flex flex-row items-center justify-between">
-          <div className="font-bold">downloaded content</div>
           {!searching
             ? (
-              <Button
-                className="cursor-pointer"
-                variant={'ghost'}
-                size={'icon'}
-                onClick={() => setSearching(!searching)}
-              >
-                <Search />
-              </Button>
+              <>
+                <div className="font-bold">downloaded content</div>
+                <Button
+                  className="cursor-pointer"
+                  variant={'ghost'}
+                  size={'icon'}
+                  onClick={() => setSearching(!searching)}
+                >
+                  <Search />
+                </Button>
+              </>
             )
             : (
               <SearchDownloaded
