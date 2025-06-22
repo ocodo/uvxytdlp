@@ -38,4 +38,7 @@ RUN uv pip install -r requirements.txt
 EXPOSE 5000
 EXPOSE 80
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+
 CMD ["/bin/bash", "-c", "fastapi run & lighttpd -D -f /etc/lighttpd/lighttpd.conf"]

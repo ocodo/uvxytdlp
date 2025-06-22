@@ -272,3 +272,15 @@ def delete_downloaded_file(filename: str):
         return {"message": f"File '{filename}' deleted successfully."}
     except Exception as e:
         logger.exception(f"Error deleting file {full_path}: {e}")
+
+
+@app.get("/health", tags=["Health"])
+@app.head("/health", tags=["Health"])
+def health_check():
+    """
+    A simple health check endpoint that confirms the API server is running.
+    This is useful for container orchestration systems (like Docker Swarm or
+    Kubernetes) and load balancers to verify service availability.
+    """
+    return {"status": "ok"}
+

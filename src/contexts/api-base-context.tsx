@@ -11,7 +11,7 @@ import React, {
 // --- Constants ---
 const DEFAULT_BACKEND_PORTS = [5150, 5000, 8000];
 const SERVER_CONFIG_PATH = '/server_config/server.json';
-const HEALTH_CHECK_PATH = '/downloaded';
+const HEALTH_CHECK_PATH = '/health';
 const PROBE_TIMEOUT_MS = 300;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_METHOD_NOT_ALLOWED = 405;
