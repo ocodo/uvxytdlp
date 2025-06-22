@@ -4,6 +4,26 @@
 
 Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com) and [FastAPI](https://fastapi.tiangolo.com/) providing the WebUI and API Service.
 
+### screenshots
+
+Light mode
+
+![](readme-images/uvxytdlp-1.png)
+
+Dark mode
+
+![](readme-images/uvxytdlp-2.png)
+
+Search downloads
+
+![](readme-images/uvxytdlp-3.png)
+
+Safe delete with long press
+
+![](readme-images/uvxytdlp-4.png)
+
+
+
 # Run
 
 Using Docker or Podman...

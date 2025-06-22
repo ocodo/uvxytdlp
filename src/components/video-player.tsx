@@ -27,7 +27,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
     const videoElement = videoRef.current
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'f' && videoElement) {
+      if (event.key === 'f' && videoElement && document.activeElement === videoElement) {
         event.preventDefault()
         if (document.fullscreenElement === videoElement) {
           document.exitFullscreen()
