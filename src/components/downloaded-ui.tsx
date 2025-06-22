@@ -1,10 +1,11 @@
 import { type FC, useState } from "react"
-import { useDownloaded } from "@/contexts/downloaded-context"
+import { useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-context"
 import { VideoPlayer } from "@/components/video-player"
 import { AudioPlayer } from "@/components/audio-player"
 import { DowloadedFile } from "@/components/downloaded-file"
 import { Button } from "@/components/ui/button"
-import { CircleXIcon } from "lucide-react"
+import { CircleXIcon, Search, SearchXIcon } from "lucide-react"
+import { Input } from "@/components/ui/input"
 
 const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
   if (!fileName) return null
@@ -16,9 +17,11 @@ const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
 }
 
 export const DownloadedUI: FC = () => {
-  const { downloadedFiles, deleteFile } = useDownloaded()
+  const { downloadedFiles, deleteFile, searchResults } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [searching, setSearching] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const handlePlay = (fileName: string) => {
     if (selectedFile === fileName) {
@@ -69,21 +72,113 @@ export const DownloadedUI: FC = () => {
             {selectedFileType === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
-        <div className="text-lg px-2 font-semibold border-t mt-2">
-          content
+        <div className="p-2 border-t mt-2 flex flex-row items-center justify-between">
+          <div>downloaded content</div>
+          {!searching
+            ? (
+              <Button
+                className="cursor-pointer"
+                variant={'ghost'}
+                size={'icon'}
+                onClick={() => setSearching(!searching)}
+              >
+                <Search />
+              </Button>
+            )
+            : (
+              <SearchDownloaded
+                setSearching={setSearching}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            )}
         </div>
-        <div className="flex flex-col justify-items" >
-          {downloadedFiles?.map((file) => (
-            <DowloadedFile
+        {!searching
+          ? (
+            <div className="flex flex-col justify-items" >
+              {downloadedFiles?.map((file) => (
+                <DowloadedFile
+                  handleDelete={handleDelete}
+                  handlePlay={handlePlay}
+                  isDeleting={isDeleting}
+                  selectedFile={selectedFile}
+                  key={file.name}
+                  file={file} />
+              ))}
+            </div>
+          )
+          : (
+            <DownloadedFilteredBySearch
+              searchResults={searchResults}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
               handleDelete={handleDelete}
               handlePlay={handlePlay}
               isDeleting={isDeleting}
               selectedFile={selectedFile}
-              key={file.name}
-              file={file} />
-          ))}
-        </div>
+            />
+          )}
       </div>
+    </div >
+  )
+}
+
+interface SearchDownloadedProps {
+  searchQuery: string
+  setSearchQuery: (query: string) => void
+  setSearching: (searching: boolean) => void
+}
+
+const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQuery, setSearching }) => {
+  return (
+    <div className="flex items-center gap-2 w-80">
+      <Input
+        onChange={(event) => setSearchQuery(event.target.value)}
+        value={searchQuery}
+      />
+      <Button
+        className="cursor-pointer"
+        onClick={() => setSearching(false)}
+        variant={'ghost'}
+        size={'icon'}
+      >
+        <SearchXIcon />
+      </Button>
+    </div>
+  )
+}
+
+interface DownloadedFilteredBySearchProps {
+  searchResults: (query: string) => DownloadedFileType[]
+  searchQuery: string
+  setSearchQuery: (query: string) => void
+  handleDelete: (fileName: string) => Promise<void>
+  handlePlay: (fileName: string) => void
+  isDeleting: string | null
+  selectedFile: string | null
+}
+
+const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
+  searchResults,
+  handleDelete,
+  handlePlay,
+  isDeleting,
+  selectedFile,
+  searchQuery
+}) => {
+  return (
+    <div className="flex flex-col justify-items" >
+      {
+        searchResults(searchQuery)?.map((file) => (
+          <DowloadedFile
+            handleDelete={handleDelete}
+            handlePlay={handlePlay}
+            isDeleting={isDeleting}
+            selectedFile={selectedFile}
+            key={file.name}
+            file={file} />
+        ))
+      }
     </div>
   )
 }

@@ -3,25 +3,25 @@ import { useApiBase } from '@/contexts/api-base-context'
 import { useThrottle } from '@/hooks/use-throttle '
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
-interface DownloadedFile {
+export interface DownloadedFileType {
   name: string
   size: number
   mtime: string
 }
 
 interface DownloadedContextType {
-  downloadedFiles: DownloadedFile[]
+  downloadedFiles: DownloadedFileType[]
   fetchDownloadedFiles: () => Promise<void>
   deleteFile: (fileName: string) => Promise<void>
   isLoading: boolean
   error: Error | null
+  searchResults: (query: string) => DownloadedFileType[]
 }
-
 
 const DownloadedContext = createContext<DownloadedContextType | undefined>(undefined)
 
 export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFile[]>([])
+  const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFileType[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const { apiFetch } = useApiBase()
@@ -34,7 +34,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      const data: DownloadedFile[] = await response.json()
+      const data: DownloadedFileType[] = await response.json()
       setDownloadedFiles(data)
     } catch (err) {
       console.error('Failed to fetch downloaded files:', err)
@@ -45,7 +45,11 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
     }
   }
 
-  const throttledFetchDownloadedFiles = useThrottle( fetchDownloadedFiles, 1000 )
+  const throttledFetchDownloadedFiles = useThrottle(fetchDownloadedFiles, 1000)
+
+  const searchResults = (query: string) => {
+    return downloadedFiles.filter(file => file.name.toLowerCase().includes(query.toLowerCase()))
+  }
 
   const deleteFile = async (fileName: string) => {
     try {
@@ -67,7 +71,14 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   })
 
   return (
-    <DownloadedContext.Provider value={{ downloadedFiles, fetchDownloadedFiles, deleteFile, isLoading, error }}>
+    <DownloadedContext.Provider value={{
+      downloadedFiles,
+      fetchDownloadedFiles,
+      deleteFile,
+      isLoading,
+      error,
+      searchResults,
+    }}>
       {children}
     </DownloadedContext.Provider>
   )
