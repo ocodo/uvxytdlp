@@ -1,15 +1,3 @@
-# /// script
-# dependencies = [
-#   "fastapi",
-#   "pydantic",
-#   "python-multipart",
-#   "starlette",
-#   "toml",
-# ]
-# ///
-
-# uv run & .venv takes care of all this,
-# but ruff complains anyway
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import os
