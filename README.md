@@ -33,8 +33,11 @@ sudo docker run -d \
   -p 8080:80 \
   -p 5150:8000 \
   -v /path/to/your/downloads:/ytdlp-downloads \
+  -v /path/to/your/server_config:/var/www/html/server_config \
   --name uvxytdlp-ui-container \
   ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:bubblegum-assembly
+  # -v to server_config is optional if you can use
+  # 8000 5000 or 5150 for the api port (see below)
 ```
 
 Then go to http://localhost:8080
