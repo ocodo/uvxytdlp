@@ -1,6 +1,6 @@
 # uvxytdlp-ui
 
-[![](https://img.shields.io/badge/binary-cheesecake-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
+[![](https://img.shields.io/badge/bubblegum-assembly-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
 
 Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com) and [FastAPI](https://fastapi.tiangolo.com/) providing the WebUI and API Service.
 
@@ -14,7 +14,7 @@ sudo docker run -d \
   -p 5150:8000 \
   -v /path/to/your/downloads:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:binary-cheesecake
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:bubblegum-assembly
 ```
 
 Then go to http://localhost:8080
