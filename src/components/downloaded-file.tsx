@@ -33,7 +33,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
           onLongPress={() => handleDelete(file.name)}
           longPressDuration={700}
           fillUpColorClass="dark:bg-red-800 bg-red-400"
-          className="cursor-pointer"
+          className="cursor-pointer animate-color hover:border-red-500/40 hover:border-1 m-1"
           variant={'ghost'}
           >
           {isDeleting === file.name ? (

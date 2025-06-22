@@ -4,7 +4,7 @@ import { VideoPlayer } from "@/components/video-player"
 import { AudioPlayer } from "@/components/audio-player"
 import { DowloadedFile } from "@/components/downloaded-file"
 import { Button } from "@/components/ui/button"
-import { CircleXIcon, Search, SearchXIcon } from "lucide-react"
+import { CircleXIcon, Search, SearchXIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
@@ -133,11 +133,24 @@ interface SearchDownloadedProps {
 
 const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQuery, setSearching }) => {
   return (
-    <div className="flex items-center gap-2 w-80">
-      <Input
-        onChange={(event) => setSearchQuery(event.target.value)}
-        value={searchQuery}
-      />
+    <div className="flex items-center gap-2 w-full">
+      <div className="relative w-full">
+        <Input
+          className="w-full"
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder='Search downloaded content...'
+          value={searchQuery}
+        />
+        <Button
+          className="cursor-pointer hover:bg-card/10 transition-color duration-500
+                     text-foreground/20 hover:text-foreground
+                     absolute right-1 top-1/2 -translate-y-1/2"
+          onClick={() => setSearchQuery('')}
+          variant={'ghost'}
+          size={'icon'}>
+          <XIcon />
+        </Button>
+      </div>
       <Button
         className="cursor-pointer"
         onClick={() => setSearching(false)}
