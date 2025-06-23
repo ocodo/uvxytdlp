@@ -1,23 +1,31 @@
-import { Presto } from "@/components/presto";
-import { UrlInputCard } from "@/components/url-input-card";
-import { useYtdlp } from "@/contexts/ytdlp-service-context";
-import { Button } from "./ui/button";
-import { XCircleIcon } from "lucide-react";
+import { Presto } from "@/components/presto"
+import { UrlInputCard } from "@/components/url-input-card"
+import { useYtdlp } from "@/contexts/ytdlp-service-context"
+import { Button } from "@/components/ui/button"
+import { XCircleIcon } from "lucide-react"
 
 export function DownloaderUI() {
   const {
-    url, setUrl, log, format, setFormat, urlValid, ytdlpFromURL, isLoading, clearLog
-  } = useYtdlp();
+    inputUrl,
+    isUrlValid,
+    format,
+    isLoading,
+    log,
+    setInputUrl,
+    setFormat,
+    startDownload,
+    clearLog
+  } = useYtdlp()
 
   return (
     <div className="gap-2 grid grid-cols-1">
       <UrlInputCard
-        url={url}
-        setUrl={setUrl}
+        url={inputUrl}
+        setUrl={setInputUrl}
         format={format}
         setFormat={setFormat}
-        urlValid={urlValid}
-        ytdlpFromURL={ytdlpFromURL}
+        isUrlValid={isUrlValid}
+        startDownload={startDownload}
         isLoading={isLoading}
       />
       {log && (

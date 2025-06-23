@@ -6,25 +6,37 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  type Dispatch,
+  type SetStateAction,
 } from 'react'
 import { formatTemplates } from "@/lib/template-formats"
 import { useDownloaded } from '@/contexts/downloaded-context'
-import { useHashUrl } from '@/contexts/hashurl-context'
 import { useApiBase } from '@/contexts/api-base-context'
 
 interface YtdlpContextType {
-  url: string
-  setUrl: (url: string) => void
+  // Core URL State
+  inputUrl: string
+  setInputUrl: Dispatch<SetStateAction<string>>
+  hashUrl: string
+  setHashUrl: Dispatch<SetStateAction<string>>
+
+  // Download Actions & Status
+  startDownload: () => Promise<void>
+  isLoading: boolean
+
+  // Logging
   log: string
   setLog: (log: string) => void
-  cliArgs: string
-  setCliArgs: (args: string) => void
-  format: string
-  setFormat: (format: string) => void
-  urlValid: () => boolean
-  ytdlpFromURL: (urlOverride?: string) => Promise<void>
-  isLoading: boolean
   clearLog: () => void
+
+  // Configuration
+  cliArgs: string
+  setCliArgs: Dispatch<SetStateAction<string>>
+  format: string
+  setFormat: Dispatch<SetStateAction<string>>
+
+  // Utilities
+  isUrlValid: (url: string | null | undefined) => boolean
 }
 
 const YtdlpContext = createContext<YtdlpContextType | undefined>(undefined)
@@ -42,24 +54,31 @@ interface YtdlpProviderProps {
 }
 
 export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
-  const [url, setUrl] = useState<string>("")
+  const [inputUrl, setInputUrl] = useState<string>("")
+  const [hashUrl, setHashUrl] = useState<string>("")
   const [log, setLog] = useState<string>("")
   const [cliArgs, setCliArgs] = useState<string>("-t mp4")
   const [format, setFormat] = useState<string>("mp4")
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { fetchDownloadedFiles } = useDownloaded()
   const { apiFetch } = useApiBase()
-  const { url: hashUrl, setUrl: setHashUrl } = useHashUrl()
 
-  const isUrlValid = (urlToTest: string | null | undefined): urlToTest is string =>
-    !!urlToTest && (urlToTest.startsWith("https://") || urlToTest.startsWith("http://"));
-
-  const urlValid: () => boolean = useCallback(() => isUrlValid(url), [url])
+  function isUrlValid(url: string | null | undefined): url is string {
+    if (typeof url !== 'string') {
+      return false
+    }
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return false
+    }
+    return true
+  }
 
   const clearLog = () => setLog("")
 
-  const ytdlpFromURL = useCallback(async (urlOverride?: string) => {
-    const downloadUrl = urlOverride ?? url
+  const startDownload = useCallback(async () => {
+    const downloadUrl = hashUrl != "" ? hashUrl : inputUrl
+    setInputUrl("")
+    setHashUrl("")
     if (!isUrlValid(downloadUrl)) {
       setLog("Invalid YouTube URL provided.")
       return
@@ -89,7 +108,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false)
     }
-  }, [apiFetch, cliArgs, url, fetchDownloadedFiles])
+  }, [apiFetch, cliArgs, hashUrl, inputUrl, fetchDownloadedFiles])
 
   useEffect(() => {
     if (Object.keys(formatTemplates).includes(format)) {
@@ -99,15 +118,34 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (hashUrl) {
-      setUrl(hashUrl)
-      ytdlpFromURL(hashUrl)
-      setHashUrl(null)
+      startDownload()
     }
-  }, [hashUrl, setHashUrl, ytdlpFromURL])
+  }, [hashUrl, setHashUrl, startDownload])
 
   const value = {
-    url, setUrl, log, setLog, cliArgs, setCliArgs, format, setFormat,
-    urlValid, ytdlpFromURL, isLoading, clearLog,
+    // Core URL State
+    inputUrl,
+    setInputUrl,
+    hashUrl,
+    setHashUrl,
+
+    // Download Actions & Status
+    startDownload, // The newly named function
+    isLoading,
+
+    // Logging
+    log,
+    setLog,
+    clearLog,
+
+    // Configuration
+    cliArgs,
+    setCliArgs,
+    format,
+    setFormat,
+
+    // Utilities
+    isUrlValid,
   }
 
   return <YtdlpContext.Provider value={value}>{children}</YtdlpContext.Provider>
