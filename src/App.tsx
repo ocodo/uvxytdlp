@@ -9,18 +9,20 @@ import ApiBaseProvider, { useApiBase } from '@/contexts/api-base-context'
 import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context"
 import { YtdlpProvider } from "@/contexts/ytdlp-service-context"
 import { toast } from "sonner"
+import { HashUrlProvider } from "@/contexts/hashurl-context"
+import { MDXProvider } from '@mdx-js/react'
 
 const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
   const { downloadedFiles } = useDownloaded()
-
   if (loading || error || !apiBase) {
     return null
   }
-
   return (
     <>
-      <Heading title="uvxytdlp-ui" />
+      <Heading
+        title="uvxytdlp-ui"
+      />
       <div className="border rounded-sm bg-card m-4 pb-2">
         <div className="px-4 py-2 text-lg font-bold">
           download from youtube
@@ -62,13 +64,17 @@ function App() {
 
   return (
     <ThemeProvider>
-      <ApiBaseProvider>
-        <DownloadedProvider>
-          <YtdlpProvider>
-            <AppContent />
-          </YtdlpProvider>
-        </DownloadedProvider>
-      </ApiBaseProvider>
+      <MDXProvider>
+        <ApiBaseProvider>
+          <DownloadedProvider>
+            <HashUrlProvider>
+              <YtdlpProvider>
+                <AppContent />
+              </YtdlpProvider>
+            </HashUrlProvider>
+          </DownloadedProvider>
+        </ApiBaseProvider>
+      </MDXProvider >
     </ThemeProvider >
   )
 }

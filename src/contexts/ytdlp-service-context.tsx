@@ -1,7 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import React, {
+  type ReactNode,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react'
 import { formatTemplates } from "@/lib/template-formats"
-import { useDownloaded } from './downloaded-context' // Import useDownloaded
+import { useDownloaded } from '@/contexts/downloaded-context'
+import { useHashUrl } from '@/contexts/hashurl-context'
 import { useApiBase } from '@/contexts/api-base-context'
 
 interface YtdlpContextType {
@@ -14,7 +22,7 @@ interface YtdlpContextType {
   format: string
   setFormat: (format: string) => void
   urlValid: () => boolean
-  ytdlpFromURL: () => Promise<void>
+  ytdlpFromURL: (urlOverride?: string) => Promise<void>
   isLoading: boolean
   clearLog: () => void
 }
@@ -41,12 +49,18 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { fetchDownloadedFiles } = useDownloaded()
   const { apiFetch } = useApiBase()
-  const urlValid: () => boolean = () => !!url && url.startsWith("https://")
+  const { url: hashUrl, setUrl: setHashUrl } = useHashUrl()
+
+  const isUrlValid = (urlToTest: string | null | undefined): urlToTest is string =>
+    !!urlToTest && (urlToTest.startsWith("https://") || urlToTest.startsWith("http://"));
+
+  const urlValid: () => boolean = useCallback(() => isUrlValid(url), [url])
 
   const clearLog = () => setLog("")
 
-  const ytdlpFromURL = async () => {
-    if (!urlValid()) {
+  const ytdlpFromURL = useCallback(async (urlOverride?: string) => {
+    const downloadUrl = urlOverride ?? url
+    if (!isUrlValid(downloadUrl)) {
       setLog("Invalid YouTube URL provided.")
       return
     }
@@ -57,7 +71,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
         method: 'POST',
         body: JSON.stringify({
           args: cliArgs,
-          url: url
+          url: downloadUrl
         }),
         headers: { 'Content-Type': 'application/json' }
       })
@@ -75,13 +89,21 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [apiFetch, cliArgs, url, fetchDownloadedFiles])
 
   useEffect(() => {
     if (Object.keys(formatTemplates).includes(format)) {
       setCliArgs(formatTemplates[format])
     }
   }, [format])
+
+  useEffect(() => {
+    if (hashUrl) {
+      setUrl(hashUrl)
+      ytdlpFromURL(hashUrl)
+      setHashUrl(null)
+    }
+  }, [hashUrl, setHashUrl, ytdlpFromURL])
 
   const value = {
     url, setUrl, log, setLog, cliArgs, setCliArgs, format, setFormat,

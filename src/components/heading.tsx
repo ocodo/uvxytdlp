@@ -1,13 +1,21 @@
 import { Menu } from 'lucide-react'
 import { ThemeSwitch } from '@/components/theme-switch'
+import BookmarkletHttpsWarning from '@/components/bookmarklet-http-warning.mdx'
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { BookmarkletGenerator } from '@/components/bookmarklet-generator'
 
 interface HeadingProps {
   title?: string
   tinyChildren?: React.ReactNode
 }
-
 export function Heading(props: HeadingProps) {
   const { title, tinyChildren } = props
+
+  const isHttps = window.location.protocol === 'https:'
 
   return (
     <div className='relative'>
@@ -17,9 +25,19 @@ export function Heading(props: HeadingProps) {
         </div>
       )}
       <header className="flex items-center justify-between p-2">
-        <div className="p-2 hover:bg-accent cursor-pointer rounded-lg">
-          <Menu className="h-4 w-4" />
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <div className="p-2 hover:bg-accent cursor-pointer rounded-lg">
+              <Menu className="h-4 w-4" />
+            </div>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            {isHttps
+            ? <BookmarkletGenerator />
+            : <BookmarkletHttpsWarning />
+            }
+          </DialogContent>
+        </Dialog>
         {title && (<div className="font-black tracking-tighter">{title}</div>)}
         <ThemeSwitch className="mr-2" />
       </header>
