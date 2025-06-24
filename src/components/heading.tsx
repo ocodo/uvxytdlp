@@ -1,12 +1,12 @@
 import { Menu } from 'lucide-react'
 import { ThemeSwitch } from '@/components/theme-switch'
-import BookmarkletHttpsWarning from '@/components/bookmarklet-http-warning.mdx'
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { BookmarkletGenerator } from '@/components/bookmarklet-generator'
+import { BookmarkletView } from '@/components/bookmarklet-view'
+import { getBookmarklet, getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
 
 interface HeadingProps {
   title?: string
@@ -33,8 +33,21 @@ export function Heading(props: HeadingProps) {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             {isHttps
-            ? <BookmarkletGenerator />
-            : <BookmarkletHttpsWarning />
+            ? <BookmarkletView />
+            :
+             <div className="overflow-hidden">
+               <div className="text-lg font-bold">Instant download bookmarklet</div>
+               <div>Copy the bookmarklet into a bookmark, when you are viewing a video page, clicking the bookmark will open the page url in uvxytdlp and begin download</div>
+               <div className="text-sm my-2">minified (copy this version)</div>
+               <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+                 {getMinifiedBookmarklet()}
+               </pre>
+               <div className="text-sm my-2">unminified source</div>
+               <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+                 {getBookmarklet()}
+               </pre>
+               <div className="text-sm mt-2">Hosting on <code className="font-bold text-cyan-600">https://</code> gives uvxytdlp-ui use of clipboard</div>
+             </div>
             }
           </DialogContent>
         </Dialog>
