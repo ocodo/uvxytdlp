@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { getBookmarklet } from '@/lib/get-bookmarklet'
+import { getBookmarklet, getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
+import { cn } from '@/lib/utils'
+import { ClipboardCopyIcon } from 'lucide-react'
 
-export const BookmarkletView: React.FC = () => {
+interface BookmarkletViewProps {
+  className?: string
+}
+
+export const BookmarkletView: React.FC<BookmarkletViewProps> = ({ className }) => {
   const [bookmarkletUrl, setBookmarkletUrl] = useState<string>('')
   const [isHttp, setIsHttp] = useState(false)
 
   useEffect(() => {
     setIsHttp(window.location.protocol === 'http:')
-    setBookmarkletUrl(getBookmarklet())
+    setBookmarkletUrl(getMinifiedBookmarklet())
   }, [])
 
   const handleCopy = () => {
@@ -22,47 +28,33 @@ export const BookmarkletView: React.FC = () => {
       })
   }
 
-  if (!bookmarkletUrl) return null // Don't render until the URL is ready
+  if (!bookmarkletUrl) return null
 
   return (
-    <div> {/* Removed outer styling, DialogContent will provide it */}
-      {isHttp && (
-        <div className="mb-4"><BookmarkletHttpWarning /></div>
-      )}
-      <h3 className="text-lg font-semibold mb-2">uvxytdlp bookmarklet</h3>
-      <p className="text-sm text-muted-foreground">
-        To install, drag the button below to your browser's bookmarks bar.
-      </p>
-      <div className="flex flex-col items-start sm:items-center gap-4">
-        <a
-          href={bookmarkletUrl}
-          onClick={(e) => {
-            e.preventDefault()
-            toast.info("Drag this button to your bookmarks bar, don't click it!")
-          }}
-          style={{ textDecoration: 'none' }}
-
-          className="inline-flex items-center justify-center
-                     whitespace-nowrap rounded-md text-sm font-medium
-                     transition-colors focus-visible:outline-none
-                     focus-visible:ring-2 focus-visible:ring-ring
-                     focus-visible:ring-offset-2 border-1
-                     h-10 px-4 py-2 mt-2 cursor-move"
-
-          title="Drag me to your bookmarks bar!"
-        >
-          Download video with uvxytdlp
-        </a>
-        <div className="text-sm text-muted-foreground">
-          Or, copy the code and create a bookmark manually:
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleCopy} className="cursor-copy">
-          Copy
-        </Button>
-      </div>
+    <div className={cn(className)} >
+      <>
+        <div className="text-lg font-bold">Instant download bookmarklet</div>
+        <div>Copy the bookmarklet into a bookmark, when you are viewing a video page, clicking the bookmark will open the page url in uvxytdlp and begin download</div>
+        <div className="text-sm my-2">minified (copy this version)</div>
+        <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+          {getMinifiedBookmarklet()}
+        </pre>
+        <div className="text-sm my-2">unminified source</div>
+        <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+          {getBookmarklet()}
+        </pre>
+        {isHttp
+          ? (
+            <div className="text-sm my-3">Hosting on <code className="font-bold text-cyan-600">https://</code> gives uvxytdlp-ui use of clipboard</div>
+          ) : (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleCopy} className="cursor-copy">
+              <ClipboardCopyIcon />
+            </Button>
+          )}
+      </>
     </div>
   )
 }
