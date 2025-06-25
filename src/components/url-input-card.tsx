@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { DownloadIcon, Loader2Icon } from "lucide-react"
 import { formatTemplates } from "@/lib/template-formats"
+import { isUrlValid } from '@/lib/is-url-valid'
 
 interface UrlInputCardProps {
   url: string
   setUrl: Dispatch<SetStateAction<string>>
   format: string
   setFormat: Dispatch<SetStateAction<string>>
-  isUrlValid: (url: string | null | undefined) => boolean
   startDownload:() => Promise<void>
   isLoading: boolean
 }
@@ -18,7 +18,6 @@ interface UrlInputCardProps {
 export const UrlInputCard: React.FC<UrlInputCardProps> = ({
   url,
   setUrl,
-  isUrlValid,
   format,
   setFormat,
   startDownload,

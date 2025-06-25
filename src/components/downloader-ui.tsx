@@ -7,7 +7,6 @@ import { XCircleIcon } from "lucide-react"
 export function DownloaderUI() {
   const {
     inputUrl,
-    isUrlValid,
     format,
     isLoading,
     log,
@@ -24,7 +23,6 @@ export function DownloaderUI() {
         setUrl={setInputUrl}
         format={format}
         setFormat={setFormat}
-        isUrlValid={isUrlValid}
         startDownload={startDownload}
         isLoading={isLoading}
       />

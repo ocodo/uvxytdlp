@@ -96,6 +96,23 @@ if __name__ == "__main__":
         )
 
 
+def get_ytdlp_progress_template() -> str:
+    """
+    Returns the yt-dlp progress template string designed to output JSON.
+    It's defined as a multi-line string for readability and then compacted
+    to a single line suitable for yt-dlp's --progress-template argument.
+    """
+    template = """download:{
+        "percent":%(progress.percent)f,
+        "eta_str":"%(progress._eta_str)s",
+        "speed_str":"%(progress._speed_str)s",
+        "downloaded_str":"%(progress._downloaded_bytes_str)s",
+        "total_str":"%(progress._total_str)s"
+    }"""
+
+    return "".join(line.strip() for line in template.splitlines())
+
+
 def should_refresh_cache() -> bool:
     """Checks if the uvx cache should be refreshed."""
     try:
@@ -232,6 +249,7 @@ async def download_via_ytdlp(body: YtdlpInput):
     full_command = (
         uvx_command_parts
         + ["yt-dlp", "-o", f"{download_dir}/%(title)s.%(ext)s"]
+        + ["--progress-template", get_ytdlp_progress_template()]
         + parsed_args
         + [body.url]
     )

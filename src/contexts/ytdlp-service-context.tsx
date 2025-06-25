@@ -10,6 +10,7 @@ import React, {
   type SetStateAction,
 } from 'react'
 import { formatTemplates } from "@/lib/template-formats"
+import { isUrlValid } from '@/lib/is-url-valid'
 import { useDownloaded } from '@/contexts/downloaded-context'
 import { useApiBase } from '@/contexts/api-base-context'
 
@@ -35,8 +36,8 @@ interface YtdlpContextType {
   format: string
   setFormat: Dispatch<SetStateAction<string>>
 
-  // Utilities
-  isUrlValid: (url: string | null | undefined) => boolean
+  // Progress
+  progress: number
 }
 
 const YtdlpContext = createContext<YtdlpContextType | undefined>(undefined)
@@ -62,16 +63,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { fetchDownloadedFiles } = useDownloaded()
   const { apiFetch } = useApiBase()
-
-  function isUrlValid(url: string | null | undefined): url is string {
-    if (typeof url !== 'string') {
-      return false
-    }
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-      return false
-    }
-    return true
-  }
+  const [progress, setProgress] = useState<number>(0)
 
   const clearLog = () => setLog("")
 
@@ -85,6 +77,8 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     }
     setIsLoading(true)
     setLog("Starting download process...\n") // Initial log
+    setProgress(0) // Reset progress at the start of a new download
+
     try {
       const response = await apiFetch(`/ytdlp`, {
         method: 'POST',
@@ -95,16 +89,58 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
         headers: { 'Content-Type': 'application/json' }
       })
 
-      const text = await response.text()
-      if (response.ok) {
-        setLog(prevLog => prevLog + text)
-        fetchDownloadedFiles()
-      } else {
-        setLog(prevLog => prevLog + `Error: ${response.status}\n${text}`)
+      if (!response.ok || !response.body) {
+        const errorText = await response.text()
+        setLog(prevLog => prevLog + `Error: ${response.status}\n${errorText}`)
+        setIsLoading(false)
+        setProgress(0) // Reset progress on immediate error
+        return
       }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder('utf-8')
+      let buffer = ''
+      // Regex to find percentages like "12.3%" in the output
+      const progressRegex = /(\d+\.\d+)%/
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || '' // Keep the last, possibly incomplete, line in the buffer
+
+        for (const line of lines) {
+          setLog(prevLog => prevLog + line + '\n') // Append each complete line to the log
+
+          const match = line.match(progressRegex)
+          if (match && match[1]) {
+            const percentage = parseFloat(match[1]) / 100
+            setProgress(percentage) // Update progress (0 to 1)
+          }
+        }
+      }
+
+      // Process any remaining buffer after the stream ends
+      if (buffer) {
+        setLog(prevLog => prevLog + buffer + '\n')
+        const match = buffer.match(progressRegex)
+        if (match && match[1]) {
+          const percentage = parseFloat(match[1]) / 100
+          setProgress(percentage)
+        }
+      }
+
+      // Final actions upon successful stream completion
+      fetchDownloadedFiles()
+      setProgress(1) // Set to 100% on successful completion
+      setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
+
     } catch (error) {
-      console.error("Failed to fetch from ytdlp_from_url:", error)
-      setLog(prevLog => prevLog + `Network or server error: ${String(error)}`)
+      console.error("Failed to stream or parse ytdlp output:", error)
+      setLog(prevLog => prevLog + `\nNetwork, stream, or parsing error: ${String(error)}`)
+      setProgress(0) // Reset or indicate error state
     } finally {
       setIsLoading(false)
     }
@@ -144,8 +180,8 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     format,
     setFormat,
 
-    // Utilities
-    isUrlValid,
+    // Progress
+    progress,
   }
 
   return <YtdlpContext.Provider value={value}>{children}</YtdlpContext.Provider>
