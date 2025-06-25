@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import os
@@ -7,7 +8,7 @@ import subprocess
 import logging
 import toml  # type: ignore
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import FileResponse, PlainTextResponse
+from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
 
 app = FastAPI(
     title="API for uvxytdlp-ui",
@@ -126,20 +127,15 @@ class YtdlpInput(BaseModel):
 
 
 @app.post("/ytdlp")
-def download_via_ytdlp(body: YtdlpInput):
-    """
-    Downloads a video using yt-dlp via uvx.
-    Accepts url and yt-dlp args.
-    """
+async def download_via_ytdlp(body: YtdlpInput):
     logger.info(f"download dir is: {download_dir}")
     logger.info(f"Received request for URL: {body.url} with args: {body.args}")
 
-    # Check for uvx
     if not (
         os.path.exists(UVX_EXPECTED_PATH) and os.access(UVX_EXPECTED_PATH, os.X_OK)
     ):
         logger.error(f"uvx not found or not executable at {UVX_EXPECTED_PATH}.")
-        return "UVX required on server", 500, {"Content-Type": "text/plain"}
+        return PlainTextResponse("UVX required on server", status_code=500)
 
     logger.info(f"Using uvx from: {UVX_EXPECTED_PATH}")
     uvx_command_parts = [UVX_EXPECTED_PATH]
@@ -147,13 +143,16 @@ def download_via_ytdlp(body: YtdlpInput):
     if should_refresh_cache():
         uvx_command_parts.append("--no-cache")
         record_refresh_timestamp()
+
     try:
         parsed_args = shlex.split(body.args)
     except ValueError as e:
-        logger.error(f"Error splitting yt-dlp arguments '{body.args}': {e}")  # type: ignore
+        logger.error(f"Error splitting yt-dlp arguments '{body.args}': {e}")
         raise HTTPException(
             status_code=400, detail=f"Invalid yt-dlp arguments format: {e}"
         )
+
+    os.makedirs(download_dir, exist_ok=True)
 
     full_command = (
         uvx_command_parts
@@ -166,29 +165,70 @@ def download_via_ytdlp(body: YtdlpInput):
         f"Executing command: {' '.join(shlex.quote(part) for part in full_command)}"
     )
 
-    try:
-        process = subprocess.run(
-            full_command, capture_output=True, text=True, check=False
+    async def stream_output_generator():
+        process = await asyncio.create_subprocess_exec(
+            *full_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        output_log = f"--- STDOUT ---\n{process.stdout}\n"
-        if process.stderr:
-            output_log += f"--- STDERR ---\n{process.stderr}\n"
-        if process.returncode != 0:
-            output_log += (
-                f"--- yt-dlp process exited with code {process.returncode} ---\n"
-            )
-            logger.warning(
-                f"yt-dlp process for {body.url} exited with code {process.returncode}. stderr: {process.stderr[:500]}"
-            )
-        logger.info(f"Successfully processed URL: {body.url}")
 
-        return PlainTextResponse(output_log, status_code=200)
+        try:
+            yield b"--- STDOUT ---\n"
+            while True:
+                line = await process.stdout.readline()
+                if not line:
+                    break
+                yield line
 
-    except Exception as e:
-        logger.exception(
-            f"An unexpected error occurred while processing {body.url}: {e}"
-        )
-        raise HTTPException(status_code=500, detail=f"Server Error: {str(e)}")
+            stderr_output = b""
+            while True:
+                line = await process.stderr.readline()
+                if not line:
+                    break
+                stderr_output += line
+
+            if stderr_output:
+                yield b"--- STDERR ---\n"
+                yield stderr_output
+
+            await process.wait()
+
+            if process.returncode != 0:
+                error_message = (
+                    f"--- yt-dlp process exited with code {process.returncode} ---\n"
+                ).encode('utf-8')
+                yield error_message
+                logger.warning(
+                    f"yt-dlp process for {body.url} exited with code {process.returncode}. "
+                    f"stderr: {stderr_output.decode('utf-8', errors='ignore')[:500]}"
+                )
+            else:
+                yield b"--- yt-dlp process finished successfully ---\n"
+
+            logger.info(f"Successfully processed URL: {body.url}")
+
+        except asyncio.CancelledError:
+            logger.warning(f"Client disconnected for {body.url}. Terminating yt-dlp process.")
+            if process.returncode is None:
+                process.terminate()
+                try:
+                    await asyncio.wait_for(process.wait(), timeout=5)
+                except asyncio.TimeoutError:
+                    logger.error(f"yt-dlp process for {body.url} did not terminate gracefully. Killing.")
+                    process.kill()
+            raise
+
+        except Exception as e:
+            logger.exception(f"An unexpected error occurred while processing {body.url}: {e}")
+            yield f"--- Server Error ---\n{str(e)}\n".encode('utf-8')
+
+        finally:
+            if process.returncode is None:
+                logger.warning(f"yt-dlp process for {body.url} was still running in finally block. Killing.")
+                process.kill()
+                await process.wait()
+
+    return StreamingResponse(stream_output_generator(), media_type="text/plain")
 
 
 @app.get("/downloaded/{filename:path}")

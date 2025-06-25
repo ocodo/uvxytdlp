@@ -63,7 +63,7 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
                     possibleBackendPorts.unshift(config.port);
                 }
             } else {
-                console.warn(`ApiBaseProvider: server.json found but is malformed or missing 'port' property.`);
+                console.warn(`ApiBaseProvider: server.json found but is malformed, proceeding with default ports.`);
             }
         } else if (response.status === HTTP_STATUS_NOT_FOUND) {
             console.info(`ApiBaseProvider: server.json not found (${HTTP_STATUS_NOT_FOUND}), proceeding with default ports.`);

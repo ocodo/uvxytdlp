@@ -8,7 +8,7 @@ export const getBookmarklet = () => {
 })();
 `
 
-  return `javascript:${script}`
+  return `${script}`
 }
 
 export const getMinifiedBookmarklet = () => {

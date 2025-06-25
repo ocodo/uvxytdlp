@@ -1,0 +1,13 @@
+[project]
+name = "uvxytdlp-apiserver"
+version = "0.1.0"
+description = "API Server for uvxytdlp"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115.13",
+    "pydantic>=2.11.7",
+    "python-multipart>=0.0.20",
+    "starlette>=0.46.2",
+    "toml>=0.10.2",
+]

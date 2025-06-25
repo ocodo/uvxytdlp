@@ -35,25 +35,29 @@ export const BookmarkletView: React.FC<BookmarkletViewProps> = ({ className }) =
       <>
         <div className="text-lg font-bold">Instant download bookmarklet</div>
         <div>Copy the bookmarklet into a bookmark, when you are viewing a video page, clicking the bookmark will open the page url in uvxytdlp and begin download</div>
-        <div className="text-sm my-2">minified (copy this version)</div>
-        <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
-          {getMinifiedBookmarklet()}
-        </pre>
-        <div className="text-sm my-2">unminified source</div>
-        <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
-          {getBookmarklet()}
-        </pre>
-        {isHttp
-          ? (
-            <div className="text-sm my-3">Hosting on <code className="font-bold text-cyan-600">https://</code> gives uvxytdlp-ui use of clipboard</div>
-          ) : (
+        <div className="text-sm my-2">bookmarklet (copy this)</div>
+        <div className='relative'>
+          {!isHttp && (
             <Button
-              variant="outline"
+              className="cursor-copy absolute top-2 right-2"
+              variant="ghost"
               size="icon"
-              onClick={handleCopy} className="cursor-copy">
+              onClick={handleCopy} >
               <ClipboardCopyIcon />
             </Button>
           )}
+          <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+            {getMinifiedBookmarklet()}
+          </pre>
+        </div>
+
+        <div className="text-sm my-2">source</div>
+        <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+          javascript:{getBookmarklet()}
+        </pre>
+        {isHttp && (
+          <div className="text-sm my-3">Hosting on <code className="font-bold text-cyan-600">https://</code> gives uvxytdlp-ui use of clipboard</div>
+        )}
       </>
     </div>
   )
