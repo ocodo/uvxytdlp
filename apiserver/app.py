@@ -1,3 +1,4 @@
+# apiserver/app.py
 import asyncio
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -125,6 +126,76 @@ def record_refresh_timestamp() -> None:
         logger.error(f"Failed to record refresh timestamp: {e}")
 
 
+async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: str):
+    """
+    Asynchronously streams stdout and stderr from a given subprocess,
+    adding appropriate headers and handling process completion and errors.
+    """
+    stderr_buffer = b"" # Buffer for stderr to potentially display at the end or on error
+    try:
+        # Stream stdout
+        yield b"--- STDOUT ---\n"
+        while True:
+            line = await process.stdout.readline()
+            if not line:
+                break
+            yield line
+
+        # Read all stderr into a buffer
+        # This ensures all stderr is captured before process.wait()
+        # and allows displaying it together if needed.
+        while True:
+            line = await process.stderr.readline()
+            if not line:
+                break
+            stderr_buffer += line
+
+        if stderr_buffer:
+            yield b"--- STDERR ---\n"
+            yield stderr_buffer
+
+        # Wait for the process to complete
+        await process.wait()
+
+        # Check return code and yield final status message
+        if process.returncode != 0:
+            error_message = (
+                f"--- yt-dlp process exited with code {process.returncode} ---\n"
+            ).encode('utf-8')
+            yield error_message
+            logger.warning(
+                f"yt-dlp process for {url} exited with code {process.returncode}. "
+                f"stderr: {stderr_buffer.decode('utf-8', errors='ignore')[:500]}"
+            )
+        else:
+            yield b"--- yt-dlp process finished successfully ---\n"
+            logger.info(f"Successfully processed URL: {url}")
+
+    except asyncio.CancelledError:
+        # Handle client disconnection
+        logger.warning(f"Client disconnected for {url}. Terminating yt-dlp process.")
+        if process.returncode is None: # Process might still be running
+            process.terminate()
+            try:
+                await asyncio.wait_for(process.wait(), timeout=5)
+            except asyncio.TimeoutError:
+                logger.error(f"yt-dlp process for {url} did not terminate gracefully. Killing.")
+                process.kill()
+        raise # Re-raise CancelledError to ensure FastAPI/Starlette handles it
+
+    except Exception as e:
+        # Catch any unexpected errors during streaming or process management
+        logger.exception(f"An unexpected error occurred while processing {url}: {e}")
+        yield f"--- Server Error ---\n{str(e)}\n".encode('utf-8')
+
+    finally:
+        # Ensure process is terminated if it's still running when exiting the generator
+        if process.returncode is None:
+            logger.warning(f"yt-dlp process for {url} was still running in finally block. Killing.")
+            process.kill()
+            await process.wait()
+
+
 class YtdlpInput(BaseModel):
     url: str
     args: str
@@ -169,70 +240,13 @@ async def download_via_ytdlp(body: YtdlpInput):
         f"Executing command: {' '.join(shlex.quote(part) for part in full_command)}"
     )
 
-    async def stream_output_generator():
-        process = await asyncio.create_subprocess_exec(
-            *full_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
+    process = await asyncio.create_subprocess_exec(
+        *full_command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
 
-        try:
-            yield b"--- STDOUT ---\n"
-            while True:
-                line = await process.stdout.readline()
-                if not line:
-                    break
-                yield line
-
-            stderr_output = b""
-            while True:
-                line = await process.stderr.readline()
-                if not line:
-                    break
-                stderr_output += line
-
-            if stderr_output:
-                yield b"--- STDERR ---\n"
-                yield stderr_output
-
-            await process.wait()
-
-            if process.returncode != 0:
-                error_message = (
-                    f"--- yt-dlp process exited with code {process.returncode} ---\n"
-                ).encode('utf-8')
-                yield error_message
-                logger.warning(
-                    f"yt-dlp process for {body.url} exited with code {process.returncode}. "
-                    f"stderr: {stderr_output.decode('utf-8', errors='ignore')[:500]}"
-                )
-            else:
-                yield b"--- yt-dlp process finished successfully ---\n"
-
-            logger.info(f"Successfully processed URL: {body.url}")
-
-        except asyncio.CancelledError:
-            logger.warning(f"Client disconnected for {body.url}. Terminating yt-dlp process.")
-            if process.returncode is None:
-                process.terminate()
-                try:
-                    await asyncio.wait_for(process.wait(), timeout=5)
-                except asyncio.TimeoutError:
-                    logger.error(f"yt-dlp process for {body.url} did not terminate gracefully. Killing.")
-                    process.kill()
-            raise
-
-        except Exception as e:
-            logger.exception(f"An unexpected error occurred while processing {body.url}: {e}")
-            yield f"--- Server Error ---\n{str(e)}\n".encode('utf-8')
-
-        finally:
-            if process.returncode is None:
-                logger.warning(f"yt-dlp process for {body.url} was still running in finally block. Killing.")
-                process.kill()
-                await process.wait()
-
-    return StreamingResponse(stream_output_generator(), media_type="text/plain")
+    return StreamingResponse(_stream_subprocess_output(process, body.url), media_type="text/plain")
 
 
 @app.get("/downloaded/{filename:path}")
