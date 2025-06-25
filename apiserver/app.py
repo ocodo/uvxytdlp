@@ -6,22 +6,22 @@ import shlex
 from datetime import datetime, timedelta
 import subprocess
 import logging
-import toml  # type: ignore
+import toml # type: ignore
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
 
 app = FastAPI(
     title="API for uvxytdlp-ui",
     version="binary-cheesecake",
-    docs_url="/docs",  # FastAPI's default docs path
-    redoc_url="/redoc",  # FastAPI's default redoc path
+    docs_url="/docs", # FastAPI's default docs path
+    redoc_url="/redoc", # FastAPI's default redoc path
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_origins=["*"], # Allows all origins
+    allow_methods=["*"], # Allows all methods
+    allow_headers=["*"], # Allows all headers
 )
 
 # Configure basic logging for the application
@@ -30,35 +30,38 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-print("Starting http/json api for uvxytdlp-ui")
-
 # --- Load Configuration from config.toml ---
 config_path = os.path.join(os.path.dirname(__file__), "config.toml")
 
-if os.path.exists(config_path):
-    try:
-        config = toml.load(config_path)
-        logger.info(f"Loaded configuration from {config_path}")
-        if not config.get("download_dir"):
-            logger.error("Download directory not configured in config.toml")
-            exit(1)
+try:
+    config = toml.load(config_path)
+    logger.info(f"Loaded configuration from {config_path}")
+    if not config.get("download_dir"):
+        logger.error("Download directory not configured in config.toml")
+        raise RuntimeError("Download directory not configured in config.toml")
+    else:
+        download_dir = config["download_dir"]
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir, exist_ok=True)
+            logger.info(f"Created download directory: {download_dir}")
         else:
-            download_dir = config["download_dir"]
-            if not os.path.exists(download_dir):
-                os.makedirs(download_dir, exist_ok=True)
-                logger.info(f"Created download directory: {download_dir}")
-            else:
-                logger.info(f"Using download directory: {download_dir}")
+            logger.info(f"Using download directory: {download_dir}")
 
-    except toml.TomlDecodeError as e:
-        logger.error(f"Error decoding TOML in {config_path}: {e}")
-else:
+except toml.TomlDecodeError as e:
+    logger.error(f"Error decoding TOML in {config_path}: {e}")
+    raise RuntimeError(f"Error decoding TOML in {config_path}: {e}")
+except FileNotFoundError:
     logger.warning(
         f"Configuration file not found: {config_path}. Using default settings."
     )
+    config = {} # Ensure config is defined even if file not found
+    download_dir = "/tmp/downloads" # Default or placeholder for testing/no config
 
-print(f"Local Download folder: {config.get('download_dir', None)}")
-print(os.listdir(config.get("download_dir", None)))
+if __name__ == "__main__":
+    print("Starting http/json api for uvxytdlp-ui")
+    print(f"Local Download folder: {config.get('download_dir', download_dir)}")
+    if os.path.exists(download_dir):
+        print(os.listdir(download_dir))
 
 # --- Configuration for daily cache refresh
 # --- always use a fresh yt-dlp everyday
@@ -83,12 +86,13 @@ elif UVX_FALLBACK_PATHS:
             UVX_EXPECTED_PATH = path
             break
 
-if UVX_EXPECTED_PATH:
-    print(f"\nSuccessfully determined uvx path: {UVX_EXPECTED_PATH}")
-else:
-    print(
-        "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
-    )
+if __name__ == "__main__":
+    if UVX_EXPECTED_PATH:
+        print(f"\nSuccessfully determined uvx path: {UVX_EXPECTED_PATH}")
+    else:
+        print(
+            "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
+        )
 
 
 def should_refresh_cache() -> bool:
@@ -290,7 +294,7 @@ def get_downloaded():
         )
 
 
-@app.delete("/downloaded/{filename:path}")  # fmt: skip
+@app.delete("/downloaded/{filename:path}") # fmt: skip
 def delete_downloaded_file(filename: str):
     """
     Deletes a specific file from the download directory.
@@ -323,4 +327,3 @@ def health_check():
     Kubernetes) and load balancers to verify service availability.
     """
     return {"status": "ok"}
-
