@@ -33,7 +33,7 @@ ENV UVX_EXPECTED_PATH=/bin/uvx
 
 WORKDIR /app/apiserver
 RUN uv venv
-RUN uv pip install -r requirements.txt
+RUN uv sync
 
 EXPOSE 5000
 EXPOSE 80

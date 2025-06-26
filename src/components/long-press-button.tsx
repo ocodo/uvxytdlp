@@ -7,6 +7,7 @@ interface LongPressButtonProps extends React.ComponentPropsWithoutRef<typeof But
   fillUpColorClass?: string;
   longPressDuration: number;
   onLongPress: () => void;
+  transformOrigin?: 'top' | 'right' | 'bottom' | 'left';
   className?: string;
 }
 
@@ -15,6 +16,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
   fillUpColorClass,
   longPressDuration,
   onLongPress,
+  transformOrigin = 'bottom',
   className,
   variant,
   size = 'icon',
@@ -172,8 +174,8 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
       <div
         className={`absolute inset-0 ${fillUpColorClass || "bg-red-900"}`}
         style={{
-          transform: `scaleY(${fillPercentage / 100})`,
-          transformOrigin: 'bottom',
+          transform: `${transformOrigin == 'left' || transformOrigin == 'right' ? 'scaleX' : 'scaleY'}(${fillPercentage / 100})`,
+          transformOrigin: transformOrigin,
         }}
       />
 

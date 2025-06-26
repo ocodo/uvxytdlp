@@ -100,19 +100,21 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       const reader = response.body.getReader()
       const decoder = new TextDecoder('utf-8')
       let buffer = ''
-      // Regex to find percentages like "12.3%" in the output
-      const progressRegex = /(\d+\.\d+)%/
+
+      const progressRegex = /(\d+\.\d+)/
 
       while (true) {
         const { done, value } = await reader.read()
+        console.log(`streaming: ${value}`)
         if (done) break
 
         buffer += decoder.decode(value, { stream: true })
         const lines = buffer.split('\n')
-        buffer = lines.pop() || '' // Keep the last, possibly incomplete, line in the buffer
+        buffer = lines.pop() || ''
 
         for (const line of lines) {
-          setLog(prevLog => prevLog + line + '\n') // Append each complete line to the log
+          console.log(line)
+          setLog(prevLog => prevLog + line + '\n')
 
           const match = line.match(progressRegex)
           if (match && match[1]) {

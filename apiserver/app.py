@@ -102,13 +102,7 @@ def get_ytdlp_progress_template() -> str:
     It's defined as a multi-line string for readability and then compacted
     to a single line suitable for yt-dlp's --progress-template argument.
     """
-    template = """download:{
-        "percent":%(progress.percent)f,
-        "eta_str":"%(progress._eta_str)s",
-        "speed_str":"%(progress._speed_str)s",
-        "downloaded_str":"%(progress._downloaded_bytes_str)s",
-        "total_str":"%(progress._total_str)s"
-    }"""
+    template = """{ "percent": %(progress._percent)f }"""
 
     return "".join(line.strip() for line in template.splitlines())
 
@@ -249,7 +243,9 @@ async def download_via_ytdlp(body: YtdlpInput):
     full_command = (
         uvx_command_parts
         + ["yt-dlp", "-o", f"{download_dir}/%(title)s.%(ext)s"]
-        + ["--progress-template", get_ytdlp_progress_template()]
+        + ["--newline"]
+        + ["--progress-delta=0.05"]
+        + ["--progress-template", f"{get_ytdlp_progress_template()}"]
         + parsed_args
         + [body.url]
     )
