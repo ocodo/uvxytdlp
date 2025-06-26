@@ -1,6 +1,7 @@
 # apiserver/app.py
 import asyncio
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import os
 import shlex
@@ -14,8 +15,8 @@ from starlette.responses import PlainTextResponse, FileResponse, StreamingRespon
 app = FastAPI(
     title="API for uvxytdlp-ui",
     version="binary-cheesecake",
-    docs_url="/docs", # FastAPI's default docs path
-    redoc_url="/redoc", # FastAPI's default redoc path
+    docs_url=None,
+    redoc_url=None,
 )
 
 app.add_middleware(
@@ -207,13 +208,37 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
             await process.wait()
 
 
+@app.get("/docs", include_in_schema=False)
+async def api_documentation(request: Request):
+    return HTMLResponse("""
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Elements in HTML</title>
+
+    <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
+  </head>
+  <body>
+
+    <elements-api
+      apiDescriptionUrl="openapi.json"
+      router="hash"
+    />
+
+  </body>
+</html>""")
+
+
 class YtdlpInput(BaseModel):
     url: str
     args: str
 
 
-@app.post("/ytdlp")
-async def download_via_ytdlp(body: YtdlpInput):
+@app.get("/ytdlp")
+async def download_via_ytdlp(YtdlpInput):
     logger.info(f"download dir is: {download_dir}")
     logger.info(f"Received request for URL: {body.url} with args: {body.args}")
 
