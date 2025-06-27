@@ -111,7 +111,6 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
         buffer = lines.pop() || ''
 
         for (const line of lines) {
-          setLog(prevLog => prevLog + line + '\n')
           console.log(line)
           if (line.startsWith(`{ "percent": `)) {
             try {
@@ -122,6 +121,8 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
             } catch (jsonError) {
               console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
             }
+          } else {
+            setLog(prevLog => prevLog + line + '\n')
           }
         }
       }
