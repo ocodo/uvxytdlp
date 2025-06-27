@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Dispatch, SetStateAction } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -7,6 +7,7 @@ interface LongPressButtonProps extends React.ComponentPropsWithoutRef<typeof But
   fillUpColorClass?: string;
   longPressDuration: number;
   onLongPress: () => void;
+  setPressing?: Dispatch<SetStateAction<boolean>>;
   transformOrigin?: 'top' | 'right' | 'bottom' | 'left';
   className?: string;
 }
@@ -16,10 +17,11 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
   fillUpColorClass,
   longPressDuration,
   onLongPress,
+  setPressing,
   transformOrigin = 'bottom',
   className,
   variant,
-  size = 'icon',
+  size = 'default',
   ...rest
 }) => {
   const [fillPercentage, setFillPercentage] = useState<number>(0);
@@ -88,6 +90,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
 
     if (rest.disabled || ('button' in e && e.button !== 0)) return;
 
+    if (setPressing) setPressing(true)
     isPressingRef.current = true;
     pressStartTime.current = performance.now();
 
@@ -108,6 +111,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     if (rest.disabled) return;
 
     isPressingRef.current = false;
+    if (setPressing) setPressing(false)
 
     if (fillAnimationFrameId.current !== null) {
       cancelAnimationFrame(fillAnimationFrameId.current);
@@ -130,6 +134,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
 
     if (isPressingRef.current) {
       isPressingRef.current = false;
+      if (setPressing) setPressing(false)
 
       if (fillAnimationFrameId.current !== null) {
         cancelAnimationFrame(fillAnimationFrameId.current);
@@ -179,10 +184,10 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
         }}
       />
 
-      {/* Content - NEW: z-[2] */}
-      <span className="relative z-[2] select-none pointer-events-none">
+      {/* Content */}
+      <div className="w-full p-6 relative z-[2] select-none">
         {children}
-      </span>
+      </div>
     </Button>
   );
 };

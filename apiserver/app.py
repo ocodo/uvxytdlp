@@ -2,13 +2,13 @@
 import asyncio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
 import os
 import shlex
 from datetime import datetime, timedelta
 import subprocess
 import logging
-import toml # type: ignore
+import toml  # type: ignore
+from urllib.parse import unquote
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
 
@@ -21,9 +21,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allows all origins
-    allow_methods=["*"], # Allows all methods
-    allow_headers=["*"], # Allows all headers
+    allow_origins=["*"],  # Allows all origins
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 # Configure basic logging for the application
@@ -56,8 +56,8 @@ except FileNotFoundError:
     logger.warning(
         f"Configuration file not found: {config_path}. Using default settings."
     )
-    config = {} # Ensure config is defined even if file not found
-    download_dir = "/tmp/downloads" # Default or placeholder for testing/no config
+    config = {}  # Ensure config is defined even if file not found
+    download_dir = "/tmp/downloads"  # Default or placeholder for testing/no config
 
 if __name__ == "__main__":
     print("Starting http/json api for uvxytdlp-ui")
@@ -115,9 +115,7 @@ def should_refresh_cache() -> bool:
             last_refresh_time = datetime.fromisoformat(f.read().strip())
         is_stale = datetime.now() - last_refresh_time > REFRESH_INTERVAL
         if is_stale:
-            logger.info(
-                f"Cache is stale (older than {REFRESH_INTERVAL}). Refreshing."
-            )
+            logger.info(f"Cache is stale (older than {REFRESH_INTERVAL}). Refreshing.")
         else:
             logger.info("Cache is fresh. No refresh needed.")
         return is_stale
@@ -143,7 +141,9 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
     Asynchronously streams stdout and stderr from a given subprocess,
     adding appropriate headers and handling process completion and errors.
     """
-    stderr_buffer = b"" # Buffer for stderr to potentially display at the end or on error
+    stderr_buffer = (
+        b""  # Buffer for stderr to potentially display at the end or on error
+    )
     try:
         # Stream stdout
         yield b"--- STDOUT ---\n"
@@ -173,7 +173,7 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
         if process.returncode != 0:
             error_message = (
                 f"--- yt-dlp process exited with code {process.returncode} ---\n"
-            ).encode('utf-8')
+            ).encode("utf-8")
             yield error_message
             logger.warning(
                 f"yt-dlp process for {url} exited with code {process.returncode}. "
@@ -186,24 +186,28 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
     except asyncio.CancelledError:
         # Handle client disconnection
         logger.warning(f"Client disconnected for {url}. Terminating yt-dlp process.")
-        if process.returncode is None: # Process might still be running
+        if process.returncode is None:  # Process might still be running
             process.terminate()
             try:
                 await asyncio.wait_for(process.wait(), timeout=5)
             except asyncio.TimeoutError:
-                logger.error(f"yt-dlp process for {url} did not terminate gracefully. Killing.")
+                logger.error(
+                    f"yt-dlp process for {url} did not terminate gracefully. Killing."
+                )
                 process.kill()
-        raise # Re-raise CancelledError to ensure FastAPI/Starlette handles it
+        raise  # Re-raise CancelledError to ensure FastAPI/Starlette handles it
 
     except Exception as e:
         # Catch any unexpected errors during streaming or process management
         logger.exception(f"An unexpected error occurred while processing {url}: {e}")
-        yield f"--- Server Error ---\n{str(e)}\n".encode('utf-8')
+        yield f"--- Server Error ---\n{str(e)}\n".encode("utf-8")
 
     finally:
         # Ensure process is terminated if it's still running when exiting the generator
         if process.returncode is None:
-            logger.warning(f"yt-dlp process for {url} was still running in finally block. Killing.")
+            logger.warning(
+                f"yt-dlp process for {url} was still running in finally block. Killing."
+            )
             process.kill()
             await process.wait()
 
@@ -232,15 +236,12 @@ async def api_documentation(request: Request):
 </html>""")
 
 
-class YtdlpInput(BaseModel):
-    url: str
-    args: str
-
-
 @app.get("/ytdlp")
-async def download_via_ytdlp(YtdlpInput):
+async def download_via_ytdlp(url: str, args: str):
+    url = unquote(url)
+    args = unquote(args)
     logger.info(f"download dir is: {download_dir}")
-    logger.info(f"Received request for URL: {body.url} with args: {body.args}")
+    logger.info(f"Received request for URL: {url} with args: {args}")
 
     if not (
         os.path.exists(UVX_EXPECTED_PATH) and os.access(UVX_EXPECTED_PATH, os.X_OK)
@@ -256,9 +257,9 @@ async def download_via_ytdlp(YtdlpInput):
         record_refresh_timestamp()
 
     try:
-        parsed_args = shlex.split(body.args)
+        parsed_args = shlex.split(args)
     except ValueError as e:
-        logger.error(f"Error splitting yt-dlp arguments '{body.args}': {e}")
+        logger.error(f"Error splitting yt-dlp arguments '{args}': {e}")
         raise HTTPException(
             status_code=400, detail=f"Invalid yt-dlp arguments format: {e}"
         )
@@ -272,20 +273,25 @@ async def download_via_ytdlp(YtdlpInput):
         + ["--progress-delta=0.05"]
         + ["--progress-template", f"{get_ytdlp_progress_template()}"]
         + parsed_args
-        + [body.url]
+        + [f"{url}"]
     )
 
     logger.info(
         f"Executing command: {' '.join(shlex.quote(part) for part in full_command)}"
     )
 
+    print(*full_command)
+
     process = await asyncio.create_subprocess_exec(
         *full_command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        env={**os.environ, "PYTHONUNBUFFERED": "1"},
     )
 
-    return StreamingResponse(_stream_subprocess_output(process, body.url), media_type="text/plain")
+    return StreamingResponse(
+        _stream_subprocess_output(process, url), media_type="text/event-stream"
+    )
 
 
 @app.get("/downloaded/{filename:path}")
@@ -347,7 +353,7 @@ def get_downloaded():
         )
 
 
-@app.delete("/downloaded/{filename:path}") # fmt: skip
+@app.delete("/downloaded/{filename:path}")  # fmt: skip
 def delete_downloaded_file(filename: str):
     """
     Deletes a specific file from the download directory.

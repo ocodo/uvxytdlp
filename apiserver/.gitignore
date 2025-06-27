@@ -1,6 +1,6 @@
 # APIFlask/Python
 __pycache__
 .venv
-
+.pytest_cache
 config.toml
 last_ytdlprefresh.txt

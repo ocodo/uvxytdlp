@@ -3,6 +3,7 @@ import { UrlInputCard } from "@/components/url-input-card"
 import { useYtdlp } from "@/contexts/ytdlp-service-context"
 import { Button } from "@/components/ui/button"
 import { XCircleIcon } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
 
 export function DownloaderUI() {
   const {
@@ -10,6 +11,7 @@ export function DownloaderUI() {
     format,
     isLoading,
     log,
+    progress,
     setInputUrl,
     setFormat,
     startDownload,
@@ -26,6 +28,9 @@ export function DownloaderUI() {
         startDownload={startDownload}
         isLoading={isLoading}
       />
+      <div className="flex flex-row items-start">
+        <Progress value={progress}  max={100}/>
+      </div>
       {log && (
         <div className="border rounded-lg">
           <div className="flex flex-row items-center justify-between">

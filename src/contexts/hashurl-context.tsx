@@ -4,39 +4,42 @@ import React, {
   useContext,
   useState,
   useEffect,
-  type ReactNode
+  type ReactNode,
+  type SetStateAction,
+  type Dispatch
 } from 'react'
 
 interface HashUrlContextType {
-  url: string | null
-  setUrl: (url: string | null) => void
+  hashUrl: string
+  setHashUrl: Dispatch<SetStateAction<string>>
 }
 
 const HashUrlContext = createContext<HashUrlContextType | undefined>(undefined)
 
 export const HashUrlProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [url, setUrl] = useState<string | null>(null)
+  const [hashUrl, setHashUrl] = useState<string>("")
 
   useEffect(() => {
     const fullHash = window.location.hash
     if (fullHash) {
       try {
-      const decodedUrl = decodeURIComponent(fullHash.substring(1))
-      const url = new URL(decodedUrl)
-      if (url.protocol === 'http:' || url.protocol === 'https:') {
-        setUrl(decodedUrl)
-        window.history.replaceState(null, '', window.location.pathname + window.location.search)
-      } else {
-        setUrl(null)
+        const decodedUrl = decodeURIComponent(fullHash.substring(1))
+        console.log(`location.hash: ${decodedUrl}`)
+        const url = new URL(decodedUrl)
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+          setHashUrl(decodedUrl)
+          window.history.replaceState(null, '', window.location.pathname + window.location.search)
+        } else {
+          setHashUrl("")
+        }
+      } catch {
+        setHashUrl("")
       }
-    } catch {
-      setUrl(null)
-    }
     }
   }, [])
 
   return (
-    <HashUrlContext.Provider value={{ url, setUrl }}>
+    <HashUrlContext.Provider value={{ hashUrl, setHashUrl }}>
       {children}
     </HashUrlContext.Provider>
   )

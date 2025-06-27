@@ -13,6 +13,7 @@ import { formatTemplates } from "@/lib/template-formats"
 import { isUrlValid } from '@/lib/is-url-valid'
 import { useDownloaded } from '@/contexts/downloaded-context'
 import { useApiBase } from '@/contexts/api-base-context'
+import { useHashUrl } from '@/contexts/hashurl-context'
 
 interface YtdlpContextType {
   // Core URL State
@@ -56,23 +57,26 @@ interface YtdlpProviderProps {
 
 export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [inputUrl, setInputUrl] = useState<string>("")
-  const [hashUrl, setHashUrl] = useState<string>("")
   const [log, setLog] = useState<string>("")
   const [cliArgs, setCliArgs] = useState<string>("-t mp4")
   const [format, setFormat] = useState<string>("mp4")
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { fetchDownloadedFiles } = useDownloaded()
-  const { apiFetch } = useApiBase()
   const [progress, setProgress] = useState<number>(0)
+  const { hashUrl, setHashUrl } = useHashUrl()
+  const { apiFetch } = useApiBase()
+  const { fetchDownloadedFiles } = useDownloaded()
 
   const clearLog = () => setLog("")
 
   const startDownload = useCallback(async () => {
-    const downloadUrl = hashUrl != "" ? hashUrl : inputUrl
-    setInputUrl("")
-    setHashUrl("")
+    const downloadUrl: string = hashUrl !== "" ? hashUrl : inputUrl
+    if (inputUrl !== downloadUrl) {
+      setInputUrl(downloadUrl)
+    }
     if (!isUrlValid(downloadUrl)) {
-      setLog("Invalid YouTube URL provided.")
+      const invalidUrlMessage = "Invalid YouTube URL provided."
+      console.log(invalidUrlMessage)
+      setLog(invalidUrlMessage)
       return
     }
     setIsLoading(true)
@@ -80,20 +84,16 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     setProgress(0) // Reset progress at the start of a new download
 
     try {
-      const response = await apiFetch(`/ytdlp`, {
-        method: 'POST',
-        body: JSON.stringify({
-          args: cliArgs,
-          url: downloadUrl
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const encodedUrl = encodeURIComponent(downloadUrl)
+      const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${cliArgs}`)
 
       if (!response.ok || !response.body) {
         const errorText = await response.text()
-        setLog(prevLog => prevLog + `Error: ${response.status}\n${errorText}`)
+        const errorMessage = `Error: ${response.status}\n${errorText}`
+        console.log(errorMessage)
+        setLog(prevLog => prevLog + errorMessage)
         setIsLoading(false)
-        setProgress(0) // Reset progress on immediate error
+        setProgress(0)
         return
       }
 
@@ -101,25 +101,27 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       const decoder = new TextDecoder('utf-8')
       let buffer = ''
 
-      const progressRegex = /(\d+\.\d+)/
-
       while (true) {
         const { done, value } = await reader.read()
-        console.log(`streaming: ${value}`)
+        const chunkString = decoder.decode(value, { stream: true })
         if (done) break
 
-        buffer += decoder.decode(value, { stream: true })
+        buffer += chunkString
         const lines = buffer.split('\n')
         buffer = lines.pop() || ''
 
         for (const line of lines) {
-          console.log(line)
           setLog(prevLog => prevLog + line + '\n')
-
-          const match = line.match(progressRegex)
-          if (match && match[1]) {
-            const percentage = parseFloat(match[1]) / 100
-            setProgress(percentage) // Update progress (0 to 1)
+          console.log(line)
+          if (line.startsWith(`{ "percent": `)) {
+            try {
+              const progressLineJson = JSON.parse(line)
+              const percentage = progressLineJson.percent
+              console.log(`parsed percentage: ${percentage}`)
+              setProgress(percentage) // Update progress (0 to 1)
+            } catch (jsonError) {
+              console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
+            }
           }
         }
       }
@@ -127,16 +129,13 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       // Process any remaining buffer after the stream ends
       if (buffer) {
         setLog(prevLog => prevLog + buffer + '\n')
-        const match = buffer.match(progressRegex)
-        if (match && match[1]) {
-          const percentage = parseFloat(match[1]) / 100
-          setProgress(percentage)
-        }
       }
 
       // Final actions upon successful stream completion
       fetchDownloadedFiles()
-      setProgress(1) // Set to 100% on successful completion
+      setProgress(1) // Set to 100% on successful completion (0-1 scale)
+      setInputUrl("")
+      setHashUrl("")
       setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
 
     } catch (error) {
@@ -146,7 +145,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false)
     }
-  }, [apiFetch, cliArgs, hashUrl, inputUrl, fetchDownloadedFiles])
+  }, [apiFetch, cliArgs, setHashUrl, hashUrl, inputUrl, fetchDownloadedFiles])
 
   useEffect(() => {
     if (Object.keys(formatTemplates).includes(format)) {
@@ -168,7 +167,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     setHashUrl,
 
     // Download Actions & Status
-    startDownload, // The newly named function
+    startDownload,
     isLoading,
 
     // Logging
