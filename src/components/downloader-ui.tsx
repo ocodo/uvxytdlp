@@ -4,7 +4,7 @@ import { useYtdlp } from "@/contexts/ytdlp-service-context"
 import { Button } from "@/components/ui/button"
 import { ScreenShareIcon, XCircleIcon } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
-import { use, useState } from "react"
+import { useState } from "react"
 
 export function DownloaderUI() {
   const {
@@ -16,7 +16,6 @@ export function DownloaderUI() {
     setInputUrl,
     setFormat,
     startDownload,
-    clearLog
   } = useYtdlp()
 
   const [logHide, setLogHide] = useState(false)

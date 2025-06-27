@@ -22,6 +22,14 @@ const AppContent = () => {
     <>
       <Heading
         title="uvxytdlp-ui"
+        tinyChildren={
+          <a
+            className="text-xs"
+            href="https://github.com/ocodo/uvxytdlp"
+          >
+          https://github.com/ocodo/uvxytdlp
+          </a>
+        }
       />
       <div className="border rounded-sm bg-card m-4 pb-2">
         <div className="px-4 py-2 text-lg font-bold">
@@ -30,8 +38,11 @@ const AppContent = () => {
         <div className="px-4 grid grid-cols-1 gap-1">
           <>
             <DownloaderUI />
-            {Array.isArray(downloadedFiles) && downloadedFiles.length > 0
-              && (<DownloadedUI />)}
+            {
+              Array.isArray(downloadedFiles) && downloadedFiles.length > 0
+              &&
+              <DownloadedUI />
+            }
           </>
         </div>
       </div>

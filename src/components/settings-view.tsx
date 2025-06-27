@@ -5,13 +5,15 @@ import { getBookmarklet, getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
 import { cn } from '@/lib/utils'
 import { ClipboardCopyIcon } from 'lucide-react'
 
-interface BookmarkletViewProps {
+interface SettingsViewProps {
   className?: string
 }
 
-export const BookmarkletView: React.FC<BookmarkletViewProps> = ({ className }) => {
+export const SettingsView: React.FC<SettingsViewProps> = ({ className }) => {
   const [bookmarkletUrl, setBookmarkletUrl] = useState<string>('')
   const [isHttp, setIsHttp] = useState(false)
+  const [showSource, setShowSource] = useState(false)
+
 
   useEffect(() => {
     setIsHttp(window.location.protocol === 'http:')
@@ -51,10 +53,17 @@ export const BookmarkletView: React.FC<BookmarkletViewProps> = ({ className }) =
           </pre>
         </div>
 
-        <div className="text-sm my-2">source</div>
-        <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
-          javascript:{getBookmarklet()}
-        </pre>
+        <Button
+          className="text-sm my-2"
+          onClick={() => setShowSource(true)}
+        >
+          View Source
+        </Button>
+        {showSource &&
+          <pre className="overflow-scroll p-4 mt-3 border-1 border-foreground/30 rounded-lg text-cyan-600 bg-foreground/10">
+            javascript:{getBookmarklet()}
+          </pre>
+        }
         {isHttp && (
           <div className="text-sm my-3">Hosting on <code className="font-bold text-cyan-600">https://</code> gives uvxytdlp-ui use of clipboard</div>
         )}
