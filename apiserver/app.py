@@ -238,6 +238,7 @@ async def api_documentation(request: Request):
 
 @app.get("/ytdlp")
 async def download_via_ytdlp(url: str, args: str):
+    global download_dir
     url = unquote(url)
     args = unquote(args)
     logger.info(f"download dir is: {download_dir}")
@@ -264,11 +265,12 @@ async def download_via_ytdlp(url: str, args: str):
             status_code=400, detail=f"Invalid yt-dlp arguments format: {e}"
         )
 
-    os.makedirs(download_dir, exist_ok=True)
+    if not download_dir.endswith(os.sep):
+        download_dir = download_dir + os.sep
 
     full_command = (
         uvx_command_parts
-        + ["yt-dlp", "-o", f"{download_dir}/%(title)s.%(ext)s"]
+        + ["yt-dlp", "-o", f"{download_dir}%(title)s.%(ext)s"]
         + ["--newline"]
         + ["--progress-delta=0.05"]
         + ["--progress-template", f"{get_ytdlp_progress_template()}"]
