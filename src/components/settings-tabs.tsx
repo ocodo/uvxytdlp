@@ -1,8 +1,8 @@
-import { BookmarkletSettingsCard } from "@/components/bookmarklet-settings-card"
-import { GeneralSettingsCard } from "@/components/general-settings-card"
+import { BookmarkletSettingsView } from "@/components/bookmarklet-settings-view"
+import { GeneralSettingsView } from "@/components/general-settings-view"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export const SettingsView: React.FC = () => {
+export const SettingsTabs: React.FC = () => {
   return (
     <Tabs defaultValue="settings">
       <TabsList>
@@ -10,10 +10,10 @@ export const SettingsView: React.FC = () => {
         <TabsTrigger value="bookmarklet">Bookmarklet</TabsTrigger>
       </TabsList>
       <TabsContent value="settings">
-        <GeneralSettingsCard />
+        <GeneralSettingsView />
       </TabsContent>
       <TabsContent value="bookmarklet">
-        <BookmarkletSettingsCard />
+        <BookmarkletSettingsView />
       </TabsContent>
     </Tabs>
   )

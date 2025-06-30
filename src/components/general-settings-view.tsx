@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 
-export const GeneralSettingsCard: React.FC = () => {
+export const GeneralSettingsView: React.FC = () => {
   return (
     <Card>
       <CardHeader>
