@@ -1,0 +1,14 @@
+#!/bin/bash
+
+docker stop uvxytdlp-ui-container
+docker rm uvxytdlp-ui-container
+docker build -t uvxytdlp-ui .
+sudo docker run -d \
+     -p 5150:8000 \
+     -p 5175:80 \
+     -v /mnt/Mirage/ytdlp-downloads:/ytdlp-downloads \
+     -v ~/:/var/www/html/server_config \
+     --name uvxytdlp-ui-container \
+     docker.io/library/uvxytdlp-ui
+
+docker logs uvxytdlp-ui-container
