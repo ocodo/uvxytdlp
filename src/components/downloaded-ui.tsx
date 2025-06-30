@@ -4,7 +4,7 @@ import { VideoPlayer } from "@/components/video-player"
 import { AudioPlayer } from "@/components/audio-player"
 import { DowloadedFile } from "@/components/downloaded-file"
 import { Button } from "@/components/ui/button"
-import { CircleXIcon, Search, SearchXIcon, XIcon } from "lucide-react"
+import { Search, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
@@ -17,10 +17,9 @@ const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
 }
 
 export const DownloadedUI: FC = () => {
-  const { downloadedFiles, deleteFile, searchResults } = useDownloaded()
+  const { deleteFile, searchResults } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
-  const [searching, setSearching] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   const handlePlay = (fileName: string) => {
@@ -63,9 +62,12 @@ export const DownloadedUI: FC = () => {
       <div className="grid grid-cols-1 gap-1">
         {selectedFile && (
           <div className="my-4 relative">
-            <div className="absolute z-10 top-1 right-1 opacity-0 hover:opacity-80">
-              <Button variant={'ghost'} size={'icon'} onClick={() => setSelectedFile(null)}>
-                <CircleXIcon />
+            <div className="absolute z-10 top-1 right-1 opacity-50 hover:opacity-80">
+              <Button
+                variant={'ghost'}
+                size={'icon'}
+                onClick={() => setSelectedFile(null)}>
+                <XIcon />
               </Button>
             </div>
             {selectedFileType === 'video' && <VideoPlayer fileName={selectedFile} />}
@@ -73,53 +75,20 @@ export const DownloadedUI: FC = () => {
           </div>
         )}
         <div className="p-2 border-t mt-2 flex flex-row items-center justify-between">
-          {!searching
-            ? (
-              <>
-                <div className="font-bold">downloaded content</div>
-                <Button
-                  className="cursor-pointer"
-                  variant={'ghost'}
-                  size={'icon'}
-                  onClick={() => setSearching(!searching)}
-                >
-                  <Search />
-                </Button>
-              </>
-            )
-            : (
-              <SearchDownloaded
-                setSearching={setSearching}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-              />
-            )}
+          <SearchDownloaded
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
         </div>
-        {!searching
-          ? (
-            <div className="flex flex-col justify-items" >
-              {downloadedFiles?.map((file) => (
-                <DowloadedFile
-                  handleDelete={handleDelete}
-                  handlePlay={handlePlay}
-                  isDeleting={isDeleting}
-                  selectedFile={selectedFile}
-                  key={file.name}
-                  file={file} />
-              ))}
-            </div>
-          )
-          : (
-            <DownloadedFilteredBySearch
-              searchResults={searchResults}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              handleDelete={handleDelete}
-              handlePlay={handlePlay}
-              isDeleting={isDeleting}
-              selectedFile={selectedFile}
-            />
-          )}
+        <DownloadedFilteredBySearch
+          searchResults={searchResults}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleDelete={handleDelete}
+          handlePlay={handlePlay}
+          isDeleting={isDeleting}
+          selectedFile={selectedFile}
+        />
       </div>
     </div >
   )
@@ -128,10 +97,10 @@ export const DownloadedUI: FC = () => {
 interface SearchDownloadedProps {
   searchQuery: string
   setSearchQuery: (query: string) => void
-  setSearching: (searching: boolean) => void
+  setSearching?: (searching: boolean) => void
 }
 
-const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQuery, setSearching }) => {
+const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQuery }) => {
   return (
     <div className="flex items-center gap-2 w-full">
       <div className="relative w-full">
@@ -151,14 +120,7 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
           <XIcon />
         </Button>
       </div>
-      <Button
-        className="cursor-pointer"
-        onClick={() => setSearching(false)}
-        variant={'ghost'}
-        size={'icon'}
-      >
-        <SearchXIcon />
-      </Button>
+      <Search />
     </div>
   )
 }

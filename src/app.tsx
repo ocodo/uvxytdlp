@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-
 import { DownloadedUI } from "@/components/downloaded-ui"
 import { DownloaderUI } from "@/components/downloader-ui"
 import { Heading } from "@/components/heading"
@@ -12,6 +11,7 @@ import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { MDXProvider } from '@mdx-js/react'
 
+
 const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
   const { downloadedFiles } = useDownloaded()
@@ -22,19 +22,8 @@ const AppContent = () => {
     <>
       <Heading
         title="uvxytdlp-ui"
-        tinyChildren={
-          <a
-            className="text-xs"
-            href="https://github.com/ocodo/uvxytdlp"
-          >
-          https://github.com/ocodo/uvxytdlp
-          </a>
-        }
       />
-      <div className="border rounded-sm bg-card m-4 pb-2">
-        <div className="px-4 py-2 text-lg font-bold">
-          download from youtube
-        </div>
+      <div className="border rounded-sm bg-card m-4 pt-4 pb-2">
         <div className="px-4 grid grid-cols-1 gap-1">
           <>
             <DownloaderUI />

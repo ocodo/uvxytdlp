@@ -2,39 +2,46 @@ import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { getBookmarklet, getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
+import { getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
 import { ClipboardCopyIcon } from 'lucide-react'
+
+interface HasTitle {
+  title: string
+}
+
+export const YtdlpSupportedSites: React.FC<HasTitle> = ({ title }) => (
+  <a
+    href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
+    target='_blank'
+  >{title}</a>
+)
 
 export const BookmarkletSettingsView: React.FC = () => {
   const [bookmarkletUrl, setBookmarkletUrl] = useState<string>('')
   const [isHttp, setIsHttp] = useState(false)
-  const [showSource, setShowSource] = useState(false)
-
-  const sourceTextColor = "text-cyan-300"
 
   useEffect(() => {
     setIsHttp(window.location.protocol === 'http:')
     setBookmarkletUrl(getMinifiedBookmarklet())
   }, [])
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!bookmarkletUrl) return
-    navigator.clipboard.writeText(bookmarkletUrl)
-      .then(() => toast.success('Bookmarklet code copied to clipboard!'))
-      .catch(err => {
-        toast.error('Failed to copy code.')
-        console.error('Failed to copy bookmarklet URL: ', err)
-      })
+    try {
+      await navigator.clipboard.writeText(bookmarkletUrl)
+      toast.success('Bookmarklet code copied to clipboard!')
+    } catch {
+      toast.error('Failed to copy code.')
+      console.error('Failed to copy bookmarklet URL')
+    }
   }
 
   if (!bookmarkletUrl) return null
 
   return (
     <Card>
-      <CardContent className='max-[500px] overflow-hidden flex flex-wrap gap-2'>
-        <div className="text-lg font-bold">Instant download bookmarklet</div>
-        <div>Copy the bookmarklet into a bookmark, when you are viewing a video page, clicking the bookmark will open the page url in uvxytdlp and begin download</div>
-        <div className="text-sm">bookmarklet (copy this)</div>
+      <CardContent className='max-[500px] overflow-hidden grid grid-col-auto gap-2'>
+        <div className="text-sm">copy/drag to a new bookmark for instant download from <YtdlpSupportedSites title="any yt-dlp compatible site" /></div>
         <div className='relative'>
           {!isHttp && (
             <Button
@@ -45,21 +52,25 @@ export const BookmarkletSettingsView: React.FC = () => {
               <ClipboardCopyIcon />
             </Button>
           )}
-          <pre className={`max-w-3/5 overflow-scroll p-2 border-1 border-foreground/30 rounded-lg ${sourceTextColor} bg-foreground/10`}>
+          <pre
+            className={`text-wrap overflow-scroll
+                        p-2 border-1 border-foreground/30
+                        rounded-lg font-bold
+                        bg-foreground/10 text-xs select-all`}
+            style={{
+              overflowWrap: 'anywhere',
+            }}
+          >
             {getMinifiedBookmarklet()}
           </pre>
         </div>
-        {showSource
-          ? (<Button onClick={() => setShowSource(false)} >Hide Source</Button>)
-          : (<Button onClick={() => setShowSource(true)} >View Source</Button>)
-        }
-        {showSource &&
-          <pre className={`overflow-scroll p-2 border-1 border-foreground/30 rounded-lg ${sourceTextColor} bg-foreground/10`}>
-            javascript:{getBookmarklet()}
-          </pre>
-        }
         {isHttp && (
-          <div className="text-sm">Hosting on <code className={`font-bold ${sourceTextColor}`}>https://</code> permits clipboard </div>
+          <div
+            className="text-xs">
+            (Note: on
+            <code className={`font-bold`}> https: </code>
+            clipboard copy button is shown)
+          </div>
         )}
       </CardContent>
     </Card>

@@ -14,6 +14,7 @@ import { isUrlValid } from '@/lib/is-url-valid'
 import { useDownloaded } from '@/contexts/downloaded-context'
 import { useApiBase } from '@/contexts/api-base-context'
 import { useHashUrl } from '@/contexts/hashurl-context'
+import { useLocalStorage } from '@/hooks/use-local-storage'
 
 interface YtdlpContextType {
   // Core URL State
@@ -28,8 +29,10 @@ interface YtdlpContextType {
 
   // Logging
   log: string
-  setLog: (log: string) => void
+  setLog: Dispatch<SetStateAction<string>>
   clearLog: () => void
+  showLog: boolean
+  setShowLog: (show: boolean) => void
 
   // Configuration
   cliArgs: string
@@ -43,7 +46,7 @@ interface YtdlpContextType {
 
 const YtdlpContext = createContext<YtdlpContextType | undefined>(undefined)
 
-export const useYtdlp = (): YtdlpContextType => {
+export const useYtdlpContext = (): YtdlpContextType => {
   const context = useContext(YtdlpContext)
   if (!context) {
     throw new Error('useYtdlp must be used within a YtdlpProvider')
@@ -58,6 +61,7 @@ interface YtdlpProviderProps {
 export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [inputUrl, setInputUrl] = useState<string>("")
   const [log, setLog] = useState<string>("")
+  const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false)
   const [cliArgs, setCliArgs] = useState<string>("-t mp4")
   const [format, setFormat] = useState<string>("mp4")
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -175,6 +179,8 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     log,
     setLog,
     clearLog,
+    showLog,
+    setShowLog,
 
     // Configuration
     cliArgs,

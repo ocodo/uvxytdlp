@@ -27,10 +27,10 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
     <div className="flex items-center gap-2">
       <Input
         type="url"
-        placeholder="Enter YouTube URL..."
-        aria-label="YouTube url"
+        placeholder="Video Page URL to download..."
+        aria-label="Video Page url"
         onChange={(event) => setUrl(event.target.value)}
-        className="md:flex-1"
+        className="md:flex-1 border-foreground/15 url-input"
         value={url}
       />
       {isUrlValid(url) && (
