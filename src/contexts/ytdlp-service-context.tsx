@@ -32,7 +32,7 @@ interface YtdlpContextType {
   setLog: Dispatch<SetStateAction<string>>
   clearLog: () => void
   showLog: boolean
-  setShowLog: (show: boolean) => void
+  setShowLog: (newValue: boolean) => void
 
   // Configuration
   cliArgs: string

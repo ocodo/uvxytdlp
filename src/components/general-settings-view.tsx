@@ -16,7 +16,7 @@ export const GeneralSettingsView: React.FC = () => {
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4">
         <Label>show log
-          <Switch onClick={() => setShowLog(prev => !prev)} checked={showLog} />
+          <Switch onClick={() => setShowLog(!showLog)} checked={showLog} />
         </Label>
       </CardContent>
     </Card>

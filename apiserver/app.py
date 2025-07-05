@@ -96,6 +96,25 @@ if __name__ == "__main__":
             "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
         )
 
+def downloaded_files():
+    # Requires try/except on caller
+    files = []
+    for entry in os.scandir(download_dir):
+        if entry.is_file():
+            try:
+                stat_info = entry.stat()
+                files.append(
+                    {
+                        "name": entry.name,
+                        "mtime": stat_info.st_mtime,
+                        "ctime": stat_info.st_ctime,
+                        "size": stat_info.st_size,
+                    }
+                )
+            except Exception as e:
+                logger.error(f"Error getting info for file {entry.name}: {e}")
+    files.sort(key=lambda x: x["ctime"], reverse=True)
+    return files
 
 def get_ytdlp_progress_template() -> str:
     """
@@ -327,24 +346,7 @@ def get_downloaded_content(filename: str):
 @app.get("/downloaded")
 def get_downloaded():
     try:
-        files = []
-        for entry in os.scandir(download_dir):
-            if entry.is_file():
-                try:
-                    stat_info = entry.stat()
-                    files.append(
-                        {
-                            "name": entry.name,
-                            "mtime": datetime.fromtimestamp(
-                                stat_info.st_mtime
-                            ).isoformat(),
-                            "size": stat_info.st_size,
-                        }
-                    )
-                except Exception as e:
-                    logger.error(f"Error getting info for file {entry.name}: {e}")
-        # Optional: Sort files by modification time, newest first
-        files.sort(key=lambda x: x["mtime"], reverse=True)
+        files = downloaded_files()
         return files
     except Exception as e:
         logger.exception(
