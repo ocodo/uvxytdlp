@@ -68,10 +68,9 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   }, [apiFetch])
 
   const browserDownloadFile = async (fileName: string) => {
-    const url = `${apiBase}/downloaded/${fileName}`;
+    const url = `${apiBase}/download/${fileName}`;
     const link = document.createElement('a');
     link.href = url;
-    // optional — browser often uses Content-Disposition
     link.setAttribute('download', fileName);
     document.body.appendChild(link);
     link.click();
