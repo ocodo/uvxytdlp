@@ -17,21 +17,15 @@ const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
 }
 
 export const DownloadedUI: FC = () => {
-  const { deleteFile, searchResults } = useDownloaded()
+  const { deleteFile, searchResults, browserDownloadFile } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
   const handlePlay = (fileName: string) => {
     if (selectedFile === fileName) {
-      // If the same file is clicked, toggle it off.
       setSelectedFile(null)
     } else {
-      // If a different file is clicked
-      // (or no file is selected),
-      // play the new one.
-      // A small delay if switching
-      // to avoid UI jank.
       if (selectedFile !== null) {
         setSelectedFile(null)
         setTimeout(() => setSelectedFile(fileName), 150)
@@ -53,6 +47,10 @@ export const DownloadedUI: FC = () => {
     } finally {
       setIsDeleting(null)
     }
+  }
+
+  const handleDownload = (fileName: string) => {
+    browserDownloadFile(fileName)
   }
 
   const selectedFileType = getFileType(selectedFile)
@@ -85,6 +83,7 @@ export const DownloadedUI: FC = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           handleDelete={handleDelete}
+          handleDownload={handleDownload}
           handlePlay={handlePlay}
           isDeleting={isDeleting}
           selectedFile={selectedFile}
@@ -129,7 +128,8 @@ interface DownloadedFilteredBySearchProps {
   searchResults: (query: string) => DownloadedFileType[]
   searchQuery: string
   setSearchQuery: (query: string) => void
-  handleDelete: (fileName: string) => Promise<void>
+  handleDelete: (fileName: string) => void
+  handleDownload: (fileName: string) => void
   handlePlay: (fileName: string) => void
   isDeleting: string | null
   selectedFile: string | null
@@ -138,6 +138,7 @@ interface DownloadedFilteredBySearchProps {
 const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   searchResults,
   handleDelete,
+  handleDownload,
   handlePlay,
   isDeleting,
   selectedFile,
@@ -150,6 +151,7 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
           <DowloadedFile
             handleDelete={handleDelete}
             handlePlay={handlePlay}
+            handleDownload={handleDownload}
             isDeleting={isDeleting}
             selectedFile={selectedFile}
             key={file.name}

@@ -315,31 +315,32 @@ async def download_via_ytdlp(url: str, args: str):
     )
 
 
-@app.get("/downloaded/{filename:path}")
-def get_downloaded_content(filename: str):
-    # check for the filename in the config download_dir
-    # and then stream it back to the caller
-    full_path = os.path.join(download_dir, filename)
-    logger.info(f"Requested content: {full_path}")
-
-    # Basic security check: prevent directory traversal
-    if not os.path.abspath(full_path).startswith(os.path.abspath(download_dir)):
-        logger.warning(f"Attempted directory traversal: {filename}")
+def serve_file_from_dir(filename: str, base_dir: str, force_download: bool = False):
+    full_path = os.path.join(base_dir, filename)
+    # Security check: prevent directory traversal
+    if not os.path.abspath(full_path).startswith(os.path.abspath(base_dir)):
         raise HTTPException(status_code=400, detail="Invalid filename")
 
     if not os.path.exists(full_path) or not os.path.isfile(full_path):
-        logger.warning(f"File not found: {full_path}")
         raise HTTPException(status_code=404, detail="File not found")
 
     try:
-        # Use send_file to stream the file
-        logger.info(f"Serving file: {full_path}")
-        return FileResponse(full_path)
+        if force_download:
+            return FileResponse(full_path, filename=filename)
+        else:
+            return FileResponse(full_path)
     except Exception as e:
-        logger.exception(f"Error serving file {full_path}: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Server Error: Could not serve file: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Server Error: Could not serve file: {str(e)}")
+
+
+@app.get("/download/{filename:path}")
+def download_content(filename: str):
+    return serve_file_from_dir(filename, download_dir, force_download=True)
+
+
+@app.get("/downloaded/{filename:path}")
+def get_downloaded_content(filename: str):
+    return serve_file_from_dir(filename, download_dir, force_download=False)
 
 
 # --- API Route to list downloaded files ---

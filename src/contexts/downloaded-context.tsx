@@ -13,6 +13,7 @@ interface DownloadedContextType {
   downloadedFiles: DownloadedFileType[]
   fetchDownloadedFiles: () => Promise<void>
   deleteFile: (fileName: string) => Promise<void>
+  browserDownloadFile: (fileName: string) => void
   isLoading: boolean
   error: Error | null
   searchResults: (query: string) => DownloadedFileType[]
@@ -24,7 +25,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFileType[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const { apiFetch } = useApiBase()
+  const { apiFetch, apiBase } = useApiBase()
 
   const fetchDownloadedFiles = useCallback(async () => {
     setIsLoading(true)
@@ -66,6 +67,17 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
     }
   }, [apiFetch])
 
+  const browserDownloadFile = async (fileName: string) => {
+    const url = `${apiBase}/downloaded/${fileName}`;
+    const link = document.createElement('a');
+    link.href = url;
+    // optional — browser often uses Content-Disposition
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   useEffect(() => {
     throttledFetchDownloadedFiles()
   }, [throttledFetchDownloadedFiles])
@@ -75,6 +87,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       downloadedFiles,
       fetchDownloadedFiles,
       deleteFile,
+      browserDownloadFile,
       isLoading,
       error,
       searchResults,

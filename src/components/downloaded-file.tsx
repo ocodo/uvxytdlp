@@ -1,5 +1,5 @@
 import LongPressButton from "@/components/long-press-button"
-import { PlayIcon, Trash2Icon } from "lucide-react"
+import { DownloadCloudIcon, PlayIcon, Trash2Icon } from "lucide-react"
 
 import type React from "react"
 
@@ -11,12 +11,13 @@ interface DowloadedFileProps {
   }
   handlePlay: (name: string) => void
   handleDelete: (name: string) => void
+  handleDownload: (name: string) => void
   selectedFile: string | null
   isDeleting: string | null
 }
 
 export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
-  const { file, handlePlay, handleDelete, isDeleting } = props
+  const { file, handlePlay, handleDownload, handleDelete, isDeleting } = props
   return (
     <div key={file.name}
       className="flex flex-row items-stretch justify-between
@@ -29,6 +30,9 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         <PlayIcon
           className="h-4 w-4 cursor-pointer"
           onClick={() => handlePlay(file.name)} />
+        <DownloadCloudIcon
+          className="h-4 w-4 cursor-pointer"
+          onClick={() => handleDownload(file.name)} />
         <LongPressButton
           onLongPress={() => handleDelete(file.name)}
           longPressDuration={700}
