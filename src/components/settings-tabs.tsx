@@ -5,20 +5,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const SettingsTabs: React.FC = () => {
   return (
-    <Tabs defaultValue="about">
+    <Tabs defaultValue="settings">
       <TabsList>
-        <TabsTrigger value="about">About</TabsTrigger>
-        <TabsTrigger value="bookmarklet">Bookmarklet</TabsTrigger>
         <TabsTrigger value="settings">Settings</TabsTrigger>
+        <TabsTrigger value="bookmarklet">Bookmarklet</TabsTrigger>
+        <TabsTrigger value="about">About</TabsTrigger>
       </TabsList>
-      <TabsContent value="about">
-        <AboutUvxYtdlp />
+      <TabsContent value="settings">
+        <GeneralSettingsView />
       </TabsContent>
       <TabsContent value="bookmarklet">
         <BookmarkletSettingsView />
       </TabsContent>
-      <TabsContent value="settings">
-        <GeneralSettingsView />
+      <TabsContent value="about">
+        <AboutUvxYtdlp />
       </TabsContent>
     </Tabs>
   )

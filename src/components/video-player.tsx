@@ -1,5 +1,6 @@
 import { useApiBase } from "@/contexts/api-base-context"
 import { useEffect, useRef, useState } from "react"
+import { useVideoSettingsContext } from "@/contexts/video-settings-context" // adjust path as needed
 
 interface VideoPlayerProps {
   fileName: string
@@ -12,6 +13,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const title = fileToTitle(fileName)
   const { apiBase } = useApiBase()
+  const { autoPlay } = useVideoSettingsContext()
 
   const url = `${apiBase}/downloaded/${fileName}`
 
@@ -22,6 +24,20 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
   const handlePauseOrEnd = () => {
     setIsPlaying(false)
   }
+
+  useEffect(() => {
+    const videoElement = videoRef.current
+
+    // Auto-play on load if setting is enabled
+    if (autoPlay && videoElement) {
+      const playPromise = videoElement.play()
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Autoplay was blocked:", err)
+        })
+      }
+    }
+  }, [autoPlay, url])
 
   useEffect(() => {
     const videoElement = videoRef.current
@@ -38,7 +54,6 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
     }
 
     document.addEventListener('keydown', handleKeyDown)
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
@@ -51,10 +66,13 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
         key={url}
         ref={videoRef}
         className="w-full aspect-video"
-        playsInline controls
+        playsInline
+        controls
+        autoPlay={autoPlay}
         onPlay={handlePlay}
         onPause={handlePauseOrEnd}
-        onEnded={handlePauseOrEnd} >
+        onEnded={handlePauseOrEnd}
+      >
         <source src={url} type="video/mp4" />
         Your browser does not support the video tag.
       </video>

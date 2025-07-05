@@ -10,6 +10,7 @@ import { YtdlpProvider } from "@/contexts/ytdlp-service-context"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { MDXProvider } from '@mdx-js/react'
+import { VideoSettingsProvider } from "@/contexts/video-settings-context"
 
 
 const AppContent = () => {
@@ -69,7 +70,9 @@ function App() {
           <DownloadedProvider>
             <HashUrlProvider>
               <YtdlpProvider>
-                <AppContent />
+                <VideoSettingsProvider>
+                  <AppContent />
+                </VideoSettingsProvider>
               </YtdlpProvider>
             </HashUrlProvider>
           </DownloadedProvider>

@@ -1,5 +1,6 @@
+import { LineMdDownloadIcon } from "@/components/line-md-download-icon"
 import LongPressButton from "@/components/long-press-button"
-import { DownloadCloudIcon, PlayIcon, Trash2Icon } from "lucide-react"
+import { PlayIcon, Trash2Icon } from "lucide-react"
 
 import type React from "react"
 
@@ -30,7 +31,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         <PlayIcon
           className="h-4 w-4 cursor-pointer"
           onClick={() => handlePlay(file.name)} />
-        <DownloadCloudIcon
+        <LineMdDownloadIcon
           className="h-4 w-4 cursor-pointer"
           onClick={() => handleDownload(file.name)} />
         <LongPressButton
