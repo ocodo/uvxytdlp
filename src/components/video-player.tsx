@@ -48,6 +48,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
     <div className="w-full relative bg-black">
       {!isPlaying && <div className="z-1 absolute top-0 left-0 w-full text-sm p-2 bg-card/80">{title}</div>}
       <video
+        key={url}
         ref={videoRef}
         className="w-full aspect-video"
         playsInline controls

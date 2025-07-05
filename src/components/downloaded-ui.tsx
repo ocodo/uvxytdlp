@@ -23,15 +23,8 @@ export const DownloadedUI: FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   const handlePlay = (fileName: string) => {
-    if (selectedFile === fileName) {
-      setSelectedFile(null)
-    } else {
-      if (selectedFile !== null) {
-        setSelectedFile(null)
-        setTimeout(() => setSelectedFile(fileName), 150)
-      } else {
-        setSelectedFile(fileName)
-      }
+    if (selectedFile !== fileName) {
+      setSelectedFile(fileName)
     }
   }
 
