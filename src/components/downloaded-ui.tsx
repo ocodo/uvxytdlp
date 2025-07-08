@@ -97,7 +97,7 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
     <div className="flex items-center gap-2 w-full">
       <div className="relative w-full">
         <Input
-          className="w-full"
+          className="w-full rounded-full"
           onChange={(event) => setSearchQuery(event.target.value)}
           placeholder='Search downloaded content...'
           value={searchQuery}

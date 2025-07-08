@@ -31,14 +31,16 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
         placeholder="Video Page URL to download..."
         aria-label="Video Page url"
         onChange={(event) => setUrl(event.target.value)}
-        className="md:flex-1 border-foreground/15 url-input"
+        className="md:flex-1 border-foreground/15 url-input rounded-full h-12"
+        disabled={isLoading}
+        autoFocus
         value={url}
       />
       {isUrlValid(url) && (
         <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex flex-row items-center gap-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="w-14">
+              <Button className="w-20 h-12 rounded-full">
                 {format}
               </Button>
             </DropdownMenuTrigger>
@@ -50,7 +52,7 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button onClick={startDownload} disabled={isLoading} aria-label="Download">
+          <Button onClick={startDownload} disabled={isLoading} aria-label="Download" className="w-20 h-12 rounded-full">
             {isLoading
               ? <OcodoLoaderIcon className="h-4 w-4 animate-spin" />
               : <LineMdDownloadIcon className="h-4 w-4" />}
