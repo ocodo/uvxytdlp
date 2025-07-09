@@ -1,0 +1,5 @@
+downloads:
+  # IMPORTANT: Don't leave a "/" at the end of the download_dir setting.
+  download_dir: /mnt/Mirage/ytdlp-downloads
+  # Downloaded Content that is visible in the content browser
+  visible_exts: ["mp4","mp3","m4a","mkv"]

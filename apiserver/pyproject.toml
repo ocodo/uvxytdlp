@@ -6,10 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.115.13",
+    "omegaconf>=2.3.0",
     "pydantic>=2.11.7",
     "python-multipart>=0.0.20",
     "starlette>=0.46.2",
-    "toml>=0.10.2",
 ]
 
 [tool.uv]

@@ -1,13 +1,12 @@
-# apiserver/app.py
 import asyncio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from omegaconf import OmegaConf
 import os
 import shlex
 from datetime import datetime, timedelta
 import subprocess
 import logging
-import toml  # type: ignore
 from urllib.parse import unquote
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
@@ -33,46 +32,29 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # --- Load Configuration from config.toml ---
-config_path = os.path.join(os.path.dirname(__file__), "config.toml")
-
-try:
-    config = toml.load(config_path)
-    logger.info(f"Loaded configuration from {config_path}")
-    if not config.get("download_dir"):
-        logger.error("Download directory not configured in config.toml")
-        raise RuntimeError("Download directory not configured in config.toml")
-    else:
-        download_dir = config["download_dir"]
-        if not os.path.exists(download_dir):
-            os.makedirs(download_dir, exist_ok=True)
-            logger.info(f"Created download directory: {download_dir}")
-        else:
-            logger.info(f"Using download directory: {download_dir}")
-
-except toml.TomlDecodeError as e:
-    logger.error(f"Error decoding TOML in {config_path}: {e}")
-    raise RuntimeError(f"Error decoding TOML in {config_path}: {e}")
-except FileNotFoundError:
-    logger.warning(
-        f"Configuration file not found: {config_path}. Using default settings."
-    )
-    config = {}  # Ensure config is defined even if file not found
-    download_dir = "/tmp/downloads"  # Default or placeholder for testing/no config
+config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+default_download_dir = os.path.join(os.path.dirname(__file__), "./downloads")
+config = OmegaConf.load(config_path)
+config
+download_dir = config.get("downloads.download_dir", default_download_dir)
+visible_content = config.get("downloads.visible_content", [])
 
 if __name__ == "__main__":
     print("Starting http/json api for uvxytdlp-ui")
-    print(f"Local Download folder: {config.get('download_dir', download_dir)}")
-    if os.path.exists(download_dir):
-        print(os.listdir(download_dir))
+
+    if not os.path.exists(download_dir):
+        os.makedirs(download_dir, exist_ok=True)
+
+    print(f"Local Download folder: {download_dir}")
+    print(os.listdir(download_dir))
 
 # --- Configuration for daily cache refresh
-# --- always use a fresh yt-dlp everyday
+# --- use a fresh yt-dlp everyday
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "last_ytdlprefresh.txt")
 REFRESH_INTERVAL = timedelta(days=1)
 
 # --- locate uvx
 UVX_FALLBACK_PATHS = [
-    os.path.expanduser("~/.cargo/bin/uvx"),
     os.path.expanduser("~/.local/bin/uvx"),
 ]
 
