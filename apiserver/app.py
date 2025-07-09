@@ -27,17 +27,22 @@ app.add_middleware(
 
 # Configure basic logging for the application
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 # --- Load Configuration from config.toml ---
 config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
-default_download_dir = os.path.join(os.path.dirname(__file__), "./downloads")
+download_dir = os.path.join(os.path.dirname(__file__), "./downloads")
+
 config = OmegaConf.load(config_path)
-config
-download_dir = config.get("downloads.download_dir", default_download_dir)
-visible_content = config.get("downloads.visible_content", [])
+print(OmegaConf.to_yaml(config))
+
+download_dir = config.downloads.download_dir or download_dir
+print(download_dir)
+visible_content = config.downloads.visible_content or []
+print(visible_content)
 
 if __name__ == "__main__":
     print("Starting http/json api for uvxytdlp-ui")
@@ -79,10 +84,12 @@ if __name__ == "__main__":
         )
 
 def downloaded_files():
-    # Requires try/except on caller
     files = []
+    errors = []
     for entry in os.scandir(download_dir):
-        if entry.is_file():
+        _, ext = os.path.splitext(entry.name)
+        is_file = entry.is_file()
+        if is_file and ext.removeprefix('.') in visible_content:
             try:
                 stat_info = entry.stat()
                 files.append(
@@ -95,8 +102,11 @@ def downloaded_files():
                 )
             except Exception as e:
                 logger.error(f"Error getting info for file {entry.name}: {e}")
-    files.sort(key=lambda x: x["ctime"], reverse=True)
-    return files
+                errors.append(e)
+
+    # Sort by newest first
+    files.sort(key=lambda f: f["ctime"], reverse=True)
+    return files, errors
 
 def get_ytdlp_progress_template() -> str:
     """
@@ -273,6 +283,9 @@ async def download_via_ytdlp(url: str, args: str):
         uvx_command_parts
         + ["yt-dlp", "-o", f"{download_dir}%(title)s.%(ext)s"]
         + ["--newline"]
+        + ["--write-thumbnail"]
+        + ["--write-description"]
+        + ["--write-info-json"]
         + ["--progress-delta=0.05"]
         + ["--progress-template", f"{get_ytdlp_progress_template()}"]
         + parsed_args
@@ -329,8 +342,8 @@ def get_downloaded_content(filename: str):
 @app.get("/downloaded")
 def get_downloaded():
     try:
-        files = downloaded_files()
-        return files
+        files, errors = downloaded_files()
+        return (files, errors)
     except Exception as e:
         logger.exception(
             f"Error listing files in download directory {download_dir}: {e}"

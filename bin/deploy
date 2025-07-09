@@ -11,4 +11,4 @@ sudo docker run -d \
      --name uvxytdlp-ui-container \
      docker.io/library/uvxytdlp-ui
 
-docker logs uvxytdlp-ui-container
+docker logs uvxytdlp-ui-container -f

@@ -9,6 +9,11 @@ export interface DownloadedFileType {
   mtime: string
 }
 
+export interface DownloadedPayload {
+  files: DownloadedFileType[]
+  errors: string[]
+}
+
 interface DownloadedContextType {
   downloadedFiles: DownloadedFileType[]
   fetchDownloadedFiles: () => Promise<void>
@@ -35,8 +40,14 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      const data: DownloadedFileType[] = await response.json()
-      setDownloadedFiles(data)
+      const {files, errors}: DownloadedPayload = await response.json()
+
+      if (errors.length > 0) {
+        console.log("errors in dowloaded files")
+        console.table(errors)
+      }
+
+      setDownloadedFiles(files)
     } catch (err) {
       console.error('Failed to fetch downloaded files:', err)
       setError(err as Error)

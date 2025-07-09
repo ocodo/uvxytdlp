@@ -24,7 +24,7 @@ COPY --from=frontend-builder /app/dist /var/www/html
 
 COPY apiserver/lighttpd.conf /etc/lighttpd/lighttpd.conf
 COPY apiserver/ /app/apiserver
-COPY apiserver/docker.config.toml /app/apiserver/config.toml
+COPY apiserver/docker.config.yaml /app/apiserver/config.yaml
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
