@@ -22,7 +22,7 @@ export const GeneralSettingsView: FC = () => {
   const updateOnChange = (event: FocusEvent) => {
     event.preventDefault()
     const textArea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
-    if (textArea.value != youtubeCookies) {
+    if (textArea.value != youtubeCookies && youtubeCookies != "") {
       setYoutubeCookies(textArea.value)
     }
   }
