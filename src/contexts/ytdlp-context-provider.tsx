@@ -1,13 +1,8 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, {
   type ReactNode,
-  createContext,
-  useContext,
   useState,
   useEffect,
   useCallback,
-  type Dispatch,
-  type SetStateAction,
 } from 'react'
 import { formatTemplates } from "@/lib/template-formats"
 import { isUrlValid } from '@/lib/is-url-valid'
@@ -15,44 +10,7 @@ import { useDownloaded } from '@/contexts/downloaded-context'
 import { useApiBase } from '@/contexts/api-base-context'
 import { useHashUrl } from '@/contexts/hashurl-context'
 import { useLocalStorage } from '@/hooks/use-local-storage'
-
-interface YtdlpContextType {
-  // Core URL State
-  inputUrl: string
-  setInputUrl: Dispatch<SetStateAction<string>>
-  hashUrl: string
-  setHashUrl: Dispatch<SetStateAction<string>>
-
-  // Download Actions & Status
-  startDownload: () => Promise<void>
-  isLoading: boolean
-
-  // Logging
-  log: string
-  setLog: Dispatch<SetStateAction<string>>
-  clearLog: () => void
-  showLog: boolean
-  setShowLog: (newValue: boolean) => void
-
-  // Configuration
-  cliArgs: string
-  setCliArgs: Dispatch<SetStateAction<string>>
-  format: string
-  setFormat: Dispatch<SetStateAction<string>>
-
-  // Progress
-  progress: number
-}
-
-const YtdlpContext = createContext<YtdlpContextType | undefined>(undefined)
-
-export const useYtdlpContext = (): YtdlpContextType => {
-  const context = useContext(YtdlpContext)
-  if (!context) {
-    throw new Error('useYtdlp must be used within a YtdlpProvider')
-  }
-  return context
-}
+import { YtdlpContext } from '@/contexts/ytdlp-context'
 
 interface YtdlpProviderProps {
   children: ReactNode

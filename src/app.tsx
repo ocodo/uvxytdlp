@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import ApiBaseProvider, { useApiBase } from '@/contexts/api-base-context'
 import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context"
-import { YtdlpProvider } from "@/contexts/ytdlp-service-context"
+import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { MDXProvider } from '@mdx-js/react'

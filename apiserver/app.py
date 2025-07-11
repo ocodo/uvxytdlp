@@ -343,7 +343,10 @@ def get_downloaded_content(filename: str):
 def get_downloaded():
     try:
         files, errors = downloaded_files()
-        return (files, errors)
+        return {
+          'files': files,
+          'errors': errors,
+        }
     except Exception as e:
         logger.exception(
             f"Error listing files in download directory {download_dir}: {e}"

@@ -1,0 +1,3 @@
+# TODO
+
+- use info.json, description, thumbnail... 

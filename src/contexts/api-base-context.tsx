@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 // --- Constants ---
-const DEFAULT_BACKEND_PORTS = [5150, 5000, 8000];
+const DEFAULT_BACKEND_PORTS = [5150, 5000, 8000, 4860];
 const SERVER_CONFIG_PATH = '/server_config/server.json';
 const HEALTH_CHECK_PATH = '/health';
 const PROBE_TIMEOUT_MS = 300;

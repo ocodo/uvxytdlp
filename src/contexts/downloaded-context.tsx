@@ -40,14 +40,13 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      const {files, errors}: DownloadedPayload = await response.json()
+      const data = await response.json()
 
-      if (errors.length > 0) {
+      if (data.errors?.length > 0) {
         console.log("errors in dowloaded files")
-        console.table(errors)
+        console.table(data.errors)
       }
-
-      setDownloadedFiles(files)
+      setDownloadedFiles(data.files)
     } catch (err) {
       console.error('Failed to fetch downloaded files:', err)
       setError(err as Error)

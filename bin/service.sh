@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 cd apiserver
-.venv/bin/fastapi dev --port 5150 &
+.venv/bin/fastapi dev --port 5150 --host 0.0.0.0 &
 FASTAPI_PID=$!
 
 eval $(/home/jason/.local/share/fnm/fnm env --shell bash)

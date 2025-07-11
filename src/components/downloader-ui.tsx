@@ -1,10 +1,9 @@
 import { XCircleIcon } from "lucide-react";
 import { Presto } from "@/components/presto";
 import { UrlInputCard } from "@/components/url-input-card";
-import { useYtdlpContext } from "@/contexts/ytdlp-service-context";
 import { Button } from "@/components/ui/button";
-// import { Progress } from "@/components/ui/progress";
 import { IndeterminateProgress } from "./indeterminate-progress";
+import { useYtdlpContext } from "@/contexts/ytdlp-context";
 
 export function DownloaderUI() {
   const {
@@ -12,7 +11,7 @@ export function DownloaderUI() {
     format,
     isLoading,
     log,
-    // progress,
+    progress,
     showLog,
     setShowLog,
     setInputUrl,
@@ -30,7 +29,8 @@ export function DownloaderUI() {
         startDownload={startDownload}
         isLoading={isLoading}
       />
-      {isLoading &&  (
+      {(isLoading && progress >= 1.01) && <Progress />}
+      {(isLoading && progress <= 1) && (
         <IndeterminateProgress />
       )}
       {showLog && log && (
