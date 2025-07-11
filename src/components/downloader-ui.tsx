@@ -1,9 +1,10 @@
 import { XCircleIcon } from "lucide-react";
 import { Presto } from "@/components/presto";
-import { UrlInputCard } from "@/components/url-input-card";
+import { DownloaderInput } from "@/components/downloader-input";
 import { Button } from "@/components/ui/button";
 import { IndeterminateProgress } from "./indeterminate-progress";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
+import { Progress } from "@/components/ui/progress";
 
 export function DownloaderUI() {
   const {
@@ -21,7 +22,7 @@ export function DownloaderUI() {
 
   return (
     <div className="gap-2 grid grid-cols-1">
-      <UrlInputCard
+      <DownloaderInput
         url={inputUrl}
         setUrl={setInputUrl}
         format={format}
@@ -29,10 +30,12 @@ export function DownloaderUI() {
         startDownload={startDownload}
         isLoading={isLoading}
       />
-      {(isLoading && progress >= 1.01) && <Progress />}
-      {(isLoading && progress <= 1) && (
-        <IndeterminateProgress />
-      )}
+      {/* Show indeterminate progress while main download
+        / addtional track downloads spin up */}
+      {(isLoading && progress <= 1) &&
+        <IndeterminateProgress />}
+      {(isLoading && progress >= 3) &&
+        <Progress value={progress} max={100} />}
       {showLog && log && (
         <div className="border rounded-lg">
           <div className="flex flex-row items-center justify-between">
@@ -43,7 +46,7 @@ export function DownloaderUI() {
               onClick={() => setShowLog(false)}
               aria-label="Hide Log"
             >
-              <XCircleIcon className="h-6 w-6" style={{strokeWidth:0.5}} />
+              <XCircleIcon className="h-6 w-6" style={{ strokeWidth: 0.5 }} />
             </Button>
           </div>
           <Presto text={log} />

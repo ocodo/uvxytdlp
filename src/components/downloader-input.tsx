@@ -7,7 +7,7 @@ import { isUrlValid } from '@/lib/is-url-valid'
 import { OcodoLoaderIcon } from '@/components/ocodo-loader-icon'
 import { LineMdDownloadIcon } from '@/components/line-md-download-icon'
 
-interface UrlInputCardProps {
+interface DownloaderInputProps {
   url: string
   setUrl: Dispatch<SetStateAction<string>>
   format: string
@@ -16,7 +16,7 @@ interface UrlInputCardProps {
   isLoading: boolean
 }
 
-export const UrlInputCard: React.FC<UrlInputCardProps> = ({
+export const DownloaderInput: React.FC<DownloaderInputProps> = ({
   url,
   setUrl,
   format,
@@ -37,7 +37,7 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
         value={url}
       />
       {isUrlValid(url) && (
-        <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex flex-row items-center gap-x-2">
+        <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex flex-row items-center gap-x-2 text-primary-foreground">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="w-20 h-12 rounded-full">
@@ -52,10 +52,13 @@ export const UrlInputCard: React.FC<UrlInputCardProps> = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button onClick={startDownload} disabled={isLoading} aria-label="Download" className="w-20 h-12 rounded-full">
+          <Button
+            onClick={() => !isLoading && startDownload()}
+            aria-label="Download"
+            className={`w-20 h-12 rounded-full transition-colors duration-1000 ${isLoading ? "bg-primary/20" : ""}`}>
             {isLoading
-              ? <OcodoLoaderIcon className="h-4 w-4 animate-spin" />
-              : <LineMdDownloadIcon className="h-4 w-4" />}
+              ? <OcodoLoaderIcon className="h-6 w-6 animate-spin" />
+              : <LineMdDownloadIcon className="h-6 w-6" />}
           </Button>
         </div>
       )}
