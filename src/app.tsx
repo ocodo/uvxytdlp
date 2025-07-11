@@ -10,7 +10,7 @@ import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { MDXProvider } from '@mdx-js/react'
-import { VideoSettingsProvider } from "@/contexts/video-settings-context"
+import { VideoSettingsProvider } from "@/contexts/video-settings-context-provider"
 
 
 const AppContent = () => {

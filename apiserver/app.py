@@ -2,8 +2,10 @@ import asyncio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from omegaconf import OmegaConf
+from pydantic import BaseModel
 import os
 import shlex
+from pathlib import Path
 from datetime import datetime, timedelta
 import subprocess
 import logging
@@ -27,8 +29,7 @@ app.add_middleware(
 
 # Configure basic logging for the application
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -83,13 +84,27 @@ if __name__ == "__main__":
             "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
         )
 
+
+def path_with_ext_exists(filename, ext):
+    """
+    find filename with the alternative extension,
+    returns None or the new filename.
+    """
+    filename_ext = None
+    filename_path = Path(filename)
+    if filename_path.with_suffix(ext).exists():
+        filename_ext = filename_path.with_suffix(ext)
+
+    return filename_ext
+
+
 def downloaded_files():
     files = []
     errors = []
     for entry in os.scandir(download_dir):
         _, ext = os.path.splitext(entry.name)
         is_file = entry.is_file()
-        if is_file and ext.removeprefix('.') in visible_content:
+        if is_file and ext.removeprefix(".") in visible_content:
             try:
                 stat_info = entry.stat()
                 files.append(
@@ -107,6 +122,7 @@ def downloaded_files():
     # Sort by newest first
     files.sort(key=lambda f: f["ctime"], reverse=True)
     return files, errors
+
 
 def get_ytdlp_progress_template() -> str:
     """
@@ -247,6 +263,31 @@ async def api_documentation(request: Request):
 </html>""")
 
 
+class CookiesPayload(BaseModel):
+    cookies: str
+
+
+def write_ytcookies(cookies: str):
+    """Writes the given cookies string to the yt.cookies file."""
+    cookies_file_path = os.path.join(download_dir, "yt.cookies")
+    try:
+        with open(cookies_file_path, "w", encoding="utf-8") as f:
+            f.write(cookies)
+        logger.info(f"Successfully wrote cookies to {cookies_file_path}")
+        return {"message": "Cookies saved successfully."}
+    except Exception as e:
+        logger.error(f"Failed to write cookies to {cookies_file_path}: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to save cookies: {str(e)}"
+        )
+
+
+@app.post("/ytcookies")
+def save_ytcookies(payload: CookiesPayload):
+    """Saves the provided YouTube cookies to a file."""
+    return write_ytcookies(payload.cookies), 201
+
+
 @app.get("/ytdlp")
 async def download_via_ytdlp(url: str, args: str):
     global download_dir
@@ -279,6 +320,10 @@ async def download_via_ytdlp(url: str, args: str):
     if not download_dir.endswith(os.sep):
         download_dir = download_dir + os.sep
 
+    cookies_file = os.path.join(download_dir, "yt.cookies")
+    if os.path.exists(cookies_file) and os.path.getsize(cookies_file) > 0:
+        parsed_args.extend(["--cookies", cookies_file])
+
     full_command = (
         uvx_command_parts
         + ["yt-dlp", "-o", f"{download_dir}%(title)s.%(ext)s"]
@@ -295,8 +340,6 @@ async def download_via_ytdlp(url: str, args: str):
     logger.info(
         f"Executing command: {' '.join(shlex.quote(part) for part in full_command)}"
     )
-
-    print(*full_command)
 
     process = await asyncio.create_subprocess_exec(
         *full_command,
@@ -325,7 +368,9 @@ def serve_file_from_dir(filename: str, base_dir: str, force_download: bool = Fal
         else:
             return FileResponse(full_path)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Server Error: Could not serve file: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Server Error: Could not serve file: {str(e)}"
+        )
 
 
 @app.get("/download/{filename:path}")
@@ -344,8 +389,8 @@ def get_downloaded():
     try:
         files, errors = downloaded_files()
         return {
-          'files': files,
-          'errors': errors,
+            "files": files,
+            "errors": errors,
         }
     except Exception as e:
         logger.exception(
@@ -359,7 +404,8 @@ def get_downloaded():
 @app.delete("/downloaded/{filename:path}")  # fmt: skip
 def delete_downloaded_file(filename: str):
     """
-    Deletes a specific file from the download directory.
+    Deletes a specific media file from the download directory,
+    and associated meta data / thumbnail(s)
     """
     full_path = os.path.join(download_dir, filename)
 
@@ -374,6 +420,12 @@ def delete_downloaded_file(filename: str):
 
     try:
         os.remove(full_path)
+        exts = {".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"}
+        for ext in exts:
+            path_with_ext = path_with_ext_exists(full_path, ext)
+            if path_with_ext:
+                os.remove(path_with_ext)
+
         logger.info(f"Successfully deleted file: {full_path}")
         return {"message": f"File '{filename}' deleted successfully."}
     except Exception as e:
