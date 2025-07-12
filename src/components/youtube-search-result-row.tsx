@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Image } from "@/components/ui/image"
+import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { useYtdlpContext } from "@/contexts/ytdlp-context"
 import type { FC, RefObject } from "react"
-import React from "react"
 
 interface YoutubeSearchResultRowType {
   id: string
@@ -17,7 +17,7 @@ interface YoutubeSearchResultRowType {
 }
 
 interface YoutubeSearchResultRowProps extends YoutubeSearchResultRowType {
-  searchInput: RefObject<HTMLInputElement>
+  searchInput: RefObject<HTMLInputElement | null>
 }
 
 export const YoutubeSearchResultRow: FC<YoutubeSearchResultRowProps> = (props: YoutubeSearchResultRowProps) => {
@@ -35,12 +35,21 @@ export const YoutubeSearchResultRow: FC<YoutubeSearchResultRowProps> = (props: Y
   const youtubeUrl = () => `https://youtube.com${url_suffix}`
 
   const {
-    setInputUrl
+    setInputUrl,
+    startDownload
   } = useYtdlpContext()
+
+  const {
+    setResults
+  } = useYoutubeSearchContext()
 
   const selectVideo = () => {
     setInputUrl(youtubeUrl())
-    searchInput.current.value = ""
+    if (searchInput.current) {
+      searchInput.current.value = ""
+    }
+    setResults([])
+    startDownload()
   }
 
   return (

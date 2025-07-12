@@ -58,7 +58,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [videoRef])
 
   return (
     <div className="w-full relative bg-black">

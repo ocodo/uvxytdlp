@@ -3,6 +3,8 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  type Dispatch,
+  type SetStateAction,
 } from 'react'
 import { formatTemplates } from "@/lib/template-formats"
 import { isUrlValid } from '@/lib/is-url-valid'
@@ -14,6 +16,34 @@ import { YtdlpContext } from '@/contexts/ytdlp-context'
 
 interface YtdlpProviderProps {
   children: ReactNode
+}
+
+export interface YtdlpContextType {
+  // Core URL State
+  inputUrl: string
+  setInputUrl: Dispatch<SetStateAction<string>>
+  hashUrl: string
+  setHashUrl: Dispatch<SetStateAction<string>>
+
+  // Download Actions & Status
+  startDownload: () => Promise<void>
+  isLoading: boolean
+
+  // Logging
+  log: string
+  setLog: Dispatch<SetStateAction<string>>
+  clearLog: () => void
+  showLog: boolean
+  setShowLog: (newValue: boolean) => void
+
+  // Configuration
+  cliArgs: string
+  setCliArgs: Dispatch<SetStateAction<string>>
+  format: string
+  setFormat: Dispatch<SetStateAction<string>>
+
+  // Progress
+  progress: number
 }
 
 export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {

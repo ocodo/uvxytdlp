@@ -2,7 +2,6 @@ import asyncio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from omegaconf import OmegaConf
-from pydantic import BaseModel
 from youtube_search import YoutubeSearch
 import os
 import shlex
@@ -13,6 +12,7 @@ import logging
 from urllib.parse import unquote
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
+from pydantic import BaseModel
 
 app = FastAPI(
     title="API for uvxytdlp-ui",
@@ -263,22 +263,50 @@ async def api_documentation(request: Request):
   </body>
 </html>""")
 
+def cookies_filepath(domain):
+    return os.path.join(download_dir, f"{domain}.cookies")
 
-class CookiesPayload(BaseModel):
-    cookies: str
+
+def valid_cookies(cookies: str):
+    """Perform progressive checks on cookies to validate as Netscape Cookies"""
+    if cookies.splitlines()[0] == "# Netscape HTTP Cookie File":
+        return True
 
 
 def write_ytcookies(cookies: str):
     """Writes the given cookies string to the yt.cookies file."""
-    cookies_file_path = os.path.join(download_dir, "yt.cookies")
+    if cookies and valid_cookies(cookies):
+        cookies_path = cookies_filepath("youtube.com")
+        try:
+            with open(cookies_path, "w", encoding="utf-8") as f:
+                f.write(cookies)
+            logger.info(f"Successfully wrote youtube cookies to {cookies_path}")
+            return {"message": "Cookies saved successfully."}
+        except Exception as e:
+            logger.error(f"Failed to write youtube cookies to {cookies_path}: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to save cookies: {str(e)}")
+    else:
+        raise HTTPException(status_code=400, detail="Unable to save empty or invalid cookies")
+
+
+def read_ytcookies():
+    """Read and return the saved YouTube cookies"""
+    cookies_path = cookies_filepath("youtube.com")
+    logger.info(f"cookies_path: {cookies_path}")
+
+    if not os.path.exists(cookies_path):
+        return None
+
     try:
-        with open(cookies_file_path, "w", encoding="utf-8") as f:
-            f.write(cookies)
-        logger.info(f"Successfully wrote cookies to {cookies_file_path}")
-        return {"message": "Cookies saved successfully."}
+        cookies = None
+        with open(cookies_path, "r", encoding="utf-8") as f:
+            cookies = f.read()
+
+        return cookies
+
     except Exception as e:
-        logger.error(f"Failed to write cookies to {cookies_file_path}: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to save cookies: {str(e)}")
+        logger.error(f"Failed to read youtube cookies from {cookies_path}: {e}")
+        return None
 
 
 @app.get("/ytsearch/{query}")
@@ -287,11 +315,25 @@ def search_youtube(query: str):
     return YoutubeSearch(query, max_results=10).to_dict()
 
 
+class Cookies(BaseModel):
+    cookies: str
+
+
 @app.post("/ytcookies")
-def save_ytcookies(payload: CookiesPayload):
+def save_ytcookies(payload: Cookies):
     """Saves the provided YouTube cookies to a file."""
+
     return write_ytcookies(payload.cookies), 201
 
+
+@app.get("/ytcookies")
+def get_ytcookies():
+    """return the saved YouTube cookies"""
+    cookies = read_ytcookies()
+    if cookies:
+        return {"cookies": cookies}
+
+    return {"message": "No cookies found"}, 404
 
 @app.get("/ytdlp")
 async def download_via_ytdlp(url: str, args: str):
@@ -333,6 +375,7 @@ async def download_via_ytdlp(url: str, args: str):
         uvx_command_parts
         + ["yt-dlp", "-o", f"{download_dir}%(title)s.%(ext)s"]
         + ["--newline"]
+        + ["--no-playlist"]
         + ["--write-thumbnail"]
         + ["--write-description"]
         + ["--write-info-json"]
@@ -425,11 +468,19 @@ def delete_downloaded_file(filename: str):
 
     try:
         os.remove(full_path)
+
+        media_exts = {".mp3", ".mp4", ".m4a", ".mkv"}
         exts = {".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"}
-        for ext in exts:
-            path_with_ext = path_with_ext_exists(full_path, ext)
-            if path_with_ext:
-                os.remove(path_with_ext)
+
+        other_media_files = media_exts.some(
+            lambda x: os.path.exists(path_with_ext_exists(full_path, ext))
+        )
+
+        if not other_media_files:
+            for ext in exts:
+                path_with_ext = path_with_ext_exists(full_path, ext)
+                if path_with_ext:
+                    os.remove(path_with_ext)
 
         logger.info(f"Successfully deleted file: {full_path}")
         return {"message": f"File '{filename}' deleted successfully."}
