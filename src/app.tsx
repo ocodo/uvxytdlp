@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { MDXProvider } from '@mdx-js/react'
 import { VideoSettingsProvider } from "@/contexts/video-settings-context-provider"
+import { YoutubeSearchProvider } from "@/contexts/youtube-search-context-provider"
 
 
 const AppContent = () => {
@@ -69,11 +70,13 @@ function App() {
         <ApiBaseProvider>
           <DownloadedProvider>
             <HashUrlProvider>
-              <YtdlpProvider>
-                <VideoSettingsProvider>
-                  <AppContent />
-                </VideoSettingsProvider>
-              </YtdlpProvider>
+              <YoutubeSearchProvider>
+                <YtdlpProvider>
+                  <VideoSettingsProvider>
+                    <AppContent />
+                  </VideoSettingsProvider>
+                </YtdlpProvider>
+              </YoutubeSearchProvider>
             </HashUrlProvider>
           </DownloadedProvider>
         </ApiBaseProvider>

@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from omegaconf import OmegaConf
 from pydantic import BaseModel
+from youtube_search import YoutubeSearch
 import os
 import shlex
 from pathlib import Path
@@ -277,9 +278,13 @@ def write_ytcookies(cookies: str):
         return {"message": "Cookies saved successfully."}
     except Exception as e:
         logger.error(f"Failed to write cookies to {cookies_file_path}: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to save cookies: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to save cookies: {str(e)}")
+
+
+@app.get("/ytsearch/{query}")
+def search_youtube(query: str):
+    """Search youtube return results"""
+    return YoutubeSearch(query, max_results=10).to_dict()
 
 
 @app.post("/ytcookies")

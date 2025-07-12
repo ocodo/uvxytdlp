@@ -150,5 +150,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     progress,
   }
 
-  return <YtdlpContext.Provider value={value}>{children}</YtdlpContext.Provider>
+  return <YtdlpContext.Provider value={value}>
+    {children}
+  </YtdlpContext.Provider>
 }

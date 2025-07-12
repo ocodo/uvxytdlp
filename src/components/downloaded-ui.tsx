@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
   if (!fileName) return null
   const extension = fileName.split('.').pop()?.toLowerCase()
-  if (['mp3', 'm4a', 'aac'].includes(extension ?? '')) {
+  if (['.mp3', '.m4a', '.aac'].includes(extension ?? '')) {
     return 'audio'
   }
   return 'video'
