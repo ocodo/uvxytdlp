@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from omegaconf import OmegaConf
 from youtube_search import YoutubeSearch
+import glob
 import os
 import shlex
 from pathlib import Path
@@ -263,6 +264,7 @@ async def api_documentation(request: Request):
   </body>
 </html>""")
 
+
 def cookies_filepath(domain):
     return os.path.join(download_dir, f"{domain}.cookies")
 
@@ -284,9 +286,13 @@ def write_ytcookies(cookies: str):
             return {"message": "Cookies saved successfully."}
         except Exception as e:
             logger.error(f"Failed to write youtube cookies to {cookies_path}: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to save cookies: {str(e)}")
+            raise HTTPException(
+                status_code=500, detail=f"Failed to save cookies: {str(e)}"
+            )
     else:
-        raise HTTPException(status_code=400, detail="Unable to save empty or invalid cookies")
+        raise HTTPException(
+            status_code=400, detail="Unable to save empty or invalid cookies"
+        )
 
 
 def read_ytcookies():
@@ -334,6 +340,7 @@ def get_ytcookies():
         return {"cookies": cookies}
 
     return {"message": "No cookies found"}, 404
+
 
 @app.get("/ytdlp")
 async def download_via_ytdlp(url: str, args: str):
@@ -401,24 +408,46 @@ async def download_via_ytdlp(url: str, args: str):
     )
 
 
-def serve_file_from_dir(filename: str, base_dir: str, force_download: bool = False):
-    full_path = os.path.join(base_dir, filename)
-    # Security check: prevent directory traversal
-    if not os.path.abspath(full_path).startswith(os.path.abspath(base_dir)):
-        raise HTTPException(status_code=400, detail="Invalid filename")
+def validate_file_path(filename: str, base_dir: str) -> str:
+    full_path = os.path.realpath(os.path.join(base_dir, filename))
+    base_dir_real = os.path.realpath(base_dir)
+
+    if not full_path.startswith(base_dir_real + os.sep):
+        raise ValueError("Invalid filename")
 
     if not os.path.exists(full_path) or not os.path.isfile(full_path):
-        raise HTTPException(status_code=404, detail="File not found")
+        raise FileNotFoundError("File not found")
+
+    return full_path
+
+
+def serve_file_from_dir(filename: str, base_dir: str, force_download: bool = False):
+    try:
+        full_path = validate_file_path(filename, base_dir)
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except FileNotFoundError as fnfe:
+        raise HTTPException(status_code=404, detail=str(fnfe))
 
     try:
         if force_download:
-            return FileResponse(full_path, filename=filename)
+            return FileResponse(full_path, filename=os.path.basename(full_path))
         else:
             return FileResponse(full_path)
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Server Error: Could not serve file: {str(e)}"
+            status_code=500,
+            detail=f"Server Error: Could not serve file: {str(e)}"
         )
+
+
+@app.get("/assets/{filename:path}")
+def get_content_assets(filename: str):
+    """Get json list of asset files for given filename"""
+    basename, ext = os.path.splitext(filename)
+    path_basename = os.path.join(download_dir, basename)
+    files = [p.replace(download_dir + os.sep, "") for p in glob.glob(f"{path_basename}*")]
+    return files
 
 
 @app.get("/download/{filename:path}")
@@ -431,7 +460,6 @@ def get_downloaded_content(filename: str):
     return serve_file_from_dir(filename, download_dir, force_download=False)
 
 
-# --- API Route to list downloaded files ---
 @app.get("/downloaded")
 def get_downloaded():
     try:

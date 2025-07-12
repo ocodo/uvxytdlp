@@ -35,24 +35,26 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const fetchDownloadedFiles = useCallback(async () => {
     setIsLoading(true)
     setError(null)
-    try {
-      const response = await apiFetch(`/downloaded`)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const data = await response.json()
+    if (apiFetch) {
+      try {
+        const response = await apiFetch(`/downloaded`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
 
-      if (data.errors?.length > 0) {
-        console.log("errors in dowloaded files")
-        console.table(data.errors)
+        if (data.errors?.length > 0) {
+          console.log("errors in dowloaded files")
+          console.table(data.errors)
+        }
+        setDownloadedFiles(data.files)
+      } catch (err) {
+        console.error('Failed to fetch downloaded files:', err)
+        setError(err as Error)
+        setDownloadedFiles([])
+      } finally {
+        setIsLoading(false)
       }
-      setDownloadedFiles(data.files)
-    } catch (err) {
-      console.error('Failed to fetch downloaded files:', err)
-      setError(err as Error)
-      setDownloadedFiles([])
-    } finally {
-      setIsLoading(false)
     }
   }, [apiFetch])
 
@@ -63,17 +65,19 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   }
 
   const deleteFile = useCallback(async (fileName: string) => {
-    try {
-      const response = await apiFetch(`downloaded/${encodeURIComponent(fileName)}`, {
-        method: 'DELETE',
-      })
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
+    if (apiFetch) {
+      try {
+        const response = await apiFetch(`downloaded/${encodeURIComponent(fileName)}`, {
+          method: 'DELETE',
+        })
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
+        }
+        setDownloadedFiles(prevFiles => prevFiles.filter(file => file.name !== fileName));
+      } catch (err) {
+        console.error(`Failed to delete file ${fileName}:`, err)
       }
-      setDownloadedFiles(prevFiles => prevFiles.filter(file => file.name !== fileName));
-    } catch (err) {
-      console.error(`Failed to delete file ${fileName}:`, err)
     }
   }, [apiFetch])
 

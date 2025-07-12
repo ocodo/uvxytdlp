@@ -24,19 +24,21 @@ export const VideoSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const getYTCookies = async () => {
-      const response = await apiFetch(`/ytcookies`, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      if (response.ok) {
-        const json = await response.json()
-        const cookies = await json.cookies
-        setServerStoredYoutubeCookies(cookies)
-        if (cookies
-          && cookies != ""
-          && youtubeCookies != cookies) {
-          setYoutubeCookies(cookies)
+      if (apiFetch) {
+        const response = await apiFetch(`/ytcookies`, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        if (response.ok) {
+          const json = await response.json()
+          const cookies = await json.cookies
+          setServerStoredYoutubeCookies(cookies)
+          if (cookies
+            && cookies != ""
+            && youtubeCookies != cookies) {
+            setYoutubeCookies(cookies)
+          }
         }
       }
     }
@@ -46,13 +48,14 @@ export const VideoSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         youtubeCookies
         && youtubeCookies != ""
         && youtubeCookies != serverStoredYoutubeCookies
+        && apiFetch
       ) {
         const response = await apiFetch(`/ytcookies`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ cookies: youtubeCookies})
+          body: JSON.stringify({ cookies: youtubeCookies })
         })
         if (!response.ok) {
           toast(`Error saving YouTube Cookies: ${response.status}`)

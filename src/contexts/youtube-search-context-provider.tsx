@@ -31,21 +31,23 @@ export const YoutubeSearchProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     const fetchYTSearchResults = async () => {
-      try {
-        const response = await apiFetch(`/ytsearch/${query}`, {
-          headers: {
-            'Content-Type': 'application/json',
+      if (apiFetch) {
+        try {
+          const response = await apiFetch(`/ytsearch/${query}`, {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+          if (!response.ok) {
+            toast(`Error Searching YouTube ${response.status}`)
+            return
           }
-        })
-        if (!response.ok) {
-          toast(`Error Searching YouTube ${response.status}`)
-          return
+          const json = await response.json()
+          const results: YoutubeSearchResultType[] = json || []
+          setResults(results)
+        } catch {
+          toast(`Network Error Searching YouTube`)
         }
-        const json = await response.json()
-        const results: YoutubeSearchResultType[] = json || []
-        setResults(results)
-      } catch {
-        toast(`Network Error Searching YouTube`)
       }
     };
     if (query && query != "") {

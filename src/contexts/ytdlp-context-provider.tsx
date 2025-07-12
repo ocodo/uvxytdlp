@@ -72,71 +72,73 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       return
     }
     setIsLoading(true)
-    setLog("Starting download process...\n") // Initial log
-    setProgress(0) // Reset progress at the start of a new download
+    setLog("Starting download process...\n")
+    setProgress(0)
 
-    try {
-      const encodedUrl = encodeURIComponent(downloadUrl)
-      const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${cliArgs}`)
+    if (apiFetch) {
+      try {
+        const encodedUrl = encodeURIComponent(downloadUrl)
+        const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${cliArgs}`)
 
-      if (!response.ok || !response.body) {
-        const errorText = await response.text()
-        const errorMessage = `Error: ${response.status}\n${errorText}`
-        console.log(errorMessage)
-        setLog(prevLog => prevLog + errorMessage)
-        setIsLoading(false)
-        setProgress(0)
-        return
-      }
+        if (!response.ok || !response.body) {
+          const errorText = await response.text()
+          const errorMessage = `Error: ${response.status}\n${errorText}`
+          console.log(errorMessage)
+          setLog(prevLog => prevLog + errorMessage)
+          setIsLoading(false)
+          setProgress(0)
+          return
+        }
 
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder('utf-8')
-      let buffer = ''
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder('utf-8')
+        let buffer = ''
 
-      while (true) {
-        const { done, value } = await reader.read()
-        const chunkString = decoder.decode(value, { stream: true })
-        if (done) break
+        while (true) {
+          const { done, value } = await reader.read()
+          const chunkString = decoder.decode(value, { stream: true })
+          if (done) break
 
-        buffer += chunkString
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
+          buffer += chunkString
+          const lines = buffer.split('\n')
+          buffer = lines.pop() || ''
 
-        for (const line of lines) {
-          console.log(line)
-          if (line.startsWith(`{ "percent": `)) {
-            try {
-              const progressLineJson = JSON.parse(line)
-              const percentage = progressLineJson.percent
-              console.log(`parsed percentage: ${percentage}`)
-              setProgress(percentage) // Update progress (0 to 1)
-            } catch (jsonError) {
-              console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
+          for (const line of lines) {
+            console.log(line)
+            if (line.startsWith(`{ "percent": `)) {
+              try {
+                const progressLineJson = JSON.parse(line)
+                const percentage = progressLineJson.percent
+                console.log(`parsed percentage: ${percentage}`)
+                setProgress(percentage) // Update progress (0 to 1)
+              } catch (jsonError) {
+                console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
+              }
+            } else {
+              setLog(prevLog => prevLog + line + '\n')
             }
-          } else {
-            setLog(prevLog => prevLog + line + '\n')
           }
         }
+
+        // Process any remaining buffer after the stream ends
+        if (buffer) {
+          setLog(prevLog => prevLog + buffer + '\n')
+        }
+
+        // Final actions upon successful stream completion
+        fetchDownloadedFiles()
+        setProgress(1) // Set to 100% on successful completion (0-1 scale)
+        setInputUrl("")
+        setHashUrl("")
+        setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
+
+      } catch (error) {
+        console.error("Failed to stream or parse ytdlp output:", error)
+        setLog(prevLog => prevLog + `\nNetwork, stream, or parsing error: ${String(error)}`)
+        setProgress(0) // Reset or indicate error state
+      } finally {
+        setIsLoading(false)
       }
-
-      // Process any remaining buffer after the stream ends
-      if (buffer) {
-        setLog(prevLog => prevLog + buffer + '\n')
-      }
-
-      // Final actions upon successful stream completion
-      fetchDownloadedFiles()
-      setProgress(1) // Set to 100% on successful completion (0-1 scale)
-      setInputUrl("")
-      setHashUrl("")
-      setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
-
-    } catch (error) {
-      console.error("Failed to stream or parse ytdlp output:", error)
-      setLog(prevLog => prevLog + `\nNetwork, stream, or parsing error: ${String(error)}`)
-      setProgress(0) // Reset or indicate error state
-    } finally {
-      setIsLoading(false)
     }
   }, [apiFetch, cliArgs, setHashUrl, hashUrl, inputUrl, fetchDownloadedFiles])
 
