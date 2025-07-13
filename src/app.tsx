@@ -39,7 +39,10 @@ const AppContent = () => {
           </>
         </div>
       </div>
-      <Toaster />
+      <Toaster
+        position="bottom-center"
+        theme='dark'
+        richColors />      
     </>
   )
 }
