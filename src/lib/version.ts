@@ -1,1 +1,1 @@
-export const VERSION = "sugarplum-replicant"
+export const VERSION = "mango-diethylamine"
