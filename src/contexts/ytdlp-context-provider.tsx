@@ -66,7 +66,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       setInputUrl(downloadUrl)
     }
     if (!isUrlValid(downloadUrl)) {
-      const invalidUrlMessage = "Invalid YouTube URL provided."
+      const invalidUrlMessage = `Invalid YouTube URL provided: ${downloadUrl}`
       console.log(invalidUrlMessage)
       setLog(invalidUrlMessage)
       return

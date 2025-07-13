@@ -2,7 +2,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Image } from "@/components/ui/image"
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { useYtdlpContext } from "@/contexts/ytdlp-context"
+import { isUrlValid } from "@/lib/is-url-valid"
 import type { FC, RefObject } from "react"
+import { toast } from "sonner"
 
 interface YoutubeSearchResultRowType {
   id: string
@@ -32,11 +34,13 @@ export const YoutubeSearchResultRow: FC<YoutubeSearchResultRowProps> = (props: Y
     searchInput,
   } = props
 
-  const youtubeUrl = () => `https://youtube.com${url_suffix}`
+  const watchRegex = /(\/watch\?v=[^&]+).*/
+  const watchSuffix = url_suffix.replace(watchRegex, "$1")
+  const youtubeUrl = () => `https://youtube.com${watchSuffix}`
 
   const {
     setInputUrl,
-    startDownload
+    startDownload,
   } = useYtdlpContext()
 
   const {
@@ -44,12 +48,20 @@ export const YoutubeSearchResultRow: FC<YoutubeSearchResultRowProps> = (props: Y
   } = useYoutubeSearchContext()
 
   const selectVideo = () => {
-    setInputUrl(youtubeUrl())
-    if (searchInput.current) {
-      searchInput.current.value = ""
+    const url = youtubeUrl();
+    if (isUrlValid(url)) {
+      setInputUrl(youtubeUrl())
+      if (searchInput.current) {
+        searchInput.current.value = ""
+      }
+      setResults([])
+      setTimeout(() => {
+        toast(`Downloading ${title}`)
+        startDownload()
+      }, 1500)
+    } else {
+      toast(`Error ${url}`)
     }
-    setResults([])
-    startDownload()
   }
 
   return (
