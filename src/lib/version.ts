@@ -1,1 +1,1 @@
-export const VERSION = "mango-diethylamine"
+export const VERSION = "bubblegum-coverup"

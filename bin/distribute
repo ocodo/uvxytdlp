@@ -1,0 +1,74 @@
+#!/bin/bash
+
+gitroot=$(git rev-parse --show-toplevel)
+
+if [[ -z $gitroot ]]; then
+    echo "Error: Not in a git repository"
+    exit 1
+fi
+
+cd $gitroot
+
+if ! command -v jq; then
+    echo "Error: jq not installed, required"
+    exit 2
+fi
+
+uvxytdlp_project=$(jq -r '.name' < package.json)
+
+if [[ $uvxytdlp_project != "uvxytdlp-ui" ]]; then
+    echo "Error: not in uvxytdlp-ui project dir"
+    exit 3
+fi
+
+tagname=$(git tag --sort=-committerdate | head -1 2> /dev/null)
+
+if [[ -z $tagname ]]; then
+    echo "Error: No previous tag found, exiting..."
+    exit 4
+fi
+
+if [[ $# != 1 ]]; then
+    cat <<EOF
+Usage: $0 <new-tagname>
+
+README.md and src/lib/version.ts will be patched with the new tagname
+EOF
+    exit 5
+fi
+
+replace_tag_reference_in_file() {
+    if [[ $# == 2 && -f $2 ]]; then
+	export newtag=$(tr ' ' '-' <<<$1) # spaces to dashes
+	sed -i'' "s/$tagname/$newtag/" $2
+    else
+	usage "$(basename $0)" $tagname
+	echo "\nError: $2 file not found\n"
+	exit 6
+    fi
+}
+
+ls README.md
+replace_tag_reference_in_file $1 README.md
+ls src/lib/version.ts
+replace_tag_reference_in_file $1 src/lib/version.ts
+
+git add --all
+git commit -m $1
+git tag $1
+
+cat <<EOF
+============================================================
+Committed/Tagged $1
+
+Push to github to trigger docker build and release as:
+
+ - ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:latest
+ - ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:$1
+
+To revert, avoid push and:
+
+  git reset HEAD
+  git tag -d $1
+
+EOF
