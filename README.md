@@ -1,6 +1,6 @@
 # uvxytdlp-ui
 
-[![](https://img.shields.io/badge/bubblegum-coverup-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
+[![](https://img.shields.io/badge/sugar-magnet-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
 
 Download and playback YouTube videos locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com) and [FastAPI](https://fastapi.tiangolo.com/) providing the WebUI and API Service.
 
@@ -35,7 +35,7 @@ sudo docker run -d \
   -v /path/to/your/downloads:/ytdlp-downloads \
   -v /path/to/your/server_config:/var/www/html/server_config \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:bubblegum-coverup
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:sugar-magnet
   # -v to server_config is optional if you can use
   # 8000 5000 or 5150 for the api port (see below)
 ```

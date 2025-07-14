@@ -1,1 +1,1 @@
-export const VERSION = "bubblegum-coverup"
+export const VERSION = "sugar-magnet"
