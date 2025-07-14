@@ -26,7 +26,7 @@ export interface YtdlpContextType {
   setHashUrl: Dispatch<SetStateAction<string>>
 
   // Download Actions & Status
-  startDownload: () => Promise<void>
+  startDownload: (downloadUrl?: string) => Promise<void>
   isLoading: boolean
 
   // Logging
@@ -37,10 +37,14 @@ export interface YtdlpContextType {
   setShowLog: (newValue: boolean) => void
 
   // Configuration
-  cliArgs: string
-  setCliArgs: Dispatch<SetStateAction<string>>
+  templateCliArg: string
+  setTemplateCliArg: Dispatch<SetStateAction<string>>
   format: string
   setFormat: Dispatch<SetStateAction<string>>
+
+  // restrictedFilenames
+  restrictedFilenames: boolean
+  setRestrictedFilenames: (newValue: boolean) => void
 
   // Progress
   progress: number
@@ -50,7 +54,8 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [inputUrl, setInputUrl] = useState<string>("")
   const [log, setLog] = useState<string>("")
   const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false)
-  const [cliArgs, setCliArgs] = useState<string>("-t mp4")
+  const [restrictedFilenames, setRestrictedFilenames] = useLocalStorage<boolean>('restrictedFilenames', false)
+  const [templateCliArg, setTemplateCliArg] = useState<string>("-t mp4")
   const [format, setFormat] = useState<string>("mp4")
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [progress, setProgress] = useState<number>(0)
@@ -60,16 +65,18 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
 
   const clearLog = () => setLog("")
 
-  const startDownload = useCallback(async () => {
-    const downloadUrl: string = hashUrl !== "" ? hashUrl : inputUrl
-    if (inputUrl !== downloadUrl) {
-      setInputUrl(downloadUrl)
-    }
-    if (!isUrlValid(downloadUrl)) {
-      const invalidUrlMessage = `Invalid YouTube URL provided: ${downloadUrl}`
-      console.log(invalidUrlMessage)
-      setLog(invalidUrlMessage)
-      return
+  const startDownload = useCallback(async (downloadUrl: string = "") => {
+    if (downloadUrl == "" || !isUrlValid(downloadUrl)) {
+      downloadUrl = hashUrl !== "" ? hashUrl : inputUrl
+      if (inputUrl !== downloadUrl) {
+        setInputUrl(downloadUrl)
+      }
+      if (!isUrlValid(downloadUrl)) {
+        const invalidUrlMessage = `Invalid YouTube URL provided: ${downloadUrl}`
+        console.log(invalidUrlMessage)
+        setLog(invalidUrlMessage)
+        return
+      }
     }
     setIsLoading(true)
     setLog("Starting download process...\n")
@@ -78,7 +85,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     if (apiFetch) {
       try {
         const encodedUrl = encodeURIComponent(downloadUrl)
-        const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${cliArgs}`)
+        const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${templateCliArg} ${restrictedFilenames ? ' --restrict-filenames ' : ''}`)
 
         if (!response.ok || !response.body) {
           const errorText = await response.text()
@@ -140,11 +147,19 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
         setIsLoading(false)
       }
     }
-  }, [apiFetch, cliArgs, setHashUrl, hashUrl, inputUrl, fetchDownloadedFiles])
+  }, [
+    apiFetch,
+    templateCliArg,
+    setHashUrl,
+    hashUrl,
+    inputUrl,
+    fetchDownloadedFiles,
+    restrictedFilenames
+  ])
 
   useEffect(() => {
     if (Object.keys(formatTemplates).includes(format)) {
-      setCliArgs(formatTemplates[format])
+      setTemplateCliArg(formatTemplates[format])
     }
   }, [format])
 
@@ -173,10 +188,12 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     setShowLog,
 
     // Configuration
-    cliArgs,
-    setCliArgs,
+    templateCliArg,
+    setTemplateCliArg,
     format,
     setFormat,
+    restrictedFilenames,
+    setRestrictedFilenames,
 
     // Progress
     progress,

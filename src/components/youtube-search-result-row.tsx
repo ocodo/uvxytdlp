@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Image } from "@/components/ui/image"
+
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { useYtdlpContext } from "@/contexts/ytdlp-context"
 import { isUrlValid } from "@/lib/is-url-valid"
@@ -50,15 +51,15 @@ export const YoutubeSearchResultRow: FC<YoutubeSearchResultRowProps> = (props: Y
   const selectVideo = () => {
     const url = youtubeUrl();
     if (isUrlValid(url)) {
-      setInputUrl(youtubeUrl())
+      setInputUrl(url)
       if (searchInput.current) {
         searchInput.current.value = ""
       }
       setResults([])
       setTimeout(() => {
-        toast(`Downloading ${title}`)
-        startDownload()
-      }, 1500)
+        toast(`Downloading ${title} / ${url}`)
+        startDownload(url)
+      }, 500)
     } else {
       toast(`Error ${url}`)
     }
@@ -70,8 +71,7 @@ export const YoutubeSearchResultRow: FC<YoutubeSearchResultRowProps> = (props: Y
       onClick={selectVideo}
     >
       <CardContent className="p-2">
-        <Image
-          source={thumbnails} />
+        <Image source={thumbnails} />
         <div className="text-sm font-bold p-2">
           {channel} | <span className="text-xs font-normal">{publish_time} | {duration}</span>
         </div>

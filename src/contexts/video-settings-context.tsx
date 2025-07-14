@@ -1,10 +1,10 @@
-import type { VideoSettingsContextType } from "@/contexts/video-settings-context-provider";
+import type { AVSettingsContextType } from "@/contexts/video-settings-context-provider";
 import { createContext, useContext } from "react";
 
-export const VideoSettingsContext = createContext<VideoSettingsContextType | undefined>(undefined);
+export const AVSettingsContext = createContext<AVSettingsContextType | undefined>(undefined);
 
-export const useVideoSettingsContext = () => {
-  const context = useContext(VideoSettingsContext);
+export const useAVSettingsContext = () => {
+  const context = useContext(AVSettingsContext);
   if (!context) {
     throw new Error('useVideoSettingsContext must be used within a VideoSettingsProvider');
   }

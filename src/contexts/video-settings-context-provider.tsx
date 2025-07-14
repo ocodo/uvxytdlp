@@ -1,18 +1,21 @@
 import { useApiBase } from '@/contexts/api-base-context';
-import { VideoSettingsContext } from '@/contexts/video-settings-context';
+import { AVSettingsContext } from '@/contexts/video-settings-context';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-export type VideoSettingsContextType = {
-  autoPlay: boolean;
-  setAutoPlay: (newValue: boolean) => void;
+export type AVSettingsContextType = {
+  videoAutoPlay: boolean;
+  setVideoAutoPlay: (newValue: boolean) => void;
+  audioAutoPlay: boolean;
+  setAudioAutoPlay: (newValue: boolean) => void;
   youtubeCookies: string;
   setYoutubeCookies: (newValue: string) => void;
 };
 
-export const VideoSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [autoPlay, setAutoPlay] = useLocalStorage<boolean>('video_auto_play', true);
+export const AVSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [videoAutoPlay, setVideoAutoPlay] = useLocalStorage<boolean>('video_auto_play', true);
+  const [audioAutoPlay, setAudioAutoPlay] = useLocalStorage<boolean>('audio_auto_play', true);
   const [youtubeCookies, setYoutubeCookies] = useLocalStorage<string>('youtube-cookies', "");
 
   const [
@@ -76,9 +79,18 @@ export const VideoSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     setYoutubeCookies
   ])
 
+  const value = {
+    audioAutoPlay,
+    setAudioAutoPlay,
+    videoAutoPlay,
+    setVideoAutoPlay,
+    youtubeCookies,
+    setYoutubeCookies
+  }
+
   return (
-    <VideoSettingsContext.Provider value={{ autoPlay, setAutoPlay, youtubeCookies, setYoutubeCookies }}>
+    <AVSettingsContext.Provider value={value}>
       {children}
-    </VideoSettingsContext.Provider>
+    </AVSettingsContext.Provider>
   );
 };

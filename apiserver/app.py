@@ -165,7 +165,7 @@ def record_refresh_timestamp() -> None:
         logger.error(f"Failed to record refresh timestamp: {e}")
 
 
-async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: str):
+async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: str, command: str = ''):
     """
     Asynchronously streams stdout and stderr from a given subprocess,
     adding appropriate headers and handling process completion and errors.
@@ -176,6 +176,7 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
     try:
         # Stream stdout
         yield b"--- STDOUT ---\n"
+        # yield command
         while True:
             line = await process.stdout.readline()
             if not line:
@@ -403,8 +404,10 @@ async def download_via_ytdlp(url: str, args: str):
         env={**os.environ, "PYTHONUNBUFFERED": "1"},
     )
 
+    full_command_str = " ".join(full_command)
+
     return StreamingResponse(
-        _stream_subprocess_output(process, url), media_type="text/event-stream"
+        _stream_subprocess_output(process, url, full_command_str), media_type="text/event-stream"
     )
 
 
@@ -448,6 +451,16 @@ def get_content_assets(filename: str):
     path_basename = os.path.join(download_dir, basename)
     files = [p.replace(download_dir + os.sep, "") for p in glob.glob(f"{path_basename}*")]
     return files
+
+
+@app.get("/thumbnail/{filename:path}")
+def get_thumbnail(filename: str):
+    assets = get_content_assets(filename)
+    extensions_to_filter = ['.webp', '.png', '.jpg', '.jpeg']
+    images =  [file for file in assets if any(file.lower().endswith(ext) for ext in extensions_to_filter)]
+    if len(images) > 0:
+        return serve_file_from_dir(images[0], download_dir, force_download=False)
+    raise HTTPException(status_code=404, detail=f'thumbnail not available for {filename}')
 
 
 @app.get("/download/{filename:path}")
@@ -497,8 +510,8 @@ def delete_downloaded_file(filename: str):
     try:
         os.remove(full_path)
 
-        media_exts = {".mp3", ".mp4", ".m4a", ".mkv"}
-        exts = {".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"}
+        media_exts = [".mp3", ".mp4", ".m4a", ".mkv"]
+        exts = [".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"]
 
         other_media_files = media_exts.some(
             lambda x: os.path.exists(path_with_ext_exists(full_path, ext))

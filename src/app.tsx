@@ -5,16 +5,14 @@ import { Heading } from "@/components/heading"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { useApiBase } from '@/contexts/api-base-context'
-
 import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context"
 import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { MDXProvider } from '@mdx-js/react'
-import { VideoSettingsProvider } from "@/contexts/video-settings-context-provider"
+import { AVSettingsProvider } from "@/contexts/video-settings-context-provider"
 import { YoutubeSearchProvider } from "@/contexts/youtube-search-context-provider"
 import ApiBaseProvider from "@/contexts/api-base-context-provider"
-
 
 const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
@@ -42,7 +40,7 @@ const AppContent = () => {
       <Toaster
         position="bottom-center"
         theme='dark'
-        richColors />      
+        richColors />
     </>
   )
 }
@@ -56,8 +54,8 @@ function App() {
 
     const handleRejection = (event: PromiseRejectionEvent) => {
       console.error("Unhandled promise rejection:", event.reason)
-      const message = "An unexpected error occurred (promise rejection)" + event.reason
-      toast.error(message)
+      // const message = "An unexpected error occurred (promise rejection)" + event.reason
+      // toast.error(message)
     }
 
     window.addEventListener("error", handleError)
@@ -77,9 +75,9 @@ function App() {
             <HashUrlProvider>
               <YoutubeSearchProvider>
                 <YtdlpProvider>
-                  <VideoSettingsProvider>
+                  <AVSettingsProvider>
                     <AppContent />
-                  </VideoSettingsProvider>
+                  </AVSettingsProvider>
                 </YtdlpProvider>
               </YoutubeSearchProvider>
             </HashUrlProvider>

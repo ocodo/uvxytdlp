@@ -1,5 +1,5 @@
 import { useApiBase } from "@/contexts/api-base-context"
-import { useVideoSettingsContext } from "@/contexts/video-settings-context"
+import { useAVSettingsContext } from "@/contexts/video-settings-context"
 import { useEffect, useRef, useState } from "react"
 
 
@@ -14,7 +14,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const title = fileToTitle(fileName)
   const { apiBase } = useApiBase()
-  const { autoPlay } = useVideoSettingsContext()
+  const { videoAutoPlay } = useAVSettingsContext()
 
   const url = `${apiBase}/downloaded/${fileName}`
 
@@ -30,7 +30,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
     const videoElement = videoRef.current
 
     // Auto-play on load if setting is enabled
-    if (autoPlay && videoElement) {
+    if (videoAutoPlay && videoElement) {
       const playPromise = videoElement.play()
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
@@ -38,7 +38,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
         })
       }
     }
-  }, [autoPlay, url])
+  }, [videoAutoPlay, url])
 
   useEffect(() => {
     const videoElement = videoRef.current
@@ -69,7 +69,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
         className="w-full aspect-video"
         playsInline
         controls
-        autoPlay={autoPlay}
+        autoPlay={videoAutoPlay}
         onPlay={handlePlay}
         onPause={handlePauseOrEnd}
         onEnded={handlePauseOrEnd}
