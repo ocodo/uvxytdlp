@@ -48,9 +48,18 @@ export const CustomAudioPlayer: FC<CustomAudioPlayerProps> = ({ src, autoPlay })
   };
 
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
+    if (isNaN(time)) {
+      return "0:00";
+    }
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    const paddedSeconds = seconds.toString().padStart(2, "0");
+    if (hours > 0) {
+      const paddedMinutes = minutes.toString().padStart(2, "0");
+      return `${hours}:${paddedMinutes}:${paddedSeconds}`;
+    }
+    return `${minutes}:${paddedSeconds}`;
   };
 
   useEffect(() => {
@@ -100,4 +109,3 @@ export const CustomAudioPlayer: FC<CustomAudioPlayerProps> = ({ src, autoPlay })
     </>
   );
 }
-

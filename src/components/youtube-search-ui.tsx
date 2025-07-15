@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input"
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import React, { useRef, type FC } from "react"
 import { debounce } from "@/lib/debounce"
-import { YoutubeSearchResultRow } from "@/components/youtube-search-result-row"
+import { YoutubeSearchResultBox } from "@/components/youtube-search-result-box"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
@@ -13,7 +13,7 @@ export const YoutubeSearchUI: FC = () => {
     const value: string = target.value
     console.log(`Value: ${value}`)
     setQuery(value)
-  }, 300)
+  }, 200)
 
   const searchInput = useRef<HTMLInputElement>(null)
 
@@ -50,7 +50,7 @@ export const YoutubeSearchUI: FC = () => {
             <div className="text-lg">Select content to download</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-1">
               {results.map((result) =>
-                <YoutubeSearchResultRow key={result.id} searchInput={searchInput} {...result} />
+                <YoutubeSearchResultBox key={result.id} searchInput={searchInput} {...result} />
               )}
             </div>
           </>)}

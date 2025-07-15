@@ -30,7 +30,6 @@ export const GeneralSettingsView: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <SwitchState label='Video AutoPlay' state={videoAutoPlay} setState={setVideoAutoPlay} />
             <SwitchState label='Audio AutoPlay' state={audioAutoPlay} setState={setAudioAutoPlay} />
-            <SwitchState label='Show Log (yt-dlp)' state={showLog} setState={setShowLog} />
             <SwitchState label='Restrict filenames' state={restrictedFilenames} setState={setRestrictedFilenames} />
           </div>
         </div>

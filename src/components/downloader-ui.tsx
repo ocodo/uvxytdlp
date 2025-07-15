@@ -32,26 +32,33 @@ export function DownloaderUI() {
       />
       {/* Show indeterminate progress while main download
         / addtional track downloads spin up */}
-      {(isLoading && progress <= 1) &&
-        <IndeterminateProgress />}
-      {(isLoading && progress >= 3) &&
-        <Progress value={progress} max={100} />}
-      {showLog && log && (
-        <div className="border rounded-lg">
-          <div className="flex flex-row items-center justify-between">
-            <div className="text-md py-2 px-4">log output</div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowLog(false)}
-              aria-label="Hide Log"
-            >
-              <XCircleIcon className="h-6 w-6" style={{ strokeWidth: 0.5 }} />
-            </Button>
-          </div>
-          <Presto text={log} />
+      {isLoading &&
+        <div onClick={(e) => {
+          e.preventDefault()
+          setShowLog(true)
+        }}>
+          {progress <= 1 && (<IndeterminateProgress />)}
+          {progress >= 3 && (<Progress value={progress} max={100} />)}
         </div>
-      )}
-    </div>
+      }
+      {
+        showLog && log && (
+          <div className="border rounded-lg">
+            <div className="flex flex-row items-center justify-between">
+              <div className="text-md py-2 px-4">log output</div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowLog(false)}
+                aria-label="Hide Log"
+              >
+                <XCircleIcon className="h-6 w-6" style={{ strokeWidth: 0.5 }} />
+              </Button>
+            </div>
+            <Presto text={log} />
+          </div>
+        )
+      }
+    </div >
   );
 }

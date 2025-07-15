@@ -5,6 +5,7 @@ from omegaconf import OmegaConf
 from youtube_search import YoutubeSearch
 import glob
 import os
+import re
 import shlex
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -87,6 +88,57 @@ if __name__ == "__main__":
         )
 
 
+def extract_filename_from_merger_log(target_line):
+    """
+    Extract the filename from a quoted path in the target line.
+    Narrows it to the filename relative to download_dir.
+    """
+    match = re.search(r'"([^"]+)"', target_line)
+    if not match:
+        raise ValueError("No quoted path found in line")
+
+    full_path = match.group(1)
+
+    if download_dir not in full_path:
+        raise ValueError("Download directory not found in path")
+
+    relative_path = full_path.split(download_dir)[-1].lstrip(r"\/")
+    filename = os.path.basename(relative_path)
+    return filename
+
+
+def sanitize_filename_group(filename):
+    """
+    Renames the given filename and all its associated files (same base name, any extension)
+    by replacing '#' and '&' with '.' in the base name.
+    """
+    base_name, _ = os.path.splitext(filename)
+
+    # Special case: handle `.info.json` and similar multi-part extensions
+    if filename.endswith(".info.json"):
+        base_name = filename[: -len(".info.json")]
+
+    cleaned_base = base_name.replace("#", ".").replace("&", ".")
+
+    # Scan download_dir for files starting with the same base name
+    for f in os.listdir(download_dir):
+        if f.startswith(base_name):
+            old_path = os.path.join(download_dir, f)
+
+            # Handle .info.json specially
+            if f.endswith(".info.json"):
+                ext = ".info.json"
+            else:
+                ext = os.path.splitext(f)[1]
+
+            new_filename = f"{cleaned_base}{ext}"
+            new_path = os.path.join(download_dir, new_filename)
+
+            if old_path != new_path:
+                os.rename(old_path, new_path)
+                print(f"Renamed: {f} → {new_filename}")
+
+
 def path_with_ext_exists(filename, ext):
     """
     find filename with the alternative extension,
@@ -165,11 +217,14 @@ def record_refresh_timestamp() -> None:
         logger.error(f"Failed to record refresh timestamp: {e}")
 
 
-async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: str, command: str = ''):
+async def _stream_subprocess_output(
+    process: asyncio.subprocess.Process, url: str, command: str = ""
+):
     """
     Asynchronously streams stdout and stderr from a given subprocess,
     adding appropriate headers and handling process completion and errors.
     """
+    target_line: str = ""
     stderr_buffer = (
         b""  # Buffer for stderr to potentially display at the end or on error
     )
@@ -181,6 +236,8 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
             line = await process.stdout.readline()
             if not line:
                 break
+            if b"[Merger]" in line:
+                target_line = line.decode()
             yield line
 
         # Read all stderr into a buffer
@@ -212,6 +269,11 @@ async def _stream_subprocess_output(process: asyncio.subprocess.Process, url: st
         else:
             yield b"--- yt-dlp process finished successfully ---\n"
             logger.info(f"Successfully processed URL: {url}")
+            yield b"Checking filename for invalid chars..."
+            yield f"target_line: {target_line}".encode("utf-8")
+            if target_line:
+                yt_filename = extract_filename_from_merger_log(target_line)
+                sanitize_filename_group(yt_filename)
 
     except asyncio.CancelledError:
         # Handle client disconnection
@@ -407,7 +469,8 @@ async def download_via_ytdlp(url: str, args: str):
     full_command_str = " ".join(full_command)
 
     return StreamingResponse(
-        _stream_subprocess_output(process, url, full_command_str), media_type="text/event-stream"
+        _stream_subprocess_output(process, url, full_command_str),
+        media_type="text/event-stream",
     )
 
 
@@ -439,8 +502,7 @@ def serve_file_from_dir(filename: str, base_dir: str, force_download: bool = Fal
             return FileResponse(full_path)
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Server Error: Could not serve file: {str(e)}"
+            status_code=500, detail=f"Server Error: Could not serve file: {str(e)}"
         )
 
 
@@ -449,18 +511,26 @@ def get_content_assets(filename: str):
     """Get json list of asset files for given filename"""
     basename, ext = os.path.splitext(filename)
     path_basename = os.path.join(download_dir, basename)
-    files = [p.replace(download_dir + os.sep, "") for p in glob.glob(f"{path_basename}*")]
+    files = [
+        p.replace(download_dir + os.sep, "") for p in glob.glob(f"{path_basename}*")
+    ]
     return files
 
 
 @app.get("/thumbnail/{filename:path}")
 def get_thumbnail(filename: str):
     assets = get_content_assets(filename)
-    extensions_to_filter = ['.webp', '.png', '.jpg', '.jpeg']
-    images =  [file for file in assets if any(file.lower().endswith(ext) for ext in extensions_to_filter)]
+    extensions_to_filter = [".webp", ".png", ".jpg", ".jpeg"]
+    images = [
+        file
+        for file in assets
+        if any(file.lower().endswith(ext) for ext in extensions_to_filter)
+    ]
     if len(images) > 0:
         return serve_file_from_dir(images[0], download_dir, force_download=False)
-    raise HTTPException(status_code=404, detail=f'thumbnail not available for {filename}')
+    raise HTTPException(
+        status_code=404, detail=f"thumbnail not available for {filename}"
+    )
 
 
 @app.get("/download/{filename:path}")
@@ -513,8 +583,8 @@ def delete_downloaded_file(filename: str):
         media_exts = [".mp3", ".mp4", ".m4a", ".mkv"]
         exts = [".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"]
 
-        other_media_files = media_exts.some(
-            lambda x: os.path.exists(path_with_ext_exists(full_path, ext))
+        other_media_files = any(
+            path_with_ext_exists(full_path, ext) for ext in media_exts
         )
 
         if not other_media_files:
