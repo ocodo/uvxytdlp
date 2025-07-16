@@ -24,10 +24,10 @@ export const YoutubeSearchUI: FC = () => {
           <Input
             ref={searchInput}
             type='text'
-            placeholder="Search YouTube..."
+            placeholder="YouTube..."
             aria-label="YouTube search query"
             onChange={(event: React.ChangeEvent) => debouncedSearch(event.currentTarget)}
-            className="md:flex-1 border-foreground/15 url-input rounded-full h-12"
+            className="border-none rounded-none md:flex-1 transition-all sm:border-foreground/15 sm:rounded-full h-12"
           />
           <Button
             className="cursor-pointer hover:bg-card/10 transition-color duration-500

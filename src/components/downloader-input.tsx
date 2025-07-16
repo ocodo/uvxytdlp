@@ -34,7 +34,7 @@ export const DownloaderInput: React.FC<DownloaderInputProps> = ({
           placeholder="Video Page URL to download..."
           aria-label="Video Page url"
           onChange={(event) => setUrl(event.target.value)}
-          className="md:flex-1 border-foreground/15 url-input rounded-full h-12"
+          className="md:flex-1 border-none sm:border-foreground/15 url-input rounded-none sm:rounded-full h-12 transition-all"
           disabled={isLoading}
           autoFocus
           value={url}

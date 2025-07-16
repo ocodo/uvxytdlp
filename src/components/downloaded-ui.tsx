@@ -49,8 +49,8 @@ export const DownloadedUI: FC = () => {
   const selectedFileType = getFileType(selectedFile)
 
   return (
-    <div className="bg-card pb-2">
-      <div className="grid grid-cols-1 gap-1">
+    <div className="bg-card sm:pb-2">
+      <div className="grid grid-cols-1 gap-y-1">
         {selectedFile && (
           <div className="my-4 relative">
             <div className="absolute z-10 top-1 right-1 opacity-50 hover:opacity-80">
@@ -65,22 +65,24 @@ export const DownloadedUI: FC = () => {
             {selectedFileType === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
-        <div className="p-2 border-t mt-2 flex flex-row items-center justify-between">
+        <div className="sm:p-2 border-t mt-2 flex flex-row items-center justify-between">
           <SearchDownloaded
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
         </div>
-        <DownloadedFilteredBySearch
-          searchResults={searchResults}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleDelete={handleDelete}
-          handleDownload={handleDownload}
-          handlePlay={handlePlay}
-          isDeleting={isDeleting}
-          selectedFile={selectedFile}
-        />
+        <div className="w-[vw-100]">
+          <DownloadedFilteredBySearch
+            searchResults={searchResults}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleDelete={handleDelete}
+            handleDownload={handleDownload}
+            handlePlay={handlePlay}
+            isDeleting={isDeleting}
+            selectedFile={selectedFile}
+          />
+        </div>
       </div>
     </div >
   )
@@ -97,15 +99,15 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
     <div className="flex items-center gap-2 w-full">
       <div className="relative w-full">
         <Input
-          className="w-full rounded-full"
+          className="w-full border-none rounded-none sm:border sm:rounded-full"
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder='Search downloaded content...'
+          placeholder='Downloaded content...'
           value={searchQuery}
         />
         <Button
           className="cursor-pointer hover:bg-card/10 transition-color duration-500
                      text-foreground/20 hover:text-foreground
-                     absolute right-1 top-1/2 -translate-y-1/2"
+                     absolute right-2 top-1/2 -translate-y-1/2 z-10"
           onClick={() => setSearchQuery('')}
           variant={'ghost'}
           size={'icon'}>
@@ -138,9 +140,10 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   searchQuery
 }) => {
   return (
+
     <div className="flex flex-col justify-items" >
       {
-        searchResults(searchQuery)?.map((file) => (
+        searchResults(searchQuery).map((file) => (
           <DowloadedFile
             handleDelete={handleDelete}
             handlePlay={handlePlay}

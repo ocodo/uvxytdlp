@@ -102,6 +102,13 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  background-color: var(--card);
+}
+
 body {
   place-items: center;
   min-height: 100vh;

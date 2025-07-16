@@ -5,7 +5,7 @@ import { Image } from "@/components/ui/image"
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { useYtdlpContext } from "@/contexts/ytdlp-context"
 import { isUrlValid } from "@/lib/is-url-valid"
-import { CircleX, CopyIcon, HeadphonesIcon, VideoIcon } from "lucide-react";
+import { CopyIcon, HeadphonesIcon, VideoIcon } from "lucide-react";
 import { useState, type FC, type RefObject } from "react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -103,11 +103,15 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
   return (
     <Card
       className="cursor-pointer p-0 bg-background rounded-none shadow-2xl"
-      onClick={() => setShowControls(true)}
+      onClick={(e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        setShowControls(!showControls)
+      }}
     >
-      <CardContent className="p-2 relative">
+      <CardContent className="p-2 relative flex flex-col">
         {showControls &&
-          <div className="bg-background/30 rounded-full absolute p-2 top-4 right-4 flex flex-row gap-2">
+          <div className="bg-background/30 rounded-full hover:bg-background/80 absolute p-2 top-4 right-4 flex gap-2">
             <Icon
               onClick={downloadVideo}
               Icon={VideoIcon}
@@ -119,13 +123,6 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
             <Icon
               Icon={CopyIcon}
               onClick={copyYoutubeUrl}
-              className={controlIconClassName} />
-            <Icon
-              Icon={CircleX}
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowControls(false)
-              }}
               className={controlIconClassName} />
           </div>
         }
