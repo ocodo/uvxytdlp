@@ -7,8 +7,6 @@ import type { FC } from "react"
 
 export const GeneralSettingsView: FC = () => {
   const {
-    showLog,
-    setShowLog,
     restrictedFilenames,
     setRestrictedFilenames,
   } = useYtdlpContext()

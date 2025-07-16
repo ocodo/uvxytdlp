@@ -1,6 +1,7 @@
 import { ToggleStateButton } from "@/components/toggle-state-button";
 import { SeekBar } from "@/components/ui/seek-bar";
-import { PauseIcon, PlayIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { FastForward, PauseIcon, PlayIcon, Rewind } from "lucide-react";
 import { type FC, useState, useRef, useEffect } from "react";
 
 interface CustomAudioPlayerProps {
@@ -41,6 +42,28 @@ export const CustomAudioPlayer: FC<CustomAudioPlayerProps> = ({ src, autoPlay })
     }
   };
 
+  const handleSkip = (fwd: boolean = true) => {
+    if (audioRef.current) {
+      const currentTime = audioRef.current.currentTime;
+
+      const duration = audioRef.current.duration;
+      if (!duration || isNaN(duration) || !isFinite(duration)) return;
+
+      const skipTime = duration / 100;
+      let newTime: number;
+      if (fwd) {
+        newTime = Math.min(currentTime + skipTime, duration);
+      } else {
+        newTime = Math.max(currentTime - skipTime, 0);
+      }
+      setCurrentTime(newTime);
+      setProgress((newTime / duration) * 100);
+      if (audioRef.current) {
+        audioRef.current.currentTime = newTime;
+      }
+    }
+  }
+
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
@@ -74,15 +97,39 @@ export const CustomAudioPlayer: FC<CustomAudioPlayerProps> = ({ src, autoPlay })
     }
   }, [isPlaying]);
 
+
+  const controlIconClassName = cn(
+    "hover:bg-accent/20 w-6 h-6",
+    "rounded-full cursor-pointer",
+     "p-2 hover:bg-foreground/10 w-10 h-10 rounded-full",
+  );
+
+  const strokePointFive = {
+    strokeWidth: 0.5
+  }
+
   return (
     <>
       <div className="w-full">
-        <ToggleStateButton
-          toggleState={handlePlayPause}
-          state={isPlaying}
-          onIcon={<PlayIcon className="w-6 h-6" style={{strokeWidth: 0.5}} />}
-          offIcon={<PauseIcon className="w-6 h-6" style={{strokeWidth: 0.5}} />}
-        />
+
+        <div className="flex items-center justify-center ">
+          <Rewind
+            onClick={() => handleSkip(false)}
+            style={strokePointFive}
+            className={cn(controlIconClassName, "pl-1")}
+            />
+          <ToggleStateButton
+            toggleState={handlePlayPause}
+            state={isPlaying}
+            onIcon={<PlayIcon className="w-6 h-6" style={strokePointFive} />}
+            offIcon={<PauseIcon className="w-6 h-6" style={strokePointFive} />}
+            />
+          <FastForward
+            onClick={() => handleSkip()}
+            style={strokePointFive}
+            className={cn(controlIconClassName, "pr-1")}
+          />
+        </div>
         <SeekBar
           value={currentTime}
           max={duration}
