@@ -8,28 +8,16 @@ import { Progress } from "@/components/ui/progress";
 
 export function DownloaderUI() {
   const {
-    inputUrl,
-    format,
     isLoading,
     log,
     progress,
     showLog,
     setShowLog,
-    setInputUrl,
-    setFormat,
-    startDownload,
   } = useYtdlpContext();
 
   return (
     <div className="gap-2 grid grid-cols-1">
-      <DownloaderInput
-        url={inputUrl}
-        setUrl={setInputUrl}
-        format={format}
-        setFormat={setFormat}
-        startDownload={startDownload}
-        isLoading={isLoading}
-      />
+      <DownloaderInput />
       {/* Show indeterminate progress while main download
         / addtional track downloads spin up */}
       {isLoading &&

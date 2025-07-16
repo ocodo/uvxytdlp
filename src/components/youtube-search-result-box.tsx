@@ -1,7 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Image } from "@/components/ui/image"
-
-
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { useYtdlpContext } from "@/contexts/ytdlp-context"
 import { isUrlValid } from "@/lib/is-url-valid"
@@ -47,8 +45,9 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
   const {
     setInputUrl,
     startDownload,
+    videoFormat,
+    audioFormat,
     setFormat,
-    setTemplateCliArg,
   } = useYtdlpContext()
 
   const {
@@ -56,13 +55,11 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
   } = useYoutubeSearchContext()
 
   const downloadVideo = () => {
-    setFormat('mp4')
-    setTemplateCliArg('-t mp4')
+    setFormat(videoFormat)
     downloadContent()
   }
   const downloadAudio = () => {
-    setTemplateCliArg('-t mp3')
-    setFormat('mp3')
+    setFormat(audioFormat)
     downloadContent()
   }
 

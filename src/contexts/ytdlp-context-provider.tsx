@@ -6,7 +6,7 @@ import React, {
   type Dispatch,
   type SetStateAction,
 } from 'react'
-import { formatTemplates } from "@/lib/template-formats"
+import { formatTemplates, type AudioFormat, type MediaFormat, type VideoFormat } from "@/lib/template-formats"
 import { isUrlValid } from '@/lib/is-url-valid'
 import { useDownloaded } from '@/contexts/downloaded-context'
 import { useApiBase } from '@/contexts/api-base-context'
@@ -39,8 +39,18 @@ export interface YtdlpContextType {
   // Configuration
   templateCliArg: string
   setTemplateCliArg: Dispatch<SetStateAction<string>>
-  format: string
-  setFormat: Dispatch<SetStateAction<string>>
+
+  setVideoFormat: Dispatch<SetStateAction<VideoFormat>>
+  videoFormat: VideoFormat
+
+  setAudioFormat: Dispatch<SetStateAction<AudioFormat>>
+  audioFormat: AudioFormat
+
+  setFormat: Dispatch<SetStateAction<MediaFormat>>
+  format: MediaFormat
+
+  setDefaultFormat: Dispatch<SetStateAction<MediaFormat>>
+  defaultFormat: MediaFormat
 
   // restrictedFilenames
   restrictedFilenames: boolean
@@ -56,7 +66,12 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
   const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false)
   const [restrictedFilenames, setRestrictedFilenames] = useLocalStorage<boolean>('restrictedFilenames', false)
   const [templateCliArg, setTemplateCliArg] = useState<string>("-t mp4")
-  const [format, setFormat] = useState<string>("mp4")
+
+  const [defaultFormat, setDefaultFormat] = useState<MediaFormat>('mp4')
+  const [format, setFormat] = useState<MediaFormat>("mp4")
+  const [videoFormat, setVideoFormat] = useState<VideoFormat>("mp4")
+  const [audioFormat, setAudioFormat] = useState<AudioFormat>("m4a")
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [progress, setProgress] = useState<number>(0)
   const { hashUrl, setHashUrl } = useHashUrl()
@@ -147,15 +162,13 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
         setIsLoading(false)
       }
     }
-  }, [
-    apiFetch,
-    templateCliArg,
-    setHashUrl,
-    hashUrl,
-    inputUrl,
-    fetchDownloadedFiles,
-    restrictedFilenames
-  ])
+  }, [apiFetch,
+     templateCliArg,
+      setHashUrl,
+       hashUrl,
+        inputUrl,
+         fetchDownloadedFiles,
+          restrictedFilenames])
 
   useEffect(() => {
     if (Object.keys(formatTemplates).includes(format)) {
@@ -180,6 +193,16 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     startDownload,
     isLoading,
 
+    // Formats
+    defaultFormat,
+    setDefaultFormat,
+    format,
+    setFormat,
+    videoFormat,
+    setVideoFormat,
+    audioFormat,
+    setAudioFormat,
+
     // Logging
     log,
     setLog,
@@ -190,8 +213,6 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
     // Configuration
     templateCliArg,
     setTemplateCliArg,
-    format,
-    setFormat,
     restrictedFilenames,
     setRestrictedFilenames,
 

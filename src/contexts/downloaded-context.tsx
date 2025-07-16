@@ -14,11 +14,16 @@ export interface DownloadedPayload {
   errors: string[]
 }
 
+export const ViewTypes = {list: 'list', grid: 'grid'}
+export type ViewType = typeof ViewTypes[keyof typeof ViewTypes];
+
 interface DownloadedContextType {
   downloadedFiles: DownloadedFileType[]
   fetchDownloadedFiles: () => Promise<void>
   deleteFile: (fileName: string) => Promise<void>
   browserDownloadFile: (fileName: string) => void
+  viewType: ViewType
+  setViewType: (newValue: ViewType) => void
   isLoading: boolean
   error: Error | null
   searchResults: (query: string) => DownloadedFileType[]
@@ -29,6 +34,7 @@ const DownloadedContext = createContext<DownloadedContextType | undefined>(undef
 export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFileType[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [viewType, setViewType] = useState<ViewType>('list')
   const [error, setError] = useState<Error | null>(null)
   const { apiFetch, apiBase } = useApiBase()
 
@@ -104,6 +110,8 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       isLoading,
       error,
       searchResults,
+      viewType,
+      setViewType,
     }}>
       {children}
     </DownloadedContext.Provider>

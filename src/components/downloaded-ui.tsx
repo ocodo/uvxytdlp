@@ -138,6 +138,9 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   selectedFile,
   searchQuery
 }) => {
+
+  // const { viewType } = useDownloaded()
+
   return (
 
     <div className="flex flex-col justify-items" >
