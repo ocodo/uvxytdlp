@@ -9,7 +9,6 @@ import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context
 import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
-import { MDXProvider } from '@mdx-js/react'
 import { AVSettingsProvider } from "@/contexts/video-settings-context-provider"
 import { YoutubeSearchProvider } from "@/contexts/youtube-search-context-provider"
 import ApiBaseProvider from "@/contexts/api-base-context-provider"
@@ -25,7 +24,7 @@ const AppContent = () => {
       <Heading
         title="uvxytdlp-ui"
       />
-      <div className="border sm:rounded-sm bg-card sm:m-4 sm:pt-4 sm:pb-2">
+      <div className="border sm:rounded-sm bg-card sm:m-4 sm:pt-2 sm:pb-2">
         <div className="sm:px-4 grid grid-cols-1 gap-1">
           <>
             <DownloaderUI />
@@ -54,8 +53,6 @@ function App() {
 
     const handleRejection = (event: PromiseRejectionEvent) => {
       console.error("Unhandled promise rejection:", event.reason)
-      // const message = "An unexpected error occurred (promise rejection)" + event.reason
-      // toast.error(message)
     }
 
     window.addEventListener("error", handleError)
@@ -69,21 +66,19 @@ function App() {
 
   return (
     <ThemeProvider>
-      <MDXProvider>
-        <ApiBaseProvider>
-          <DownloadedProvider>
-            <HashUrlProvider>
-              <YoutubeSearchProvider>
-                <YtdlpProvider>
-                  <AVSettingsProvider>
-                    <AppContent />
-                  </AVSettingsProvider>
-                </YtdlpProvider>
-              </YoutubeSearchProvider>
-            </HashUrlProvider>
-          </DownloadedProvider>
-        </ApiBaseProvider>
-      </MDXProvider >
+      <ApiBaseProvider>
+        <DownloadedProvider>
+          <HashUrlProvider>
+            <YoutubeSearchProvider>
+              <YtdlpProvider>
+                <AVSettingsProvider>
+                  <AppContent />
+                </AVSettingsProvider>
+              </YtdlpProvider>
+            </YoutubeSearchProvider>
+          </HashUrlProvider>
+        </DownloadedProvider>
+      </ApiBaseProvider>
     </ThemeProvider >
   )
 }

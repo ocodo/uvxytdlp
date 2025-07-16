@@ -4,7 +4,7 @@ import { VideoPlayer } from "@/components/video-player"
 import { AudioPlayer } from "@/components/audio-player"
 import { DowloadedFile } from "@/components/downloaded-file"
 import { Button } from "@/components/ui/button"
-import { Search, XIcon } from "lucide-react"
+import { XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
@@ -99,7 +99,7 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
     <div className="flex items-center gap-2 w-full">
       <div className="relative w-full">
         <Input
-          className="w-full border-none rounded-none sm:border sm:rounded-full"
+          className="border-none rounded-none md:flex-1 sm:border-foreground/15 sm:rounded-full h-12"
           onChange={(event) => setSearchQuery(event.target.value)}
           placeholder='Downloads...'
           value={searchQuery}
@@ -114,7 +114,6 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
           <XIcon />
         </Button>
       </div>
-      <Search />
     </div>
   )
 }

@@ -18,7 +18,7 @@ export const AudioPlayer:FC<AudioPlayerProps> = ({ fileName }) => {
   const url = `${apiBase}/downloaded/${fileName}`
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-center p-4 border rounded-xl">
+    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 items-center p-4 sm:border sm:rounded-xl">
       {/* Col 1 */}
       <div>
         <Img
