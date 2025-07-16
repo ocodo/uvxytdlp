@@ -23,7 +23,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     <div key={file.name}
       className="flex flex-row items-end justify-between
                  even:bg-background/10 odd:bg-background/80
-                 align-bottom border-b py-3">
+                 align-bottom border-b py-3 sm:py-1">
       <div className="px-3 py-2 truncate sm:whitespace-normal">
         {file.name}
       </div>
