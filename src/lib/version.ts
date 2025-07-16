@@ -1,1 +1,1 @@
-export const VERSION = "moonbeam-explosion"
+export const VERSION = "icecream-infiltrator"
