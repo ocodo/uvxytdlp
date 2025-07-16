@@ -27,7 +27,7 @@ export const YoutubeSearchUI: FC = () => {
             placeholder="YouTube..."
             aria-label="YouTube search query"
             onChange={(event: React.ChangeEvent) => debouncedSearch(event.currentTarget)}
-            className="border-none rounded-none md:flex-1 transition-all sm:border-foreground/15 sm:rounded-full h-12"
+            className="border-none rounded-none md:flex-1 sm:border-foreground/15 sm:rounded-full h-12"
           />
           <Button
             className="cursor-pointer hover:bg-card/10 transition-color duration-500

@@ -101,7 +101,7 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
         <Input
           className="w-full border-none rounded-none sm:border sm:rounded-full"
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder='Downloaded content...'
+          placeholder='Downloads...'
           value={searchQuery}
         />
         <Button
