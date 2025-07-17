@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
-import { ClipboardCopyIcon } from 'lucide-react'
+import { ClipboardCopyIcon, ExternalLink } from 'lucide-react'
 
 interface HasTitle {
   title: string
@@ -11,9 +11,10 @@ interface HasTitle {
 
 export const YtdlpSupportedSites: React.FC<HasTitle> = ({ title }) => (
   <a
+  className='flex flex-row'
     href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
     target='_blank'
-  >{title}</a>
+  >{title} <ExternalLink className='w-4 h-4' /></a>
 )
 
 export const BookmarkletSettingsView: React.FC = () => {
@@ -39,7 +40,7 @@ export const BookmarkletSettingsView: React.FC = () => {
   if (!bookmarkletUrl) return null
 
   return (
-    <Card>
+    <Card className="max-w-[92%]">
       <CardContent className='max-[500px] overflow-hidden grid grid-col-auto gap-2'>
         <div className="text-sm">copy/drag to a new bookmark for instant download from <YtdlpSupportedSites title="any yt-dlp compatible site" /></div>
         <div className='relative'>

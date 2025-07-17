@@ -1,13 +1,30 @@
+import { OcodoLoaderIcon } from "@/components/ocodo-loader-icon";
 import { StatusDisplay } from "@/components/status-display";
+import { UvxYtdlpIcon } from "@/components/uvxytdlp-icon";
 import type { FC } from "react";
 
-export const ConnectingStatusDisplay: FC<{ error: string | null }> = ({ error }) => (
-  <StatusDisplay className="animate-pulse">
-    <svg className="mx-auto h-12 w-12 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <h2 className="text-xl font-semibold mt-4">Connecting to apiserver...</h2>
-    {error && <p className="text-orange-400 mt-2 text-sm">{error.replace('API service not reachable.', 'Searching for API...')}</p>}
-    <p className="mt-4 text-xs text-foreground/70">Please wait while the application attempts to locate the apiserver.</p>
-  </StatusDisplay>
-)
+interface ConnectingStatusProps {
+  error?: string | null;
+  ready?: boolean;
+  onDone?: () => void;
+}
+
+export const ConnectingStatusView: FC<ConnectingStatusProps> = ({ error, onDone, ready }) => {
+  return (
+    <StatusDisplay>
+      <div className=" flex flex-col justify-center items-center gap-6">
+        <h2 className="text-3xl tracking-tighter font-semibold mt-4">uvxytdlp</h2>
+        {ready &&
+          <UvxYtdlpIcon onDone={onDone} doneDelay={1000} size={240} strokeWidth={6} />
+        }
+        {!ready &&
+          <div><OcodoLoaderIcon className="w-20 h-20 animate-spin" /></div>
+        }
+        {error
+          ? <p className="text-orange-400 mt-2 text-sm">{error.replace('API service not reachable.', 'Searching for API...')}</p>
+          : <p className="mt-4 text-xs text-foreground/70">connecting...</p>
+        }
+      </div>
+    </StatusDisplay>
+  )
+}

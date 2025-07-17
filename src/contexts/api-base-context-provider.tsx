@@ -1,5 +1,5 @@
 import { BackendConnectionFailed } from '@/components/backend-connection-failed';
-import { ConnectingStatusDisplay } from '@/components/connecting-status-display';
+import { ConnectingStatusView } from '@/components/connecting-status-display';
 import { ApiBaseContext } from '@/contexts/api-base-context';
 import { createApiFetch } from '@/lib/api-fetch';
 import React, {
@@ -78,6 +78,7 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
   const [apiBase, setApiBase] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [logoWait, setLogoWait] = useState<boolean>(true)
 
   const initializeApiBase = useCallback(async () => {
     setLoading(true);
@@ -121,9 +122,9 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
     apiFetch,
   };
 
-  if (loading) {
+  if (loading || logoWait) {
     return (
-      <ConnectingStatusDisplay error={error} />
+      <ConnectingStatusView ready={!!apiBase} onDone={() => setLogoWait(false)} error={error} />
     );
   }
 

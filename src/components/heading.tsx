@@ -3,7 +3,8 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { SettingsDialog } from '@/components/settings-dialog'
 import { cn } from '@/lib/utils'
 import type React from 'react'
-import type { FC } from 'react'
+import { type FC } from 'react'
+import { UvxYtdlpIcon } from '@/components/uvxytdlp-icon'
 
 interface HeadingProps {
   title?: string
@@ -27,15 +28,19 @@ export const Heading: FC<HeadingProps> = ({ topLine, topLineClassName }) => {
           {topLine}
         </div>
       )}
-      <header className="flex items-stretch justify-between p-2">
+      <div className="flex items-stretch justify-between p-2">
         <SettingsDialog>
           <div className="p-2 hover:bg-accent cursor-pointer rounded-lg">
             <Menu className="h-4 w-4" />
           </div>
         </SettingsDialog>
-        <div className="font-black text-foreground text-3xl tracking-tighter">uvx ytdlp ui</div>
+        <div className='flex flex-row gap-4 items-end'>
+          <UvxYtdlpIcon size={29} strokeWidth={0.5} />
+          <div className="font-black text-foreground text-3xl tracking-tighter">uvxytdlp</div>
+        </div>
         <ThemeSwitch className="mr-2" />
-      </header>
+      </div>
     </div>
   )
 }
+

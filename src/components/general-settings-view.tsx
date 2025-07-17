@@ -25,49 +25,49 @@ export const GeneralSettingsView: FC = () => {
     useAVSettingsContext();
 
   return (
-    <Card>
+    <Card className="max-w-[92%]">
       <CardHeader>
         <CardTitle>General Settings</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-2">
-            <SwitchState
-              label="Video AutoPlay"
-              state={videoAutoPlay}
-              setState={setVideoAutoPlay}
-            />
-            <SwitchState
-              label="Audio AutoPlay"
-              state={audioAutoPlay}
-              setState={setAudioAutoPlay}
-            />
-            <SwitchState
-              label="Restrict filenames"
-              state={restrictedFilenames}
-              setState={setRestrictedFilenames}
-            />
+      <CardContent className="flex flex-col gap-4">
 
-            <SelectState
-              label={`Video Format`}
-              choices={VideoFormats}
-              state={videoFormat}
-              setState={setVideoFormat}
-            />
-            <SelectState
-              label={`Audio Format`}
-              choices={AudioFormats}
-              state={audioFormat}
-              setState={setAudioFormat}
-            />
-            <SelectState
-              label={`Download View`}
-              choices={ViewTypes}
-              state={viewType}
-              setState={setViewType}
-            />
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+          <SwitchState
+            label="Video AutoPlay"
+            state={videoAutoPlay}
+            setState={setVideoAutoPlay}
+          />
+          <SwitchState
+            label="Audio AutoPlay"
+            state={audioAutoPlay}
+            setState={setAudioAutoPlay}
+          />
+          <SwitchState
+            label="Basic filenames"
+            state={restrictedFilenames}
+            setState={setRestrictedFilenames}
+          />
+
+          <SelectState
+            label={`Video Format`}
+            choices={VideoFormats}
+            state={videoFormat}
+            setState={setVideoFormat}
+          />
+          <SelectState
+            label={`Audio Format`}
+            choices={AudioFormats}
+            state={audioFormat}
+            setState={setAudioFormat}
+          />
+          <SelectState
+            label={`Download View`}
+            choices={ViewTypes}
+            state={viewType}
+            setState={setViewType}
+          />
         </div>
+
       </CardContent>
     </Card>
   );

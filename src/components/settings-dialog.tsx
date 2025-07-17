@@ -13,10 +13,10 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({children}) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className='p-4' >
         <Description style={{display:'none'}}>Settings</Description>
         <DialogTitle style={{display:'none'}}>App Settings</DialogTitle>
-        <div className="flex w-full max-w-sm flex-col gap-6">
+        <div className=''>
           <SettingsTabs />
         </div>
       </DialogContent>

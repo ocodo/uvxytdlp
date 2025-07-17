@@ -20,21 +20,19 @@ export const CookiesSettingsView: FC = () => {
   }
 
   return (
-    <Card>
+    <Card className="max-w-[85%]">
       <CardHeader>
         <CardTitle>Cookies Settings</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-4">
-          <Label>YouTube Cookies</Label>
-          <Textarea
-            rows={5}
-            className="text-sm font-mono"
-            placeholder="Paste Youtube Browser Cookies. Used when YouTube won't allow anonymous access."
-            defaultValue={youtubeCookies}
-            onBlur={updateOnChange}
-          />
-        </div>
+      <CardContent className="flex flex-col gap-4 max-h-[30vh]">
+        <Label>YouTube Cookies</Label>
+        <Textarea
+          rows={5}
+          className="text-sm font-mono max-w-[75vw]"
+          placeholder="Paste Youtube Browser Cookies. Used when YouTube won't allow anonymous access."
+          defaultValue={youtubeCookies}
+          onBlur={updateOnChange}
+        />
       </CardContent>
     </Card>
   )
