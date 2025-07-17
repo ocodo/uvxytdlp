@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useApiBase } from '@/contexts/api-base-context'
+import { useLocalStorage } from '@/hooks/use-local-storage'
 import { useThrottle } from '@/hooks/use-throttle '
 import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
 
@@ -34,7 +35,7 @@ const DownloadedContext = createContext<DownloadedContextType | undefined>(undef
 export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFileType[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [viewType, setViewType] = useState<ViewType>('list')
+  const [viewType, setViewType] = useLocalStorage<ViewType>('downloadedContentViewType','list')
   const [error, setError] = useState<Error | null>(null)
   const { apiFetch, apiBase } = useApiBase()
 

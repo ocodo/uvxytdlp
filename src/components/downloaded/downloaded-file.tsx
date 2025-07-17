@@ -34,12 +34,12 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
           style={{ stroke: '#fff', strokeWidth: 0.5}}
           className="w-28 h-28 opacity-30 hover:opacity-40 cursor-pointer" />
       </div>
-      <div>
+      <div className="rounded-t-xl rounded-b-none w-full h-[230px] bg-black flex flex-row items-center justify-center">
         <Img
-          className="h-[15em] bg-background/20 rounded-xl"
+          className="rounded-t-xl rounded-b-none h-[230px]"
           src={`${apiBase}/thumbnail/${file.name}`}
           unloader={<UvxYtdlpIcon
-            className='opacity-30 cursor-pointer'
+            className='opacity-30 cursor-pointer w-full'
             size={201}
             strokeWidth={6}
             totalDuration={100}
@@ -83,7 +83,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
            even:bg-background/10 odd:bg-background/80
            align-bottom border-b py-3 sm:py-1`
 
-  const gridClasses = `grid grid-cols-1 gap-3`
+  const gridClasses = `grid grid-cols-1 gap-3 rounded-xl shadow-2xl bg-card`
   const isGrid = viewType == 'grid'
   const isList = viewType == 'list'
 

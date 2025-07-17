@@ -20,6 +20,7 @@ export const GeneralSettingsView: FC = () => {
   } = useYtdlpContext();
 
   const { viewType, setViewType } = useDownloaded();
+
   let gridView = viewType == 'grid'
   const setGridView = (newValue: boolean) => {
     if (newValue) {
