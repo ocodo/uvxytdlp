@@ -1,5 +1,5 @@
-import { BackendConnectionFailed } from '@/components/backend-connection-failed';
-import { ConnectingStatusView } from '@/components/connecting-status-display';
+import { BackendConnectionFailed } from '@/components/ocodo-ui/backend-connection-failed';
+import { ConnectingStatusView } from '@/components/ocodo-ui/connecting-status-display';
 import { ApiBaseContext } from '@/contexts/api-base-context';
 import { createApiFetch } from '@/lib/api-fetch';
 import React, {

@@ -1,4 +1,4 @@
-import { ToggleStateButton } from "@/components/toggle-state-button";
+import { ToggleStateButton } from "@/components/ocodo-ui/toggle-state-button";
 import { SeekBar } from "@/components/ui/seek-bar";
 import { cn } from "@/lib/utils";
 import { FastForward, PauseIcon, PlayIcon, Rewind } from "lucide-react";

@@ -13,6 +13,7 @@ import { useApiBase } from '@/contexts/api-base-context'
 import { useHashUrl } from '@/contexts/hashurl-context'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { YtdlpContext } from '@/contexts/ytdlp-context'
+import { toast } from 'sonner'
 
 interface YtdlpProviderProps {
   children: ReactNode
@@ -89,6 +90,7 @@ export const YtdlpProvider: React.FC<YtdlpProviderProps> = ({ children }) => {
       if (!isUrlValid(downloadUrl)) {
         const invalidUrlMessage = `Invalid YouTube URL provided: ${downloadUrl}`
         console.log(invalidUrlMessage)
+        toast(invalidUrlMessage)
         setLog(invalidUrlMessage)
         return
       }

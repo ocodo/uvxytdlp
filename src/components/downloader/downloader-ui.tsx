@@ -1,8 +1,8 @@
 import { XCircleIcon } from "lucide-react";
-import { Presto } from "@/components/presto";
-import { DownloaderInput } from "@/components/downloader-input";
+import { Presto } from "@/components/ocodo-ui/presto";
+import { DownloaderInput } from "@/components/downloader/downloader-input";
 import { Button } from "@/components/ui/button";
-import { IndeterminateProgress } from "./indeterminate-progress";
+import { IndeterminateProgress } from "../ocodo-ui/indeterminate-progress";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
 import { Progress } from "@/components/ui/progress";
 

@@ -1,9 +1,9 @@
-import { YtdlpSupportedSites } from "@/components/bookmarklet-settings-view";
-import { RadixIconsGithubLogo } from "@/components/radix-icons-github-logo";
+import { YtdlpSupportedSites } from "@/components/settings-ui/bookmarklet-settings-view";
+import { RadixIconsGithubLogo } from "@/components/ocodo-ui/radix-icons-github-logo";
 import { CopyleftIcon } from "lucide-react";
 import { VERSION } from '@/lib/version';
 import type { FC } from "react";
-import { UvxYtdlpIcon } from "@/components/uvxytdlp-icon";
+import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 
 export const AboutUvxYtdlp: FC = () => (
   <>

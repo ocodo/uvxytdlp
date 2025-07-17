@@ -1,4 +1,4 @@
-import { StatusDisplay } from "@/components/status-display";
+import { StatusDisplay } from "@/components/ocodo-ui/status-display";
 import type { FC } from "react";
 
 interface BackendConnectionFailedProps {

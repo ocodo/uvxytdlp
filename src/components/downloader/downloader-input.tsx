@@ -2,8 +2,8 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { isUrlValid } from '@/lib/is-url-valid'
-import { OcodoLoaderIcon } from '@/components/ocodo-loader-icon'
-import { YoutubeSearchUI } from '@/components/youtube-search-ui'
+import { OcodoLoaderIcon } from '@/components/ocodo-ui/ocodo-loader-icon'
+import { YoutubeSearchUI } from '@/components/downloader/youtube-search-ui'
 import { HeadphonesIcon, VideoIcon } from 'lucide-react'
 import { useYtdlpContext } from '@/contexts/ytdlp-context'
 import type { FC } from "react"
@@ -19,7 +19,6 @@ export const DownloaderInput: FC = () => {
     isLoading,
     startDownload,
   } = useYtdlpContext()
-
 
   const startVideoDownload = () => {
     setFormat(videoFormat)
@@ -44,23 +43,28 @@ export const DownloaderInput: FC = () => {
           autoFocus
           value={inputUrl}
         />
-        {isUrlValid(inputUrl) && (
+        {isUrlValid(inputUrl) && isLoading && (
           <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex flex-row items-center gap-x-2 text-primary-foreground">
             <Button
-              onClick={() => !isLoading && startVideoDownload()}
+              disabled={true}
+              className={`w-42 h-12 cursor-wait rounded-full transition-colors duration-1000`}>
+              <OcodoLoaderIcon className="animate-spin" spinnerWidth={10} />
+            </Button>
+          </div>
+        )}
+        {isUrlValid(inputUrl) && !isLoading && (
+          <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex flex-row items-center gap-x-2 text-primary-foreground">
+            <Button
+              onClick={() => startVideoDownload()}
               aria-label="Download Video"
-              className={`w-20 h-12 rounded-full transition-colors duration-1000 ${isLoading ? "bg-primary/20" : ""}`}>
-              {isLoading
-                ? <OcodoLoaderIcon className="h-6 w-6 animate-spin" />
-                : <VideoIcon className="h-6 w-6" />}
+              className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
+              <VideoIcon className="h-6 w-6" />
             </Button>
             <Button
-              onClick={() => !isLoading && startAudioDownload()}
+              onClick={() => startAudioDownload()}
               aria-label="Download Audio"
-              className={`w-20 h-12 rounded-full transition-colors duration-1000 ${isLoading ? "bg-primary/20" : ""}`}>
-              {isLoading
-                ? <OcodoLoaderIcon className="h-6 w-6 animate-spin" />
-                : <HeadphonesIcon className="h-6 w-6" />}
+              className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
+              <HeadphonesIcon className="h-6 w-6" />
             </Button>
           </div>
         )}

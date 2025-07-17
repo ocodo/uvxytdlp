@@ -7,7 +7,7 @@ import { CopyIcon, HeadphonesIcon, VideoIcon } from "lucide-react";
 import { useState, type FC, type RefObject } from "react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
-import { Icon } from "@/components/icon"
+import { Icon } from "@/components/ocodo-ui/icon"
 interface YoutubeSearchResultRowType {
   id: string
   title: string

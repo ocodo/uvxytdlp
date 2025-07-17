@@ -1,5 +1,7 @@
+import { ThemeContext } from "@/contexts/theme-context";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, type FC } from "react";
+import { useContext, useEffect, useRef, type FC } from "react";
+
 
 interface UvxYtdlpIconProps {
   size?: number;
@@ -24,7 +26,10 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const { theme } = useContext(ThemeContext)
+
   useEffect(() => {
+    const isDark = () => theme == 'dark'
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -35,7 +40,6 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     const dpr = window.devicePixelRatio || 1;
 
     const canvasSize = size;
-
     const half = size / 2;
     const oneThird = (size / 3);
     const twoThirds = oneThird * 2;
@@ -61,6 +65,7 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     ];
 
     const start = performance.now();
+    const strokeColor = () => isDark() ? "#000" : '#FFF';
 
     const draw = (now: number) => {
       const elapsed = now - start;
@@ -102,7 +107,7 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
           ctx.fill();
         } else if (step.type === "stroke") {
           ctx.globalCompositeOperation = "source-over";
-          ctx.strokeStyle = "#000";
+          ctx.strokeStyle = strokeColor();
           ctx.lineWidth = strokeWidth;
           ctx.beginPath();
           ctx.arc(step.x, step.y, adjustedR, 0, Math.PI * 2);
@@ -122,7 +127,7 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     }
 
     requestAnimationFrame(draw);
-  }, [size, fadeDuration, totalDuration, strokeWidth, colors, onDone, doneDelay]);
+  }, [theme, size, fadeDuration, totalDuration, strokeWidth, colors, onDone, doneDelay]);
 
   return (
     <canvas

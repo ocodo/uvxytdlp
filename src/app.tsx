@@ -1,8 +1,8 @@
 import { useEffect } from "react"
-import { DownloadedUI } from "@/components/downloaded-ui"
-import { DownloaderUI } from "@/components/downloader-ui"
-import { Heading } from "@/components/heading"
-import { ThemeProvider } from "@/components/theme-provider"
+import { DownloadedUI } from "@/components/downloaded/downloaded-ui"
+import { DownloaderUI } from "@/components/downloader/downloader-ui"
+import { Heading } from "@/components/ocodo-ui/heading"
+import { ThemeProvider } from "@/contexts/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { useApiBase } from '@/contexts/api-base-context'
 import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context"

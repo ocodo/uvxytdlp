@@ -1,6 +1,6 @@
-import { OcodoLoaderIcon } from "@/components/ocodo-loader-icon";
-import { StatusDisplay } from "@/components/status-display";
-import { UvxYtdlpIcon } from "@/components/uvxytdlp-icon";
+import { OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon";
+import { StatusDisplay } from "@/components/ocodo-ui/status-display";
+import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import type { FC } from "react";
 
 interface ConnectingStatusProps {

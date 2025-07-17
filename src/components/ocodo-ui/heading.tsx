@@ -1,10 +1,10 @@
 import { Menu } from 'lucide-react'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { SettingsDialog } from '@/components/settings-dialog'
+import { ThemeSwitch } from '@/components/theme-switch/theme-switch'
+import { SettingsDialog } from '@/components/settings-ui/settings-dialog'
 import { cn } from '@/lib/utils'
 import type React from 'react'
 import { type FC } from 'react'
-import { UvxYtdlpIcon } from '@/components/uvxytdlp-icon'
+import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon'
 
 interface HeadingProps {
   title?: string

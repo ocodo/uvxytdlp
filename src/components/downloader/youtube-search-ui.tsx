@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input"
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import React, { useRef, type FC } from "react"
 import { debounce } from "@/lib/debounce"
-import { YoutubeSearchResultBox } from "@/components/youtube-search-result-box"
+import { YoutubeSearchResultBox } from "@/components/downloader/youtube-search-result-box"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 

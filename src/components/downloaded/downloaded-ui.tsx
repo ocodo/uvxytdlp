@@ -1,8 +1,8 @@
 import { type FC, useState } from "react"
 import { useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-context"
-import { VideoPlayer } from "@/components/video-player"
-import { AudioPlayer } from "@/components/audio-player"
-import { DowloadedFile } from "@/components/downloaded-file"
+import { VideoPlayer } from "@/components/downloaded/video-player"
+import { AudioPlayer } from "@/components/downloaded/audio-player"
+import { DowloadedFile } from "@/components/downloaded/downloaded-file"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -139,11 +139,12 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   searchQuery
 }) => {
 
-  // const { viewType } = useDownloaded()
-
+  const { viewType } = useDownloaded()
+  const listClasses = "flex flex-col justify-items"
+  const gridClasses = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
   return (
 
-    <div className="flex flex-col justify-items" >
+    <div className={viewType == 'grid' ? gridClasses : listClasses} >
       {
         searchResults(searchQuery).map((file) => (
           <DowloadedFile

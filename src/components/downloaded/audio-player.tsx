@@ -1,9 +1,9 @@
 import { Img } from 'react-image';
 import { useApiBase } from "@/contexts/api-base-context"
-import { CustomAudioPlayer } from '@/components/custom-audio-component';
+import { CustomAudioPlayer } from '@/components/ocodo-ui/custom-audio-component';
 import { useAVSettingsContext } from '@/contexts/video-settings-context';
 import type { FC } from 'react';
-import { UvxYtdlpIcon } from '@/components/uvxytdlp-icon';
+import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon';
 
 interface AudioPlayerProps {
   fileName: string;

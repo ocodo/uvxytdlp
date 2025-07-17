@@ -1,9 +1,9 @@
-import { AboutUvxYtdlp } from "@/components/about-uvxytdlp"
-import { BookmarkletSettingsView } from "@/components/bookmarklet-settings-view"
-import { CookiesSettingsView } from "@/components/cookies-settings-view"
-import { GeneralSettingsView } from "@/components/general-settings-view"
+import { AboutUvxYtdlp } from "@/components/settings-ui/about-uvxytdlp"
+import { BookmarkletSettingsView } from "@/components/settings-ui/bookmarklet-settings-view"
+import { CookiesSettingsView } from "@/components/settings-ui/cookies-settings-view"
+import { GeneralSettingsView } from "@/components/settings-ui/general-settings-view"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { UvxYtdlpIcon } from "@/components/uvxytdlp-icon"
+import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
 
 export const SettingsTabs: React.FC = () => {
   return (

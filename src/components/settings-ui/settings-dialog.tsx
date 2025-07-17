@@ -1,5 +1,5 @@
 import type React from 'react'
-import { SettingsTabs } from '@/components/settings-tabs'
+import { SettingsTabs } from '@/components/settings-ui/settings-tabs'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Description } from '@radix-ui/react-dialog'
 
