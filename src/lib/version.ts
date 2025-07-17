@@ -1,1 +1,1 @@
-export const VERSION = "icecream-infiltrator"
+export const VERSION = "tangerine-chromakey"
