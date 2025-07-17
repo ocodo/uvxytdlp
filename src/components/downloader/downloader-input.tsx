@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { isUrlValid } from '@/lib/is-url-valid'
@@ -6,29 +5,17 @@ import { OcodoLoaderIcon } from '@/components/ocodo-ui/ocodo-loader-icon'
 import { YoutubeSearchUI } from '@/components/downloader/youtube-search-ui'
 import { HeadphonesIcon, VideoIcon } from 'lucide-react'
 import { useYtdlpContext } from '@/contexts/ytdlp-context'
-import type { FC } from "react"
-
+import { type FC } from "react"
 
 export const DownloaderInput: FC = () => {
   const {
-    setFormat,
-    audioFormat,
-    videoFormat,
     inputUrl,
     setInputUrl,
     isLoading,
+    audioFormat,
+    videoFormat,
     startDownload,
   } = useYtdlpContext()
-
-  const startVideoDownload = () => {
-    setFormat(videoFormat)
-    startDownload()
-  }
-
-  const startAudioDownload = () => {
-    setFormat(audioFormat)
-    startDownload()
-  }
 
   return (
     <>
@@ -55,13 +42,13 @@ export const DownloaderInput: FC = () => {
         {isUrlValid(inputUrl) && !isLoading && (
           <div className="ml-0 mt-2 md:mt-0 md:ml-2 flex flex-row items-center gap-x-2 text-primary-foreground">
             <Button
-              onClick={() => startVideoDownload()}
+              onClick={() => startDownload(inputUrl, videoFormat)}
               aria-label="Download Video"
               className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
               <VideoIcon className="h-6 w-6" />
             </Button>
             <Button
-              onClick={() => startAudioDownload()}
+              onClick={() => startDownload(inputUrl, audioFormat)}
               aria-label="Download Audio"
               className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
               <HeadphonesIcon className="h-6 w-6" />

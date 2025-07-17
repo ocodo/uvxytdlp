@@ -26,22 +26,26 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { viewType } = useDownloaded()
 
   const image = (
-    <div className="flex flex-col justify-center items-center relative">
-      <div className="absolute opacity-0 hover:opacity-40">
+    <div
+      className="flex flex-col justify-center items-center relative"
+      onClick={() => handlePlay(file.name)}>
+      <div className="absolute rounded-full bg-foreground/20">
         <PlayCircleIcon
-          style={{ stroke: '#fff', fill: '#FFF' }}
-          className="w-20 h-20" />
+          style={{ stroke: '#fff', strokeWidth: 0.5}}
+          className="w-28 h-28 opacity-30 hover:opacity-40 cursor-pointer" />
       </div>
-      <Img
-        className="h-[15em] bg-background/20 rounded-xl"
-        src={`${apiBase}/thumbnail/${file.name}`}
-        unloader={<UvxYtdlpIcon
-          className='opacity-[30%]'
-          size={201}
-          strokeWidth={6}
-          totalDuration={100}
-          fadeDuration={200} />}
-      />
+      <div>
+        <Img
+          className="h-[15em] bg-background/20 rounded-xl"
+          src={`${apiBase}/thumbnail/${file.name}`}
+          unloader={<UvxYtdlpIcon
+            className='opacity-30 cursor-pointer'
+            size={201}
+            strokeWidth={6}
+            totalDuration={100}
+            fadeDuration={200} />}
+        />
+      </div>
     </div>
   )
 

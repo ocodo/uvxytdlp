@@ -15,7 +15,7 @@ export const ConnectingStatusView: FC<ConnectingStatusProps> = ({ error, onDone,
       <div className=" flex flex-col justify-center items-center gap-6">
         <h2 className="text-3xl tracking-tighter font-semibold mt-4">uvxytdlp</h2>
         {ready &&
-          <UvxYtdlpIcon onDone={onDone} doneDelay={1000} size={240} strokeWidth={6} />
+          <UvxYtdlpIcon onDone={onDone} doneDelay={200} size={240} strokeWidth={6} />
         }
         {!ready &&
           <div><OcodoLoaderIcon className="w-20 h-20 animate-spin" /></div>
