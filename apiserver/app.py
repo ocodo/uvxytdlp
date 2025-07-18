@@ -389,7 +389,7 @@ def read_ytcookies():
 @app.get("/ytsearch/{query}")
 def search_youtube(query: str):
     """Search youtube return results"""
-    return YoutubeSearch(query, max_results=10).to_dict()
+    return YoutubeSearch(query, max_results=16).to_dict()
 
 
 class Cookies(BaseModel):
