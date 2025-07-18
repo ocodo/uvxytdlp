@@ -70,7 +70,7 @@ export const DownloadedUI: FC = () => {
             {contentType() === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
-        <div className="sm:p-2 border-t mt-2 flex flex-row items-center justify-between">
+        <div className="flex flex-row items-center justify-between">
           <SearchDownloaded
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

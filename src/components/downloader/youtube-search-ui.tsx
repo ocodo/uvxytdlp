@@ -15,16 +15,16 @@ export const YoutubeSearchUI: FC = () => {
     setQuery(value)
   }, 200)
 
-  const searchInput = useRef<HTMLInputElement>(undefined)
+  const searchInput = useRef<HTMLInputElement | undefined>(undefined)
 
   return (
     <>
       <div className="flex items-center gap-2">
         <div className="relative w-full">
           <Input
-            ref={searchInput}
+            ref={searchInput as React.RefObject<HTMLInputElement>}
             type='text'
-            placeholder="YouTube..."
+            placeholder="YouTube Search..."
             aria-label="YouTube search query"
             onChange={(event: React.ChangeEvent) => debouncedSearch(event.currentTarget)}
             className="border-none rounded-none md:flex-1 sm:border-foreground/15 sm:rounded-full h-12"

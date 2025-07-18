@@ -68,7 +68,7 @@ export const CustomAudioPlayer: FC = () => {
         </div>
         <SeekBar
           value={currentTime}
-          max={duration}
+          duration={duration}
           onChange={(e) => {
             const newTime = parseFloat(e.target.value)
             setCurrentTime(newTime)

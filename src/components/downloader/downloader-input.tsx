@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { isUrlValid } from '@/lib/is-url-valid'
 import { OcodoLoaderIcon } from '@/components/ocodo-ui/ocodo-loader-icon'
-import { YoutubeSearchUI } from '@/components/downloader/youtube-search-ui'
 import { HeadphonesIcon, VideoIcon } from 'lucide-react'
 import { useYtdlpContext } from '@/contexts/ytdlp-context'
 import { type FC } from "react"
@@ -56,7 +55,6 @@ export const DownloaderInput: FC = () => {
           </div>
         )}
       </div>
-      <YoutubeSearchUI />
     </>
   )
 }

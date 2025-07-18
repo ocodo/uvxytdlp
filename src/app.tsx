@@ -13,6 +13,7 @@ import { AVSettingsProvider } from "@/contexts/video-settings-context-provider"
 import { YoutubeSearchProvider } from "@/contexts/youtube-search-context-provider"
 import ApiBaseProvider from "@/contexts/api-base-context-provider"
 import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
+import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 
 const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
@@ -29,6 +30,7 @@ const AppContent = () => {
         <div className="sm:px-4 grid grid-cols-1 gap-1">
           <>
             <DownloaderUI />
+            <YoutubeSearchUI />
             {
               Array.isArray(downloadedFiles) && downloadedFiles.length > 0
               &&
