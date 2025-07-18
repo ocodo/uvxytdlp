@@ -19,18 +19,6 @@ export const GeneralSettingsView: FC = () => {
   } = useYtdlpContext();
 
   const { viewType, setViewType } = useDownloaded();
-
-  /*   let gridView = viewType == 'grid'
-    const setGridView = (newValue: boolean) => {
-      if (newValue) {
-        setViewType('grid')
-        gridView = true
-      } else {
-        setViewType('list')
-        gridView = false
-      }
-    } */
-
   const { setVideoAutoPlay, videoAutoPlay } = useVideoPlayerContext();
   const { setAudioAutoPlay, audioAutoPlay } = useAudioPlayerContext();
 
@@ -40,7 +28,6 @@ export const GeneralSettingsView: FC = () => {
         <CardTitle>General Settings</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-
         <div className="grid grid-cols-2 gap-4">
           <SelectState
             layout="row"
@@ -79,7 +66,6 @@ export const GeneralSettingsView: FC = () => {
             setState={setAudioFormat}
           />
         </div>
-
       </CardContent>
     </Card>
   );
