@@ -98,11 +98,16 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
   )
 
   return (
-    <div className="cursor-pointer bg-background rounded-xl shadow-2xl relative flex flex-col overflow-clip"
-      onClick={(e) => {
+    <div className="cursor-pointer bg-background rounded-xl shadow-xl hover:shadow-2xl relative flex flex-col overflow-clip"
+      onMouseEnter={(e) => {
         e.stopPropagation()
         e.preventDefault()
-        setShowControls(!showControls)
+        setShowControls(true)
+      }}
+      onMouseLeave={(e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        setShowControls(false)
       }}
     >
 
