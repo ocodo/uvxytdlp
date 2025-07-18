@@ -7,53 +7,51 @@ interface SelectStateProps {
   choices: Record<string, string>;
   setState: (newValue: string) => void;
   className?: string;
-  layout: 'row' | 'column'
+  layout: 'row' | 'column';
 }
 
-export const SelectState: FC<SelectStateProps> = ({ ...props }) => {
+export const SelectState: FC<SelectStateProps> = ({
+  label,
+  state,
+  choices,
+  setState,
+  className,
+  layout
+}) => {
 
-  const asRow = (
-    <>
-      <div className={cn("flex flex-col items-start justify-between gap-2", props.className)}>
-        <div className="text-sm font-light">{props.label}</div>
-      </div>
-      <div className="flex flex-row items-start justify-start gap-2">
-        {Object.keys(props.choices).map((choice: string) => (
-          <div
-            className={cn(
-              `p-1 px-3 text-xs rounded-2xl cursor-pointer`,
-              `${props.state === choice
-                ? 'bg-primary'
-                : 'bg-background'}`)}
-            onClick={() => props.setState(choice)}
-          >
-            {choice}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-
-  const asCol = (
-    <div className={cn("flex flex-col items-start justify-between gap-2", props.className)}>
-      <div className="text-sm font-light">{props.label}</div>
-      <div className="flex flex-row items-center justify-between gap-2">
-        {Object.keys(props.choices).map((choice: string) => (
-          <div
-            className={cn(
-              `p-1 px-3 text-xs rounded-2xl cursor-pointer`,
-              `${props.state === choice
-                ? 'bg-primary'
-                : 'bg-background'}`)}
-            onClick={() => props.setState(choice)}
-          >
-            {choice}
-          </div>
-        ))}
-      </div>
+  const renderChoices = () => (
+    <div className="flex flex-row items-center justify-start gap-2">
+      {Object.keys(choices).map((choice) => (
+        <div
+          key={choice}
+          className={cn(
+            "p-1 px-3 text-xs rounded-2xl cursor-pointer",
+            state === choice ? "bg-primary" : "bg-background"
+          )}
+          onClick={() => setState(choice)}
+        >
+          {choice}
+        </div>
+      ))}
     </div>
   );
 
-  return { row: asRow, column: asCol }[props.layout]
+  if (layout === 'row') {
+    return (
+      <>
+        <div className={cn("flex flex-col items-start justify-between gap-2", className)}>
+          <div className="text-sm font-light">{label}</div>
+        </div>
+        {renderChoices()}
+      </>
+    );
+  }
 
+  // 'column' layout
+  return (
+    <div className={cn("flex flex-col items-start justify-between gap-2", className)}>
+      <div className="text-sm font-light">{label}</div>
+      {renderChoices()}
+    </div>
+  );
 };
