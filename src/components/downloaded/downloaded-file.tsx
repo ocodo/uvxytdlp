@@ -25,7 +25,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
-  const image = (
+  const image = () => (
     <div
       className="flex flex-col justify-center items-center relative gap-1 bg-background rounded-t-xl"
       onClick={() => handlePlay(file.name)}>
@@ -40,8 +40,8 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
           src={`${apiBase}/thumbnail/${file.name}`}
           unloader={
             <UvxYtdlpIcon
-              className="mb-3"
-              size={180}
+              className="mb-[1.4em]"
+              size={170}
               fadeDuration={500}
               totalDuration={1000}
               colors={["#6337", "#3632", "#3364"]}
@@ -52,19 +52,19 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const playButton = (
+  const playButton = () => (
     <PlayIcon
       className="h-4 w-4 cursor-pointer"
       onClick={() => handlePlay(file.name)} />
   )
 
-  const downloadButton = (
+  const downloadButton = () => (
     <DownloadIcon
       className="h-4 w-4 cursor-pointer"
       onClick={() => handleDownload(file.name)} />
   )
 
-  const deleteButton = (
+  const deleteButton = () => (
     <LongPressButton
       onLongPress={() => handleDelete(file.name)}
       longPressDuration={700}
@@ -97,14 +97,14 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
 
   return (
     <div className={isList ? listClasses : gridClasses}>
-      {isGrid && image}
+      {isGrid && image()}
       <div
         className={isList ? listNameClasses : gridNameClasses}>
         {file.name}
       </div>
       <div
         className={isList ? listButtonClasses : gridButtonClasses}>
-        {playButton}{downloadButton}{deleteButton}
+        {playButton()}{downloadButton()}{deleteButton()}
       </div>
     </div>
   )

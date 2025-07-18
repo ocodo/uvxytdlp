@@ -79,9 +79,9 @@ export const CustomAudioPlayer: FC = () => {
           }}
           />
       {/* TODO: */}
-        <div className="flex justify-between text-sm text-muted-foreground mt-2">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
           <span>{formatTime(0)}</span>
-          <span>{formatTime(currentTime)}</span>
+          <span className="text-xl">{formatTime(currentTime)}</span>
           <span>{'-' + formatTime(duration - currentTime)}</span>
         </div>
       </div>
