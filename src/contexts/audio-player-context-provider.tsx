@@ -30,7 +30,7 @@ interface AudioPlayerProviderProps {
   children: ReactNode;
 }
 
-const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
+export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -41,11 +41,11 @@ const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const audioElement = audioRef?.current;
-    if (audioAutoPlay && audioElement && src) {
+    if (audioAutoPlay && audioElement && src && !isPlaying) {
       audioElement.play();
       setIsPlaying(true)
     }
-  }, [audioAutoPlay, audioRef, src])
+  }, [audioAutoPlay, audioRef, src, isPlaying])
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -134,7 +134,6 @@ const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
     }
   };
 
-
   return (
     <AudioPlayerContext.Provider value={{
       audioElement: audioRef.current,
@@ -157,7 +156,7 @@ const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
       setAudioAutoPlay,
     }}>
       <audio
-        ref={audioRef}
+        ref={audioRef as React.RefObject<HTMLAudioElement>}
         src={src}
         autoPlay={audioAutoPlay}
       />
@@ -166,7 +165,8 @@ const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
   );
 };
 
-const useAudioPlayerContext = () => {
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAudioPlayerContext = () => {
   const context = useContext(AudioPlayerContext);
   if (!context) {
     throw new Error('useAudio must be used within an AudioProvider');
@@ -174,5 +174,3 @@ const useAudioPlayerContext = () => {
   return context;
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { AudioPlayerProvider, useAudioPlayerContext };

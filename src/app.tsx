@@ -9,11 +9,12 @@ import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context
 import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
-import { AVSettingsProvider } from "@/contexts/video-settings-context-provider"
+import { CookiesSettingsProvider } from "@/contexts/cookie-settings-context-provider"
 import { YoutubeSearchProvider } from "@/contexts/youtube-search-context-provider"
 import ApiBaseProvider from "@/contexts/api-base-context-provider"
 import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
 import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
+import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
 
 const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
@@ -71,17 +72,19 @@ function App() {
     <ThemeProvider>
       <ApiBaseProvider>
         <AudioPlayerProvider>
-          <DownloadedProvider>
-            <HashUrlProvider>
-              <YoutubeSearchProvider>
-                <YtdlpProvider>
-                  <AVSettingsProvider>
-                    <AppContent />
-                  </AVSettingsProvider>
-                </YtdlpProvider>
-              </YoutubeSearchProvider>
-            </HashUrlProvider>
-          </DownloadedProvider>
+          <VideoPlayerProvider>
+            <DownloadedProvider>
+              <HashUrlProvider>
+                <YoutubeSearchProvider>
+                  <YtdlpProvider>
+                    <CookiesSettingsProvider>
+                      <AppContent />
+                    </CookiesSettingsProvider>
+                  </YtdlpProvider>
+                </YoutubeSearchProvider>
+              </HashUrlProvider>
+            </DownloadedProvider>
+          </VideoPlayerProvider>
         </AudioPlayerProvider>
       </ApiBaseProvider>
     </ThemeProvider >

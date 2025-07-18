@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useAVSettingsContext } from "@/contexts/video-settings-context";
+import { useCookieSettingsContext } from "@/contexts/cookie-settings-context";
 import type { FC, FocusEvent } from "react";
 
 export const CookiesSettingsView: FC = () => {
@@ -9,7 +9,7 @@ export const CookiesSettingsView: FC = () => {
   const {
     youtubeCookies,
     setYoutubeCookies,
-  } = useAVSettingsContext()
+  } = useCookieSettingsContext()
 
   const updateOnChange = (event: FocusEvent) => {
     event.preventDefault()

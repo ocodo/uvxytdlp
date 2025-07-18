@@ -1,18 +1,15 @@
 import { useApiBase } from '@/contexts/api-base-context';
-import { AVSettingsContext } from '@/contexts/video-settings-context';
+import { CookieSettingsContext } from '@/contexts/cookie-settings-context';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-export type AVSettingsContextType = {
-  videoAutoPlay: boolean;
-  setVideoAutoPlay: (newValue: boolean) => void;
+export type CookeSettingsProviderValue = {
   youtubeCookies: string;
   setYoutubeCookies: (newValue: string) => void;
 };
 
-export const AVSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [videoAutoPlay, setVideoAutoPlay] = useLocalStorage<boolean>('video_auto_play', true);
+export const CookiesSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [youtubeCookies, setYoutubeCookies] = useLocalStorage<string>('youtube-cookies', "");
 
   const [
@@ -77,15 +74,13 @@ export const AVSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   ])
 
   const value = {
-    videoAutoPlay,
-    setVideoAutoPlay,
     youtubeCookies,
     setYoutubeCookies
   }
 
   return (
-    <AVSettingsContext.Provider value={value}>
+    <CookieSettingsContext.Provider value={value}>
       {children}
-    </AVSettingsContext.Provider>
+    </CookieSettingsContext.Provider>
   );
 };

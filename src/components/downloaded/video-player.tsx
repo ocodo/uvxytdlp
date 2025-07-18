@@ -1,7 +1,6 @@
 import { useApiBase } from "@/contexts/api-base-context"
-import { useAVSettingsContext } from "@/contexts/video-settings-context"
-import { useEffect, useRef, useState } from "react"
-
+import { useVideoPlayerContext } from "@/contexts/video-player-context-provider"
+import { useEffect, useRef, useState, type RefObject } from "react"
 
 interface VideoPlayerProps {
   fileName: string
@@ -14,7 +13,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(undefined)
   const title = fileToTitle(fileName)
   const { apiBase } = useApiBase()
-  const { videoAutoPlay } = useAVSettingsContext()
+  const { videoAutoPlay } = useVideoPlayerContext()
 
   const url = `${apiBase}/downloaded/${fileName}`
 
@@ -65,7 +64,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
       {!isPlaying && <div className="z-1 absolute top-0 left-0 w-full text-sm p-2 bg-card/80">{title}</div>}
       <video
         key={url}
-        ref={videoRef}
+        ref={videoRef as RefObject<HTMLVideoElement>}
         className="w-full aspect-video"
         playsInline
         controls
