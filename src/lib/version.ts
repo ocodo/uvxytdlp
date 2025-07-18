@@ -1,1 +1,1 @@
-export const VERSION = "glowing-cupcakes"
+export const VERSION = "bubblegum-astrolabe"
