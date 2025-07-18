@@ -8,8 +8,8 @@ import { GripIcon, MenuIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
 
-const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
-  if (!fileName) return null
+const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
+  if (!fileName) return undefined
   const extension = fileName.split('.').pop()?.toLowerCase()
   if (['mp3', 'm4a', 'aac'].includes(extension ?? '')) {
     return 'audio'
@@ -19,15 +19,15 @@ const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
 
 export const DownloadedUI: FC = () => {
   const { deleteFile, searchResults, browserDownloadFile } = useDownloaded()
-  const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<string | undefined>(undefined)
+  const [isDeleting, setIsDeleting] = useState<string | undefined>(undefined)
   const [searchQuery, setSearchQuery] = useState('')
-  const { audioStop: audioStop } = useAudioPlayerContext()
+  const { audioStop } = useAudioPlayerContext()
 
   const handlePlay = (fileName: string) => {
-    setSelectedFile('')
+    setSelectedFile(undefined)
     audioStop()
-    setTimeout(() => setSelectedFile(fileName), 100)
+    setTimeout(() => setSelectedFile(fileName), 500)
   }
 
   const handleDelete = async (fileName: string) => {
@@ -35,12 +35,12 @@ export const DownloadedUI: FC = () => {
     try {
       await deleteFile(fileName)
       if (selectedFile === fileName) {
-        setSelectedFile(null)
+        setSelectedFile(undefined)
       }
     } catch (error) {
       console.error("Error during delete operation in UI:", error)
     } finally {
-      setIsDeleting(null)
+      setIsDeleting(undefined)
     }
   }
 
@@ -59,7 +59,10 @@ export const DownloadedUI: FC = () => {
               <Button
                 variant={'ghost'}
                 size={'icon'}
-                onClick={() => setSelectedFile(null)}>
+                onClick={() => {
+                  setSelectedFile(undefined)
+                  audioStop()
+                }}>
                 <XIcon />
               </Button>
             </div>
@@ -139,8 +142,8 @@ interface DownloadedFilteredBySearchProps {
   handleDelete: (fileName: string) => void
   handleDownload: (fileName: string) => void
   handlePlay: (fileName: string) => void
-  isDeleting: string | null
-  selectedFile: string | null
+  isDeleting: string | undefined
+  selectedFile: string | undefined
 }
 
 const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({

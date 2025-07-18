@@ -28,7 +28,7 @@ export const HashUrlProvider: React.FC<{ children: ReactNode }> = ({ children })
         const url = new URL(decodedUrl)
         if (url.protocol === 'http:' || url.protocol === 'https:') {
           setHashUrl(decodedUrl)
-          window.history.replaceState(null, '', window.location.pathname + window.location.search)
+          window.history.replaceState(undefined, '', window.location.pathname + window.location.search)
         } else {
           setHashUrl("")
         }

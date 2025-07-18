@@ -2,7 +2,7 @@ import { StatusDisplay } from "@/components/ocodo-ui/status-display";
 import type { FC } from "react";
 
 interface BackendConnectionFailedProps {
-  error: string | null
+  error: string | undefined
   initializeApiBase: () => Promise<void>
 }
 

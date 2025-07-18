@@ -56,13 +56,13 @@ export function Presto({
   highlightLogs = false,
   scrollOnFilter = false
 }: PrestoProps) {
-  const preRef = useRef<HTMLDivElement>(null)
+  const preRef = useRef<HTMLDivElement>(undefined)
   const [showButton, setShowButton] = useState(false)
   const [autoScroll, setAutoScroll] = useState(true)
   const [filterText, setFilterText] = useState("")
-  const [filterRegex, setFilterRegex] = useState<RegExp | null>(null)
-  const [regexError, setRegexError] = useState<string | null>(null)
-  const [firstMatchIndex, setFirstMatchIndex] = useState<number | null>(null)
+  const [filterRegex, setFilterRegex] = useState<RegExp | undefined>(undefined)
+  const [regexError, setRegexError] = useState<string | undefined>(undefined)
+  const [firstMatchIndex, setFirstMatchIndex] = useState<number | undefined>(undefined)
 
   const isDarkMode = document.documentElement.classList.contains('dark')
   const textLines = text.split("\n").filter(line => line.trim() !== "")
@@ -102,14 +102,14 @@ export function Presto({
         const pattern = val.slice(1)
         const regex = new RegExp(pattern, "i")
         setFilterRegex(regex)
-        setRegexError(null)
+        setRegexError(undefined)
       } catch {
-        setFilterRegex(null)
+        setFilterRegex(undefined)
         setRegexError("Invalid regex")
       }
     } else {
-      setFilterRegex(null)
-      setRegexError(null)
+      setFilterRegex(undefined)
+      setRegexError(undefined)
     }
   }
 
@@ -132,7 +132,7 @@ export function Presto({
   }, [filteredLogs, filterText, filterRegex, textLines, scrollOnFilter])
 
   useEffect(() => {
-    if (scrollOnFilter && firstMatchIndex !== null && preRef.current) {
+    if (scrollOnFilter && firstMatchIndex !== undefined && preRef.current) {
       const firstMatchElement = preRef.current.children[firstMatchIndex] as HTMLElement
       firstMatchElement?.scrollIntoView({ behavior: "smooth", block: "center" })
     }

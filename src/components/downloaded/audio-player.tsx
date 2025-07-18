@@ -21,20 +21,18 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
       const url = `${apiBase}/downloaded/${fileName}`
       setSrc(url)
     }
-
   }, [fileName, apiBase, setSrc])
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 justify-center items-center p-4 sm:border sm:rounded-xl">
-      {/* Col 1 */}
+    <div className={`grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 p-4
+                     justify-center items-center sm:border sm:rounded-xl`}>
       <div className='flex flex-row items-center justify-center'>
         <Img
           className="h-[15em] bg-background/20 rounded-xl"
           src={`${apiBase}/thumbnail/${fileName}`}
           unloader={<UvxYtdlpIcon
-            className='breather'
             size={301}
-            colors={["#707", "#770", "#077"]}
+            colors={["#F0F", "#FF0", "#0FF"]}
             strokeWidth={6}
             totalDuration={10000}
             fadeDuration={3000}

@@ -4,7 +4,7 @@ import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import type { FC } from "react";
 
 interface ConnectingStatusProps {
-  error?: string | null;
+  error?: string | undefined;
   ready?: boolean;
   onDone?: () => void;
 }

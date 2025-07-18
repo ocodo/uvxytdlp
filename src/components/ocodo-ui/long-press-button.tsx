@@ -38,8 +38,8 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
   const [fillPercentage, setFillPercentage] = useState<number>(0);
 
   const isPressingRef = useRef<boolean>(false);
-  const fillAnimationFrameId = useRef<number | null>(null);
-  const drainAnimationFrameId = useRef<number | null>(null);
+  const fillAnimationFrameId = useRef<number | undefined>(undefined);
+  const drainAnimationFrameId = useRef<number | undefined>(undefined);
   const pressStartTime = useRef<number>(0);
   const drainStartTime = useRef<number>(0);
   const initialDrainFill = useRef<number>(0);
@@ -48,9 +48,9 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
 
   const fillAnimation = useCallback((timestamp: DOMHighResTimeStamp) => {
     if (!isPressingRef.current) {
-      if (fillAnimationFrameId.current !== null) {
+      if (fillAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(fillAnimationFrameId.current);
-        fillAnimationFrameId.current = null;
+        fillAnimationFrameId.current = undefined;
       }
       return;
     }
@@ -62,10 +62,10 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     if (newPercentage < 100) {
       fillAnimationFrameId.current = requestAnimationFrame(fillAnimation);
     } else {
-      if (fillAnimationFrameId.current !== null) {
+      if (fillAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(fillAnimationFrameId.current);
       }
-      fillAnimationFrameId.current = null;
+      fillAnimationFrameId.current = undefined;
       setFillPercentage(100);
       onLongPress();
     }
@@ -73,10 +73,10 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
 
   const drainAnimation = useCallback((timestamp: DOMHighResTimeStamp) => {
     if (fillPercentage <= 0) {
-      if (drainAnimationFrameId.current !== null) {
+      if (drainAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(drainAnimationFrameId.current);
       }
-      drainAnimationFrameId.current = null;
+      drainAnimationFrameId.current = undefined;
       return;
     }
 
@@ -88,10 +88,10 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     if (newPercentage > 0) {
       drainAnimationFrameId.current = requestAnimationFrame(drainAnimation);
     } else {
-      if (drainAnimationFrameId.current !== null) {
+      if (drainAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(drainAnimationFrameId.current);
       }
-      drainAnimationFrameId.current = null;
+      drainAnimationFrameId.current = undefined;
       setFillPercentage(0);
     }
   }, [longPressDuration, fillPercentage]);
@@ -105,13 +105,13 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     isPressingRef.current = true;
     pressStartTime.current = performance.now();
 
-    if (fillAnimationFrameId.current !== null) {
+    if (fillAnimationFrameId.current !== undefined) {
       cancelAnimationFrame(fillAnimationFrameId.current);
-      fillAnimationFrameId.current = null;
+      fillAnimationFrameId.current = undefined;
     }
-    if (drainAnimationFrameId.current !== null) {
+    if (drainAnimationFrameId.current !== undefined) {
       cancelAnimationFrame(drainAnimationFrameId.current);
-      drainAnimationFrameId.current = null;
+      drainAnimationFrameId.current = undefined;
     }
 
     setFillPercentage(0);
@@ -124,12 +124,12 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     isPressingRef.current = false;
     if (setPressing) setPressing(false)
 
-    if (fillAnimationFrameId.current !== null) {
+    if (fillAnimationFrameId.current !== undefined) {
       cancelAnimationFrame(fillAnimationFrameId.current);
-      fillAnimationFrameId.current = null;
+      fillAnimationFrameId.current = undefined;
     }
 
-    if (fillPercentage > 0 && fillPercentage < 100 && drainAnimationFrameId.current === null) {
+    if (fillPercentage > 0 && fillPercentage < 100 && drainAnimationFrameId.current === undefined) {
       drainStartTime.current = performance.now();
       initialDrainFill.current = fillPercentage;
       drainAnimationFrameId.current = requestAnimationFrame(drainAnimation);
@@ -147,12 +147,12 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
       isPressingRef.current = false;
       if (setPressing) setPressing(false)
 
-      if (fillAnimationFrameId.current !== null) {
+      if (fillAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(fillAnimationFrameId.current);
-        fillAnimationFrameId.current = null;
+        fillAnimationFrameId.current = undefined;
       }
 
-      if (fillPercentage > 0 && fillPercentage < 100 && drainAnimationFrameId.current === null) {
+      if (fillPercentage > 0 && fillPercentage < 100 && drainAnimationFrameId.current === undefined) {
         drainStartTime.current = performance.now();
         initialDrainFill.current = fillPercentage;
         drainAnimationFrameId.current = requestAnimationFrame(drainAnimation);
@@ -166,10 +166,10 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
 
   useEffect(() => {
     return () => {
-      if (fillAnimationFrameId.current !== null) {
+      if (fillAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(fillAnimationFrameId.current);
       }
-      if (drainAnimationFrameId.current !== null) {
+      if (drainAnimationFrameId.current !== undefined) {
         cancelAnimationFrame(drainAnimationFrameId.current);
       }
     };

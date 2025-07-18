@@ -9,9 +9,9 @@ import { useRef, useCallback, useEffect } from 'react';
  * @returns A throttled version of the callback function.
  */
 export const useThrottle = <T extends (...args: []) => void>(callback: T, delay: number): T => {
-  const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
-  const lastArgs = useRef<[] | null>(null);
-  const lastThis = useRef(null);
+  const throttleTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const lastArgs = useRef<[] | undefined>(undefined);
+  const lastThis = useRef(undefined);
 
   const throttledFunction = useCallback(function(this: never, ...args: []) {
     lastArgs.current = args;
@@ -22,9 +22,9 @@ export const useThrottle = <T extends (...args: []) => void>(callback: T, delay:
       callback.apply(this, args);
       throttleTimeout.current = setTimeout(() => {
         // After the delay, clear the timeout and reset args/this
-        throttleTimeout.current = null;
-        lastArgs.current = null;
-        lastThis.current = null;
+        throttleTimeout.current = undefined;
+        lastArgs.current = undefined;
+        lastThis.current = undefined;
       }, delay);
     }
   }, [callback, delay]);

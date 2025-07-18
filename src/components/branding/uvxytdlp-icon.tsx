@@ -24,7 +24,7 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
   strokeWidth = 2.5,
   colors = ["#FF0000", "#00FF00", "#0000FF"],
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(undefined);
 
   const { theme } = useContext(ThemeContext)
 

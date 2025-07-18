@@ -37,7 +37,7 @@ export const BookmarkletSettingsView: React.FC = () => {
     }
   }
 
-  if (!bookmarkletUrl) return null
+  if (!bookmarkletUrl) return undefined
 
   return (
     <Card className="max-w-[92%]">

@@ -15,7 +15,7 @@ export const YoutubeSearchUI: FC = () => {
     setQuery(value)
   }, 200)
 
-  const searchInput = useRef<HTMLInputElement>(null)
+  const searchInput = useRef<HTMLInputElement>(undefined)
 
   return (
     <>

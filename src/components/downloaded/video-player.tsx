@@ -11,7 +11,7 @@ const fileToTitle = (fileName: string): string => fileName.replace(/\.[^/.]+$/, 
 
 export function VideoPlayer({ fileName }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(undefined)
   const title = fileToTitle(fileName)
   const { apiBase } = useApiBase()
   const { videoAutoPlay } = useAVSettingsContext()

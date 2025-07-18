@@ -16,18 +16,18 @@ const HEALTH_CHECK_PATH = '/health';
 const PROBE_TIMEOUT_MS = 300;
 
 export interface ApiBaseContextType {
-  apiBase: string | null;
+  apiBase: string | undefined;
   loading: boolean;
-  error: string | null;
+  error: string | undefined;
   retryInitialization: () => void;
-  apiFetch: ReturnType<typeof createApiFetch> | null;
+  apiFetch: ReturnType<typeof createApiFetch> | undefined;
 }
 
 interface ApiBaseProviderProps {
   children: ReactNode;
 }
 
-let _cachedApiBase: string | null = null;
+let _cachedApiBase: string | undefined = undefined;
 
 const determineApiBaseUrlInternal = async (): Promise<string> => {
   if (_cachedApiBase) return _cachedApiBase;
@@ -75,16 +75,16 @@ const determineApiBaseUrlInternal = async (): Promise<string> => {
 };
 
 const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
-  const [apiBase, setApiBase] = useState<string | null>(null);
+  const [apiBase, setApiBase] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [logoWait, setLogoWait] = useState<boolean>(true)
 
   const initializeApiBase = useCallback(async () => {
     setLoading(true);
-    setError(null);
-    setApiBase(null);
-    _cachedApiBase = null;
+    setError(undefined);
+    setApiBase(undefined);
+    _cachedApiBase = undefined;
 
     try {
       const base = await determineApiBaseUrlInternal();
@@ -109,7 +109,7 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
 
   const apiFetch = useMemo(() => {
     if (!apiBase) {
-      return null;
+      return undefined;
     }
     return createApiFetch(apiBase);
   }, [apiBase]);

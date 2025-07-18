@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useApiBase } from '@/contexts/api-base-context'
 import { useLocalStorage } from '@/hooks/use-local-storage'
-import { useThrottle } from '@/hooks/use-throttle '
+import { useThrottle } from '@/hooks/use-throttle'
 import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
 
 export interface DownloadedFileType {
@@ -26,7 +26,7 @@ interface DownloadedContextType {
   viewType: ViewType
   setViewType: (newValue: ViewType) => void
   isLoading: boolean
-  error: Error | null
+  error: Error | undefined
   searchResults: (query: string) => DownloadedFileType[]
 }
 
@@ -36,12 +36,12 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFileType[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [viewType, setViewType] = useLocalStorage<ViewType>('downloadedContentViewType','list')
-  const [error, setError] = useState<Error | null>(null)
+  const [error, setError] = useState<Error | undefined>(undefined)
   const { apiFetch, apiBase } = useApiBase()
 
   const fetchDownloadedFiles = useCallback(async () => {
     setIsLoading(true)
-    setError(null)
+    setError(undefined)
     if (apiFetch) {
       try {
         const response = await apiFetch(`/downloaded`)

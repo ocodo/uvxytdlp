@@ -20,7 +20,7 @@ interface YoutubeSearchResultRowType {
 }
 
 interface YoutubeSearchResultRowProps extends YoutubeSearchResultRowType {
-  searchInput: RefObject<HTMLInputElement | null>
+  searchInput: RefObject<HTMLInputElement | undefined>
 }
 
 export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: YoutubeSearchResultRowProps) => {

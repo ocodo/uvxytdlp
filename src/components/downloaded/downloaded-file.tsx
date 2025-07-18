@@ -16,8 +16,8 @@ interface DowloadedFileProps {
   handlePlay: (name: string) => void
   handleDelete: (name: string) => void
   handleDownload: (name: string) => void
-  selectedFile: string | null
-  isDeleting: string | null
+  selectedFile: string | undefined
+  isDeleting: string | undefined
 }
 
 export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {

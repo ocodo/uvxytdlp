@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode, FC, Dispatch, SetStateAction } from 'react';
 
 interface AudioPlayerContextValue {
-  audioElement: HTMLAudioElement | null;
+  audioElement: HTMLAudioElement | undefined;
   audioStop: () => void;
   audioPlay: () => void;
   audioPause: () => void;
@@ -24,14 +24,14 @@ interface AudioPlayerContextValue {
   setAudioAutoPlay: (newValue: boolean) => void;
 }
 
-const AudioPlayerContext = createContext<AudioPlayerContextValue | null>(null);
+const AudioPlayerContext = createContext<AudioPlayerContextValue | undefined>(undefined);
 
 interface AudioPlayerProviderProps {
   children: ReactNode;
 }
 
 const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);

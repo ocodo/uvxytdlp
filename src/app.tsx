@@ -18,7 +18,7 @@ const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
   const { downloadedFiles } = useDownloaded()
   if (loading || error || !apiBase) {
-    return null
+    return undefined
   }
   return (
     <>
