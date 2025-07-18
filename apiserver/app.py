@@ -106,6 +106,8 @@ def extract_filename_from_merger_log(target_line):
     filename = os.path.basename(relative_path)
     return filename
 
+def squeeze_spaces(input_string):
+    return re.sub(r'\s+', ' ', input_string).strip()
 
 def sanitize_filename_group(filename):
     """
@@ -118,7 +120,7 @@ def sanitize_filename_group(filename):
     if filename.endswith(".info.json"):
         base_name = filename[: -len(".info.json")]
 
-    cleaned_base = base_name.replace("#", ".").replace("&", ".")
+    cleaned_base = squeeze_spaces(base_name.replace("#", " ").replace("&", " ").replace("_", " "))
 
     # Scan download_dir for files starting with the same base name
     for f in os.listdir(download_dir):

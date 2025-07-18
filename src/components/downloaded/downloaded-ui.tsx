@@ -144,7 +144,7 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
 
   const { viewType } = useDownloaded()
   const listClasses = "flex flex-col justify-items"
-  const gridClasses = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+  const gridClasses = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
   return (
 
     <div className={viewType == 'grid' ? gridClasses : listClasses} >

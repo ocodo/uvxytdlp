@@ -1,3 +1,4 @@
+import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
 import LongPressButton from "@/components/ocodo-ui/long-press-button"
 import { useApiBase } from "@/contexts/api-base-context"
 import { useDownloaded } from "@/contexts/downloaded-context"
@@ -26,18 +27,26 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
 
   const image = (
     <div
-      className="flex flex-col justify-center items-center relative"
+      className="flex flex-col justify-center items-center relative gap-1 bg-background rounded-t-xl"
       onClick={() => handlePlay(file.name)}>
       <div className="absolute rounded-full bg-foreground/20">
         <PlayCircleIcon
-          style={{ stroke: '#fff', strokeWidth: 0.5}}
-          className="w-28 h-28 opacity-30 hover:opacity-40 cursor-pointer" />
+          style={{ stroke: '#fff', strokeWidth: 0.5 }}
+          className="w-28 h-28 opacity-30 hover:opacity-80 cursor-pointer transition-opacity duration-300" />
       </div>
-      <div className="rounded-t-xl rounded-b-none w-full h-[230px] bg-black flex flex-row items-center justify-center">
+      <div className=" rounded-t-xl overflow-hidden rounded-b-none w-full h-[230px] flex flex-row items-center justify-center">
         <Img
-          className="rounded-t-xl rounded-b-none h-[230px]"
+          className="object-cover"
           src={`${apiBase}/thumbnail/${file.name}`}
-          unloader={<img className="w-50" src="/uvxytdlp-content-thumb-placeholder.png"/>}
+          unloader={
+            <UvxYtdlpIcon
+              className="mb-3"
+              size={180}
+              fadeDuration={500}
+              totalDuration={1000}
+              colors={["#6337", "#3632", "#3364"]}
+            />
+          }
         />
       </div>
     </div>
@@ -77,19 +86,24 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
            even:bg-background/10 odd:bg-background/80
            align-bottom border-b py-3 sm:py-1`
 
-  const gridClasses = `grid grid-cols-1 gap-3 rounded-xl shadow-2xl bg-card`
+  const gridClasses = `grid grid-cols-1 rounded-xl shadow-xl hover:shadow-2xl bg-card`
   const isGrid = viewType == 'grid'
   const isList = viewType == 'list'
+
+  const gridNameClasses = "bg-background pt-2 px-4 truncate sm:whitespace-normal text-sm"
+  const listNameClasses = "px-3 py-2 truncate sm:whitespace-normal"
+  const gridButtonClasses = "flex flex-row bg-background rounded-b-xl items-center justify-center  gap-x-6"
+  const listButtonClasses = "flex flex-row items-center justify-end  gap-x-6"
 
   return (
     <div className={isList ? listClasses : gridClasses}>
       {isGrid && image}
       <div
-        className="px-3 py-2 truncate sm:whitespace-normal">
+        className={isList ? listNameClasses : gridNameClasses}>
         {file.name}
       </div>
       <div
-        className={`flex flex-row items-center justify-end  gap-x-6`}>
+        className={isList ? listButtonClasses : gridButtonClasses}>
         {playButton}{downloadButton}{deleteButton}
       </div>
     </div>

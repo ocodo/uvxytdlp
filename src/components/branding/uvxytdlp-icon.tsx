@@ -11,7 +11,7 @@ interface UvxYtdlpIconProps {
   strokeWidth?: number;
   onDone?: () => void;
   doneDelay?: number;
-  colors?: [string, string, string]; // e.g. green, red, blue
+  colors?: [string, string, string]; // e.g.red, green, blue
 }
 
 export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
