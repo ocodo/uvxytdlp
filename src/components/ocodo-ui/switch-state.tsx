@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import type { FC } from "react";
 
 interface SwitchStateProps {
@@ -14,9 +14,7 @@ export const SwitchState: FC<SwitchStateProps> = ({
   setState,
 }) => (
   <>
-    <div>
-      <Label>{label}</Label>
-    </div>
+    <div className={cn("text-sm font-light")}>{label}</div>
     <div>
       <Switch onClick={() => setState(!state)} checked={state} />
     </div>

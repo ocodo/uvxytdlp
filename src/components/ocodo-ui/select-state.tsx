@@ -7,6 +7,10 @@ interface SelectStateProps {
   choices: Record<string, string>;
   setState: (newValue: string) => void;
   className?: string;
+  labelClasses?: string;
+  choiceButtonClasses?: string;
+  selectedChoiceClassName?: string;
+  unSelectedChoiceClassName?: string;
   layout: 'row' | 'column';
 }
 
@@ -16,6 +20,10 @@ export const SelectState: FC<SelectStateProps> = ({
   choices,
   setState,
   className,
+  labelClasses = "text-sm font-light",
+  choiceButtonClasses,
+  selectedChoiceClassName = "bg-primary",
+  unSelectedChoiceClassName = "bg-background",
   layout
 }) => {
 
@@ -26,7 +34,8 @@ export const SelectState: FC<SelectStateProps> = ({
           key={choice}
           className={cn(
             "p-1 px-3 text-xs rounded-2xl cursor-pointer",
-            state === choice ? "bg-primary" : "bg-background"
+            state === choice ? selectedChoiceClassName : unSelectedChoiceClassName,
+            choiceButtonClasses
           )}
           onClick={() => setState(choice)}
         >
@@ -40,7 +49,7 @@ export const SelectState: FC<SelectStateProps> = ({
     return (
       <>
         <div className={cn("flex flex-col items-start justify-between gap-2", className)}>
-          <div className="text-sm font-light">{label}</div>
+          <div className={labelClasses}>{label}</div>
         </div>
         {renderChoices()}
       </>
@@ -50,7 +59,7 @@ export const SelectState: FC<SelectStateProps> = ({
   // 'column' layout
   return (
     <div className={cn("flex flex-col items-start justify-between gap-2", className)}>
-      <div className="text-sm font-light">{label}</div>
+      <div className={labelClasses}>{label}</div>
       {renderChoices()}
     </div>
   );

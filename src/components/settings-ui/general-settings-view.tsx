@@ -64,16 +64,15 @@ export const GeneralSettingsView: FC = () => {
             state={restrictedFilenames}
             setState={setRestrictedFilenames}
           />
-
           <SelectState
-            layout="column"
+            layout="row"
             label={`Video Format`}
             choices={VideoFormats}
             state={videoFormat}
             setState={setVideoFormat}
             />
           <SelectState
-            layout="column"
+            layout="row"
             label={`Audio Format`}
             choices={AudioFormats}
             state={audioFormat}
