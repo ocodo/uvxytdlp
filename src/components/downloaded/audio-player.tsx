@@ -1,9 +1,9 @@
 import { Img } from 'react-image';
 import { useApiBase } from "@/contexts/api-base-context"
 import { CustomAudioPlayer } from '@/components/ocodo-ui/custom-audio-component';
-import { useAVSettingsContext } from '@/contexts/video-settings-context';
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon';
+import { useAudioPlayerContext } from '@/contexts/audio-player-context-provider';
 
 interface AudioPlayerProps {
   fileName: string;
@@ -14,8 +14,15 @@ const fileToTitle = (fileName: string): string => fileName.replace(/\.[^/.]+$/, 
 export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
   const title = fileToTitle(fileName)
   const { apiBase } = useApiBase()
-  const { audioAutoPlay } = useAVSettingsContext()
-  const url = `${apiBase}/downloaded/${fileName}`
+  const { setSrc } = useAudioPlayerContext()
+
+  useEffect(() => {
+    if (apiBase && fileName) {
+      const url = `${apiBase}/downloaded/${fileName}`
+      setSrc(url)
+    }
+
+  }, [fileName, apiBase, setSrc])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 justify-center items-center p-4 sm:border sm:rounded-xl">
@@ -38,7 +45,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
           <h2 className="">{title}</h2>
         </div>
         <div className="flex items-start">
-          <CustomAudioPlayer src={url} autoPlay={audioAutoPlay} />
+          <CustomAudioPlayer />
         </div>
       </div>
     </div>

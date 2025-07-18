@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
+import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider";
 import { useDownloaded } from "@/contexts/downloaded-context";
 import { useAVSettingsContext } from "@/contexts/video-settings-context";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
@@ -32,8 +33,8 @@ export const GeneralSettingsView: FC = () => {
     }
   }
 
-  const { setVideoAutoPlay, videoAutoPlay, setAudioAutoPlay, audioAutoPlay } =
-    useAVSettingsContext();
+  const { setVideoAutoPlay, videoAutoPlay } = useAVSettingsContext();
+  const { setAudioAutoPlay, audioAutoPlay } = useAudioPlayerContext();
 
   return (
     <Card className="max-w-[92%]">

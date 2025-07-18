@@ -6,6 +6,7 @@ import { DowloadedFile } from "@/components/downloaded/downloaded-file"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
 
 const getFileType = (fileName: string | null): 'video' | 'audio' | null => {
   if (!fileName) return null
@@ -21,9 +22,11 @@ export const DownloadedUI: FC = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const { audioStop: audioStop } = useAudioPlayerContext()
 
   const handlePlay = (fileName: string) => {
     setSelectedFile('')
+    audioStop()
     setTimeout(() => setSelectedFile(fileName), 100)
   }
 
@@ -45,7 +48,8 @@ export const DownloadedUI: FC = () => {
     browserDownloadFile(fileName)
   }
 
-  const selectedFileType = getFileType(selectedFile)
+
+  const contentType = () => getFileType(selectedFile)
 
   return (
     <div className="bg-card sm:pb-2">
@@ -60,8 +64,8 @@ export const DownloadedUI: FC = () => {
                 <XIcon />
               </Button>
             </div>
-            {selectedFileType === 'video' && <VideoPlayer fileName={selectedFile} />}
-            {selectedFileType === 'audio' && <AudioPlayer fileName={selectedFile} />}
+            {contentType() === 'video' && <VideoPlayer fileName={selectedFile} />}
+            {contentType() === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
         <div className="sm:p-2 border-t mt-2 flex flex-row items-center justify-between">

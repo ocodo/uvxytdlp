@@ -7,15 +7,12 @@ import { toast } from 'sonner';
 export type AVSettingsContextType = {
   videoAutoPlay: boolean;
   setVideoAutoPlay: (newValue: boolean) => void;
-  audioAutoPlay: boolean;
-  setAudioAutoPlay: (newValue: boolean) => void;
   youtubeCookies: string;
   setYoutubeCookies: (newValue: string) => void;
 };
 
 export const AVSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [videoAutoPlay, setVideoAutoPlay] = useLocalStorage<boolean>('video_auto_play', true);
-  const [audioAutoPlay, setAudioAutoPlay] = useLocalStorage<boolean>('audio_auto_play', true);
   const [youtubeCookies, setYoutubeCookies] = useLocalStorage<string>('youtube-cookies', "");
 
   const [
@@ -80,8 +77,6 @@ export const AVSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   ])
 
   const value = {
-    audioAutoPlay,
-    setAudioAutoPlay,
     videoAutoPlay,
     setVideoAutoPlay,
     youtubeCookies,

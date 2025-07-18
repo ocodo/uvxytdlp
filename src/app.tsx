@@ -12,6 +12,7 @@ import { HashUrlProvider } from "@/contexts/hashurl-context"
 import { AVSettingsProvider } from "@/contexts/video-settings-context-provider"
 import { YoutubeSearchProvider } from "@/contexts/youtube-search-context-provider"
 import ApiBaseProvider from "@/contexts/api-base-context-provider"
+import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
 
 const AppContent = () => {
   const { apiBase, loading, error } = useApiBase()
@@ -67,17 +68,19 @@ function App() {
   return (
     <ThemeProvider>
       <ApiBaseProvider>
-        <DownloadedProvider>
-          <HashUrlProvider>
-            <YoutubeSearchProvider>
-              <YtdlpProvider>
-                <AVSettingsProvider>
-                  <AppContent />
-                </AVSettingsProvider>
-              </YtdlpProvider>
-            </YoutubeSearchProvider>
-          </HashUrlProvider>
-        </DownloadedProvider>
+        <AudioPlayerProvider>
+          <DownloadedProvider>
+            <HashUrlProvider>
+              <YoutubeSearchProvider>
+                <YtdlpProvider>
+                  <AVSettingsProvider>
+                    <AppContent />
+                  </AVSettingsProvider>
+                </YtdlpProvider>
+              </YoutubeSearchProvider>
+            </HashUrlProvider>
+          </DownloadedProvider>
+        </AudioPlayerProvider>
       </ApiBaseProvider>
     </ThemeProvider >
   )

@@ -1,5 +1,4 @@
 import LongPressButton from "@/components/ocodo-ui/long-press-button"
-import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
 import { useApiBase } from "@/contexts/api-base-context"
 import { useDownloaded } from "@/contexts/downloaded-context"
 import { DownloadIcon, PlayCircleIcon, PlayIcon, Trash2Icon } from "lucide-react"
@@ -38,12 +37,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         <Img
           className="rounded-t-xl rounded-b-none h-[230px]"
           src={`${apiBase}/thumbnail/${file.name}`}
-          unloader={<UvxYtdlpIcon
-            className='opacity-30 cursor-pointer w-full'
-            size={201}
-            strokeWidth={6}
-            totalDuration={100}
-            fadeDuration={200} />}
+          unloader={<img className="w-50" src="/uvxytdlp-content-thumb-placeholder.png"/>}
         />
       </div>
     </div>

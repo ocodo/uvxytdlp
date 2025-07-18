@@ -102,18 +102,18 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-input:focus {
+input:focus:not([type="range"]):not([type="date"]):not([type="datetime-local"]):not([type="month"]):not([type="week"]):not([type="time"]):not([type="number"]):not([type="email"]) {
   outline: none;
   box-shadow: none;
   border: none;
   background-color: var(--background);
 }
 
-input {
+input:not([type="range"]):not([type="date"]):not([type="datetime-local"]):not([type="month"]):not([type="week"]):not([type="time"]):not([type="number"]):not([type="email"]) {
   background-color: var(--card);
   padding-left: 1.5em;
   opacity: 70%;
-  border: 1px solid var(--border)
+  border: none
 }
 
 body {

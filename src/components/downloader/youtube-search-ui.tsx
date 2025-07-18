@@ -1,8 +1,8 @@
+import React, { useRef, type FC } from "react"
 import { Input } from "@/components/ui/input"
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
-import React, { useRef, type FC } from "react"
-import { debounce } from "@/lib/debounce"
 import { YoutubeSearchResultBox } from "@/components/downloader/youtube-search-result-box"
+import { debounce } from "@/lib/debounce"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
@@ -42,18 +42,25 @@ export const YoutubeSearchUI: FC = () => {
             <XIcon />
           </Button>
         </div>
-
       </div>
       {results.length > 0 &&
         (
           <>
-            <div className="text-lg">Select content to download</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-1">
-              {results.map((result) =>
-                <YoutubeSearchResultBox key={result.id} searchInput={searchInput} {...result} />
-              )}
+              {
+                results.map(
+                  (result) =>
+                    <YoutubeSearchResultBox
+                      key={result.id}
+                      searchInput={searchInput}
+                      {...result}
+                    />
+                )
+              }
             </div>
-          </>)}
+          </>
+        )
+      }
     </>
   )
 }

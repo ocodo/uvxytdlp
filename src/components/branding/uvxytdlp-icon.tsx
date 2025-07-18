@@ -127,7 +127,8 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     }
 
     requestAnimationFrame(draw);
-  }, [theme, size, fadeDuration, totalDuration, strokeWidth, colors, onDone, doneDelay]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   return (
     <canvas
