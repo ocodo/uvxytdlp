@@ -4,7 +4,7 @@ import { VideoPlayer } from "@/components/downloaded/video-player"
 import { AudioPlayer } from "@/components/downloaded/audio-player"
 import { DowloadedFile } from "@/components/downloaded/downloaded-file"
 import { Button } from "@/components/ui/button"
-import { XIcon } from "lucide-react"
+import { GripIcon, MenuIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
 
@@ -47,7 +47,6 @@ export const DownloadedUI: FC = () => {
   const handleDownload = (fileName: string) => {
     browserDownloadFile(fileName)
   }
-
 
   const contentType = () => getFileType(selectedFile)
 
@@ -98,6 +97,9 @@ interface SearchDownloadedProps {
 }
 
 const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQuery }) => {
+
+  const { viewType, setViewType } = useDownloaded()
+
   return (
     <div className="flex items-center gap-2 w-full">
       <div className="relative w-full">
@@ -116,6 +118,15 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
           size={'icon'}>
           <XIcon />
         </Button>
+      </div>
+      <div
+        className="hover:bg-foreground/20 cursor-pointer p-2 rounded-full"
+        onClick={() => setViewType(viewType == 'grid' ? 'list' : 'grid')}
+      >
+        {viewType == 'list'
+          ? <MenuIcon />
+          : <GripIcon />
+        }
       </div>
     </div>
   )

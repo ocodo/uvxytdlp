@@ -120,7 +120,13 @@ def sanitize_filename_group(filename):
     if filename.endswith(".info.json"):
         base_name = filename[: -len(".info.json")]
 
-    cleaned_base = squeeze_spaces(base_name.replace("#", " ").replace("&", " ").replace("_", " "))
+    cleaned_base = squeeze_spaces(base_name.
+                                  replace("[", "").
+                                  replace("]", "").
+                                  replace("#", " ").
+                                  replace("&", " ").
+                                  replace("*", " ").
+                                  replace("_", " "))
 
     # Scan download_dir for files starting with the same base name
     for f in os.listdir(download_dir):

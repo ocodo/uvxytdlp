@@ -29,9 +29,33 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
   const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
+
     const isDark = () => theme == 'dark'
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    function getCirclePositions(centerX: number, centerY: number, radius: number) {
+      return Array.from({ length: 3 }, (_, i) => {
+        const angle = -Math.PI / 2 + i * (2 * Math.PI / 3); // 0°, 120°, 240°
+        return {
+          x: centerX + radius * Math.cos(angle),
+          y: centerY + radius * Math.sin(angle),
+        };
+      });
+    }
+
+    const strokeColor = () => isDark() ? "#000" : '#FFF';
+
+    function getSteps(positions: { x: number; y: number }[], colors: string[]) {
+      return [
+        { type: "fill", ...positions[0], color: colors[0] },
+        { type: "fill", ...positions[1], color: colors[1] },
+        { type: "fill", ...positions[2], color: colors[2] },
+        { type: "stroke", ...positions[0], color: strokeColor() },
+        { type: "stroke", ...positions[1], color: strokeColor() },
+        { type: "stroke", ...positions[2], color: strokeColor() },
+      ];
+    }
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -42,7 +66,7 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     const canvasSize = size;
     const half = size / 2;
     const oneThird = (size / 3);
-    const twoThirds = oneThird * 2;
+    const radiusFromCenter = (10 / 6) * (size / 10);
 
     canvas.width = canvasSize * dpr;
     canvas.height = canvasSize * dpr;
@@ -54,18 +78,9 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     const adjustedR = r - strokeWidth / 2;
     const backgroundR = r // TODO: saving for larger frame / fringe
 
-    // animation steps
-    const steps = [
-      { type: "fill", x: half, y: oneThird, color: colors[0] }, // top circle
-      { type: "fill", x: oneThird, y: twoThirds, color: colors[1] }, // bottom-left circle
-      { type: "fill", x: twoThirds, y: twoThirds, color: colors[2] }, // bottom-right circle
-      { type: "stroke", x: half, y: oneThird },
-      { type: "stroke", x: oneThird, y: twoThirds },
-      { type: "stroke", x: twoThirds, y: twoThirds },
-    ];
-
+    const circlePositions = getCirclePositions(half, half, radiusFromCenter);
+    const steps = getSteps(circlePositions, colors);
     const start = performance.now();
-    const strokeColor = () => isDark() ? "#000" : '#FFF';
 
     const draw = (now: number) => {
       const elapsed = now - start;
@@ -75,11 +90,7 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
       ctx.globalAlpha = 0.5;
       ctx.fillStyle = "#000000";
 
-      const bgCircles = [
-        { x: half, y: oneThird },
-        { x: oneThird, y: twoThirds },
-        { x: twoThirds, y: twoThirds },
-      ];
+      const bgCircles = getCirclePositions(half, half, radiusFromCenter);
 
       // background as a black tri-circle
       for (const { x, y } of bgCircles) {
@@ -127,8 +138,8 @@ export const UvxYtdlpIcon: FC<UvxYtdlpIconProps> = ({
     }
 
     requestAnimationFrame(draw);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
 
   return (
     <canvas

@@ -32,11 +32,13 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
           className="h-[15em] bg-background/20 rounded-xl"
           src={`${apiBase}/thumbnail/${fileName}`}
           unloader={<UvxYtdlpIcon
-          className='opacity-[30%]'
+            className='breather'
             size={301}
+            colors={["#707", "#770", "#077"]}
             strokeWidth={6}
             totalDuration={10000}
-            fadeDuration={3000} />}
+            fadeDuration={3000}
+          />}
         />
       </div>
       {/* Col 2 */}

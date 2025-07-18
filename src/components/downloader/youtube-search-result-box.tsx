@@ -46,6 +46,7 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
     startDownload,
     videoFormat,
     audioFormat,
+    format,
     setFormat,
   } = useYtdlpContext()
 
@@ -71,7 +72,7 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
       }
       setResults([])
       setTimeout(() => {
-        toast(`Downloading ${title} / ${url}`)
+        toast(`Downloading ${format} / ${title} / ${url}`)
         startDownload(url)
       }, 500)
     } else {
