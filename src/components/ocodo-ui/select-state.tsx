@@ -56,7 +56,6 @@ export const SelectState: FC<SelectStateProps> = ({
     );
   }
 
-  // 'column' layout
   return (
     <div className={cn("flex flex-col items-start justify-between gap-2", className)}>
       <div className={labelClasses}>{label}</div>
