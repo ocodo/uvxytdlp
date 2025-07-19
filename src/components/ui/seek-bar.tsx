@@ -89,9 +89,8 @@ const SeekBar = React.forwardRef<HTMLInputElement, SeekBarProps>(
         {isHovering && hoverPercent !== null && (
           <div
             className={`absolute -top-6 transform -translate-x-1/2 rounded-full
-                        bg-primary text-foreground border-foreground
-                        border-[1px] text-xs px-2 py-1
-                        pointer-events-none z-20`}
+                        bg-primary text-primary-foreground
+                        text-xs px-2 py-1 pointer-events-none z-20`}
             style={{
               left: `${hoverPercent}%`
             }}
