@@ -78,7 +78,6 @@ export const CustomAudioPlayer: FC = () => {
             }
           }}
           />
-      {/* TODO: */}
         <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
           <span>{formatTime(currentTime)}</span>
           <span className="text-xl">{formatTime(currentTime)}</span>
