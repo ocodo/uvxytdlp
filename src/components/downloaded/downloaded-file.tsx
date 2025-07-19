@@ -1,4 +1,5 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
+import { thinIconStyle } from "@/components/lib/thin-icon-style"
 import LongPressButton from "@/components/ocodo-ui/long-press-button"
 import { useApiBase } from "@/contexts/api-base-context"
 import { useDownloaded } from "@/contexts/downloaded-context"
@@ -25,6 +26,8 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
+  const roundButtonClasses = "rounded-full hover:bg-foreground/20 cursor-pointer p-2 animate-all duration-500"
+
   const image = () => (
     <div
       className="flex flex-col justify-center items-center relative gap-1 bg-background rounded-t-xl"
@@ -35,7 +38,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
                        w-20 h-20 mb-[22px]
                        flex flex-row items-center justify-center`}>
         <PlayIcon
-          style={{ stroke: '#fff', strokeWidth: 1 }}
+          style={{ stroke: '#fff', ...thinIconStyle }}
           className="w-12 h-12 ml-[3px]" />
       </div>
       <div className=" rounded-t-xl overflow-hidden rounded-b-none w-full h-[230px] flex flex-row items-center justify-center">
@@ -57,15 +60,23 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   )
 
   const playButton = () => (
-    <PlayIcon
-      className="h-4 w-4 cursor-pointer"
-      onClick={() => handlePlay(file.name)} />
+    <div className={roundButtonClasses}
+      onClick={() => handlePlay(file.name)} >
+      <PlayIcon
+        className="h-6 w-6 ml-[3px] cursor-pointer"
+        style={thinIconStyle}
+      />
+    </div>
   )
 
   const downloadButton = () => (
-    <DownloadIcon
-      className="h-4 w-4 cursor-pointer"
-      onClick={() => handleDownload(file.name)} />
+    <div className={roundButtonClasses}
+      onClick={() => handleDownload(file.name)} >
+      <DownloadIcon
+        className="h-6 w-6cursor-pointer"
+        style={thinIconStyle}
+      />
+    </div>
   )
 
   const deleteButton = () => (
@@ -73,14 +84,16 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
       onLongPress={() => handleDelete(file.name)}
       longPressDuration={700}
       fillUpColorClass="dark:bg-red-800 bg-red-400"
-      className="cursor-pointer animate-color hover:border-red-500/40 hover:border-1"
-      variant={'ghost'}
-      size={viewType == 'list' ? 'icon' : 'default'}
+      className={`cursor-pointer animate-color hover:border-red-500/40 hover:bg-red-500/20
+                  border-[1pt] border-transparent animate-all duration-500`}
     >
       {isDeleting === file.name ? (
-        <Trash2Icon className="animate-pulse" /> // Optional: visual feedback
+        <Trash2Icon
+          style={thinIconStyle}
+          className="animate-pulse" /> // Optional: visual feedback
       ) : (
-        <Trash2Icon />
+        <Trash2Icon
+          style={thinIconStyle} />
       )}
 
     </LongPressButton>
@@ -96,6 +109,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
 
   const gridNameClasses = "bg-background pt-2 px-4 truncate sm:whitespace-normal text-sm"
   const listNameClasses = "px-3 py-2 truncate sm:whitespace-normal"
+
   const gridButtonClasses = "flex flex-row bg-background rounded-b-xl items-center justify-center gap-x-6 pb-2"
   const listButtonClasses = "flex flex-row items-center justify-end  gap-x-6"
 

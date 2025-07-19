@@ -7,9 +7,8 @@ import {
   type SetStateAction
 } from 'react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 
-interface LongPressButtonProps extends React.ComponentPropsWithoutRef<typeof Button> {
+interface LongPressButtonProps {
   className?: string;
   childrenClassName?: string;
   fillUpColorClass?: string;
@@ -31,8 +30,6 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
   setPressing,
   transformOrigin = 'bottom',
   className,
-  variant,
-  size = 'default',
   ...rest
 }) => {
   const [fillPercentage, setFillPercentage] = useState<number>(0);
@@ -96,11 +93,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     }
   }, [longPressDuration, fillPercentage]);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-
-    if (rest.disabled || ('button' in e && e.button !== 0)) return;
-
+  const handleMouseDown = () => {
     if (setPressing) setPressing(true)
     isPressingRef.current = true;
     pressStartTime.current = performance.now();
@@ -118,9 +111,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
     fillAnimationFrameId.current = requestAnimationFrame(fillAnimation);
   };
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
-    if (rest.disabled) return;
-
+  const handleMouseUp = () => {
     isPressingRef.current = false;
     if (setPressing) setPressing(false)
 
@@ -134,15 +125,9 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
       initialDrainFill.current = fillPercentage;
       drainAnimationFrameId.current = requestAnimationFrame(drainAnimation);
     }
-
-    if (rest.onClick && fillPercentage < 100) {
-      rest.onClick(e as React.MouseEvent<HTMLButtonElement>);
-    }
   };
 
   const handleMouseLeave = () => {
-    if (rest.disabled) return;
-
     if (isPressingRef.current) {
       isPressingRef.current = false;
       if (setPressing) setPressing(false)
@@ -176,13 +161,12 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
   }, []);
 
   return (
-    <Button
+    <div
       className={cn(
-        `relative overflow-hidden group`, // Button itself is relative, creating a stacking context
+        `relative overflow-hidden group rounded-full p-2`, // Button itself is relative, creating a stacking context
         className
       )}
-      variant={variant}
-      size={size}
+
       {...rest}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -192,7 +176,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
       onTouchCancel={handleMouseLeave}
     >
       <div
-        className={`absolute inset-0 ${fillUpColorClass || "bg-red-900"}`}
+        className={`absolute p-2 inset-0 ${fillUpColorClass || "bg-red-900"}`}
         style={{
           transform: `${transformOrigin == 'left' || transformOrigin == 'right' ? 'scaleX' : 'scaleY'}(${fillPercentage / 100})`,
           transformOrigin: transformOrigin,
@@ -208,7 +192,7 @@ const LongPressButton: React.FC<LongPressButtonProps> = ({
       }>
         {children}
       </div>
-    </Button>
+    </div>
   );
 };
 

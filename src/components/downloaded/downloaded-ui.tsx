@@ -12,23 +12,33 @@ import { thinIconStyle } from "@/components/lib/thin-icon-style"
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
   if (!fileName) return undefined
   const extension = fileName.split('.').pop()?.toLowerCase()
-  if (['mp3', 'm4a', 'aac'].includes(extension ?? '')) {
+  if (['mp3', 'm4a'].includes(extension ?? '')) {
     return 'audio'
   }
-  return 'video'
+  if (['mp4', 'mkv'].includes(extension ?? '')) {
+    return 'video'
+  }
+  return undefined
 }
+
+type MediaType = 'video' | 'audio' | undefined
 
 export const DownloadedUI: FC = () => {
   const { deleteFile, searchResults, browserDownloadFile } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | undefined>(undefined)
+  const [mediaType, setMediaType] = useState<MediaType>(undefined)
   const [isDeleting, setIsDeleting] = useState<string | undefined>(undefined)
   const [searchQuery, setSearchQuery] = useState('')
   const { audioStop } = useAudioPlayerContext()
 
   const handlePlay = (fileName: string) => {
-    setSelectedFile(undefined)
-    audioStop()
-    setTimeout(() => setSelectedFile(fileName), 500)
+    setMediaType(() => {
+      setSelectedFile(() => {
+        audioStop()
+        return fileName
+      })
+      return getFileType(fileName)
+  })
   }
 
   const handleDelete = async (fileName: string) => {
@@ -49,8 +59,6 @@ export const DownloadedUI: FC = () => {
     browserDownloadFile(fileName)
   }
 
-  const contentType = () => getFileType(selectedFile)
-
   return (
     <div className="bg-card sm:pb-2">
       <div className="grid grid-cols-1 gap-y-1">
@@ -61,14 +69,16 @@ export const DownloadedUI: FC = () => {
                 variant={'ghost'}
                 size={'icon'}
                 onClick={() => {
-                  setSelectedFile(undefined)
-                  audioStop()
+                  setSelectedFile(() => {
+                    audioStop()
+                    return undefined
+                  })
                 }}>
                 <XIcon />
               </Button>
             </div>
-            {contentType() === 'video' && <VideoPlayer fileName={selectedFile} />}
-            {contentType() === 'audio' && <AudioPlayer fileName={selectedFile} />}
+            {selectedFile && mediaType === 'video' && <VideoPlayer fileName={selectedFile} />}
+            {selectedFile && mediaType === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
         <div className="flex flex-row items-center justify-between">

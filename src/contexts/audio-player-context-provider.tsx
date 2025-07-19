@@ -2,6 +2,7 @@ import { useLocalStorage } from '@/hooks/use-local-storage';
 import { parseTime } from '@/lib/parse-time';
 import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode, FC, Dispatch, SetStateAction } from 'react';
+import { toast } from 'sonner';
 
 interface AudioPlayerContextValue {
   audioElement: HTMLAudioElement | undefined;
@@ -32,20 +33,12 @@ interface AudioPlayerProviderProps {
 
 export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(undefined);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioAutoPlay, setAudioAutoPlay] = useLocalStorage<boolean>('audio_auto_play', true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [src, setSrc] = useState<string | undefined>(undefined);
-  const [audioAutoPlay, setAudioAutoPlay] = useLocalStorage<boolean>('audio_auto_play', true);
-
-  useEffect(() => {
-    const audioElement = audioRef?.current;
-    if (audioAutoPlay && audioElement && src && !isPlaying) {
-      audioElement.play();
-      setIsPlaying(true)
-    }
-  }, [audioAutoPlay, audioRef, src, isPlaying])
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -82,6 +75,8 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
     if (audioRef.current) {
       audioRef.current.play();
       setIsPlaying(true)
+    } else {
+      toast.error(`Unable to connect audio player`)
     }
   };
 
@@ -89,14 +84,17 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
     if (audioRef.current) {
       audioRef.current.pause();
       setIsPlaying(false)
+    } else {
+      toast.error(`Unable to connect audio player`)
     }
   };
 
   const audioStop = () => {
     if (audioRef.current) {
-      audioPause()
       setCurrentTime(0)
-      setIsPlaying(false)
+      audioPause()
+    } else {
+      toast.error(`Unable to connect audio player`)
     }
   };
 
@@ -119,6 +117,8 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
         time += parseTime(amount);
       }
       audioRef.current.currentTime = Math.min(time, audioRef.current.duration);
+    } else {
+      toast.error(`Unable to connect audio player`)
     }
   };
 
@@ -131,6 +131,8 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
         time -= parseTime(amount);
       }
       audioRef.current.currentTime = Math.max(time, 0);
+    } else {
+      toast.error(`Unable to connect audio player`)
     }
   };
 
@@ -156,6 +158,7 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
       setAudioAutoPlay,
     }}>
       <audio
+	id="audio-element"
         ref={audioRef as React.RefObject<HTMLAudioElement>}
         src={src}
         autoPlay={audioAutoPlay}
@@ -173,4 +176,3 @@ export const useAudioPlayerContext = () => {
   }
   return context;
 };
-

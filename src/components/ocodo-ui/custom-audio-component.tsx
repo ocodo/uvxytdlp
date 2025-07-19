@@ -7,12 +7,14 @@ import { type FC } from "react";
 
 export const CustomAudioPlayer: FC = () => {
   const {
+    audioElement,
     isPlaying,
     audioFastForward,
     audioRewind,
     audioPlay: play,
     audioPause: pause,
     currentTime,
+    setProgress,
     setCurrentTime,
     duration,
   } = useAudioPlayerContext()
@@ -70,11 +72,15 @@ export const CustomAudioPlayer: FC = () => {
           onChange={(e) => {
             const newTime = parseFloat(e.target.value)
             setCurrentTime(newTime)
+            setProgress((newTime / duration) * 100)
+            if (audioElement) {
+              audioElement.currentTime = newTime
+            }
           }}
           />
       {/* TODO: */}
         <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
-          <span>{formatTime(0)}</span>
+          <span>{formatTime(currentTime)}</span>
           <span className="text-xl">{formatTime(currentTime)}</span>
           <span>{'-' + formatTime(duration - currentTime)}</span>
         </div>
