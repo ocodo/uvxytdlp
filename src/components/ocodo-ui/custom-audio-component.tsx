@@ -8,12 +8,10 @@ import { type FC } from "react";
 export const CustomAudioPlayer: FC = () => {
   const {
     isPlaying,
-    setProgress,
     audioFastForward,
     audioRewind,
     audioPlay: play,
     audioPause: pause,
-    audioElement,
     currentTime,
     setCurrentTime,
     duration,
@@ -72,10 +70,6 @@ export const CustomAudioPlayer: FC = () => {
           onChange={(e) => {
             const newTime = parseFloat(e.target.value)
             setCurrentTime(newTime)
-            setProgress((newTime / duration) * 100)
-            if (audioElement) {
-              audioElement.currentTime = newTime
-            }
           }}
           />
       {/* TODO: */}

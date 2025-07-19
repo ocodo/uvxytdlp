@@ -48,7 +48,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
               size={170}
               fadeDuration={500}
               totalDuration={1000}
-              colors={["#6337", "#3632", "#3364"]}
+              colors={["#6004", "#0604", "#0064"]}
             />
           }
         />

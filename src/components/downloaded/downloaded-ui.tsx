@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { GripIcon, MenuIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
+import { thinIconStyle } from "@/components/lib/thin-icon-style"
 
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
   if (!fileName) return undefined
@@ -123,12 +124,12 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
         </Button>
       </div>
       <div
-        className="hover:bg-foreground/20 cursor-pointer p-2 rounded-full"
+        className="hover:bg-foreground/20 cursor-pointer p-2 rounded-full transition-all duration-500"
         onClick={() => setViewType(viewType == 'grid' ? 'list' : 'grid')}
       >
         {viewType == 'list'
-          ? <MenuIcon />
-          : <GripIcon />
+          ? <MenuIcon style={thinIconStyle} />
+          : <GripIcon style={thinIconStyle} />
         }
       </div>
     </div>

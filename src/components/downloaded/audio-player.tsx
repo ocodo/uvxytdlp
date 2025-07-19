@@ -32,7 +32,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
           src={`${apiBase}/thumbnail/${fileName}`}
           unloader={<UvxYtdlpIcon
             size={301}
-            colors={["#F0F", "#FF0", "#0FF"]}
+            colors={["#6004", "#0604", "#0064"]}
             strokeWidth={6}
             totalDuration={10000}
             fadeDuration={3000}

@@ -1,10 +1,11 @@
-import { XCircleIcon } from "lucide-react";
+import { LogsIcon, XCircleIcon } from "lucide-react";
 import { Presto } from "@/components/ocodo-ui/presto";
 import { DownloaderInput } from "@/components/downloader/downloader-input";
 import { Button } from "@/components/ui/button";
 import { IndeterminateProgress } from "../ocodo-ui/indeterminate-progress";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
 import { Progress } from "@/components/ui/progress";
+import { thinIconStyle } from "@/components/lib/thin-icon-style";
 
 export function DownloaderUI() {
   const {
@@ -20,14 +21,26 @@ export function DownloaderUI() {
       <DownloaderInput />
       {/* Show indeterminate progress while main download
         / addtional track downloads spin up */}
+
       {isLoading &&
-        <div onClick={(e) => {
-          e.preventDefault()
-          setShowLog(true)
-        }}>
+
+        <div className="flex items-center gap-4">
           {progress <= 1 && (<IndeterminateProgress />)}
           {progress >= 3 && (<Progress value={progress} max={100} />)}
+          <div
+            className="hover:bg-foreground/20 cursor-pointer p-2 rounded-full transition-all duration-500"
+            onClick={(e) => {
+              e.preventDefault()
+              setShowLog(!showLog)
+            }}>
+            {
+              showLog
+                ? <XCircleIcon style={thinIconStyle} />
+                : <LogsIcon style={thinIconStyle} />
+            }
+          </div>
         </div>
+
       }
       {
         showLog && log && (
