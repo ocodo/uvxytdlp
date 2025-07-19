@@ -106,8 +106,10 @@ def extract_filename_from_merger_log(target_line):
     filename = os.path.basename(relative_path)
     return filename
 
+
 def squeeze_spaces(input_string):
     return re.sub(r'\s+', ' ', input_string).strip()
+
 
 def sanitize_filename_group(filename):
     """
@@ -182,7 +184,7 @@ def downloaded_files():
                 errors.append(e)
 
     # Sort by newest first
-    files.sort(key=lambda f: f["ctime"], reverse=True)
+    files.sort(key=lambda f: f["mtime"], reverse=True)
     return files, errors
 
 
@@ -459,6 +461,7 @@ async def download_via_ytdlp(url: str, args: str):
         + ["--write-info-json"]
         + ["--progress-delta=0.05"]
         + ["--progress-template", f"{get_ytdlp_progress_template()}"]
+        + ["--no-mtime"]
         + parsed_args
         + [f"{url}"]
     )

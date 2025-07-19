@@ -1,3 +1,3 @@
 # TODO
 
-- use info.json, description, thumbnail... 
+- trim / clip / chapter / markers... fast, non destructive, to allow excerpt extraction

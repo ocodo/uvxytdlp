@@ -27,7 +27,7 @@ const AppContent = () => {
       <Heading
         title="uvxytdlp-ui"
       />
-      <div className="border sm:rounded-sm bg-card sm:m-4 sm:pt-2 sm:pb-2">
+      <div className="border rounded-none sm:rounded-lg bg-card sm:m-4 sm:pt-2 sm:pb-2">
         <div className="sm:px-4 grid grid-cols-1 gap-1">
           <>
             <DownloaderUI />
