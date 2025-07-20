@@ -3,6 +3,8 @@ import { useApiBase } from '@/contexts/api-base-context'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { useThrottle } from '@/hooks/use-throttle'
 import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
+import { normalizeUnicodeText as tr } from 'normalize-unicode-text'
+import { smallCapsToAscii } from '@/lib/smallcaps-to-ascii'
 
 export interface DownloadedFileType {
   name: string
@@ -15,7 +17,7 @@ export interface DownloadedPayload {
   errors: string[]
 }
 
-export const ViewTypes = {list: 'list', grid: 'grid'}
+export const ViewTypes = { list: 'list', grid: 'grid' }
 export type ViewType = typeof ViewTypes[keyof typeof ViewTypes];
 
 interface DownloadedContextType {
@@ -35,7 +37,7 @@ const DownloadedContext = createContext<DownloadedContextType | undefined>(undef
 export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [downloadedFiles, setDownloadedFiles] = useState<DownloadedFileType[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [viewType, setViewType] = useLocalStorage<ViewType>('downloadedContentViewType','list')
+  const [viewType, setViewType] = useLocalStorage<ViewType>('downloadedContentViewType', 'list')
   const [error, setError] = useState<Error | undefined>(undefined)
   const { apiFetch, apiBase } = useApiBase()
 
@@ -68,18 +70,22 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const throttledFetchDownloadedFiles = useThrottle(fetchDownloadedFiles, 1000)
 
   const searchResults = (query: string) => {
-    const lowerCaseQuery = query.toLowerCase().trim()
-    if (!lowerCaseQuery) {
+
+    const normalizedQuery = tr(query.trim())
+    if (!normalizedQuery) {
       // sort by mtime descending if no query
       return [...downloadedFiles].sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime())
     }
 
-    const queryWords = lowerCaseQuery.split(/\s+/).filter(Boolean)
+    const queryWords = normalizedQuery.split(/\s+/).filter(Boolean)
 
     return downloadedFiles
       .map(file => {
-        const lowerCaseName = file.name.toLowerCase()
-        const score = queryWords.reduce((acc, word) => (lowerCaseName.includes(word) ? acc + 1 : acc), 0)
+        const normalizedName = smallCapsToAscii(tr(file.name)
+          .toLocaleLowerCase()
+          .replace(/\s/g, ''))
+          console.log(normalizedName)
+        const score = queryWords.reduce((acc: number, word: string) => (normalizedName.includes(word) ? acc + 1 : acc), 0)
         return { file, score }
       })
       .filter(item => item.score > 0)
