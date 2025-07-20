@@ -1,3 +1,4 @@
+import { thinIconStyle } from "@/lib/icon-style";
 import { cn } from "@/lib/utils";
 import { type LucideProps } from "lucide-react";
 import type { FC } from "react";
@@ -18,6 +19,6 @@ export const Icon: FC<IconProps> = ({
       className
     )}
   >
-    <Icon {...props} style={{ strokeWidth: 1 }} />
+    <Icon {...props} style={thinIconStyle} />
   </div>
 )

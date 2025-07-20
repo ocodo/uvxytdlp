@@ -22,7 +22,7 @@ export const SelectState: FC<SelectStateProps> = ({
   className,
   labelClasses = "text-sm font-light",
   choiceButtonClasses,
-  selectedChoiceClassName = "bg-primary text-white",
+  selectedChoiceClassName = "bg-primary text-primary-foreground",
   unSelectedChoiceClassName = "bg-background",
   layout
 }) => {

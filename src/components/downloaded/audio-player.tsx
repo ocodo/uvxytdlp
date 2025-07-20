@@ -13,6 +13,7 @@ const fileToTitle = (fileName: string): string => fileName.replace(/\.[^/.]+$/, 
 
 export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
   const title = fileToTitle(fileName)
+  const ext = fileName.replace(`${title}.`,'')
   const { apiBase } = useApiBase()
   const { setSrc } = useAudioPlayerContext()
 
@@ -24,7 +25,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
   }, [fileName, apiBase, setSrc])
 
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 p-4
+    <div className={`select-none grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 p-4
                      justify-center items-center sm:border sm:rounded-xl`}>
       <div className='flex flex-row items-center justify-center'>
         <Img
@@ -42,10 +43,11 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
       {/* Col 2 */}
       <div className="grid grid-rows-[1fr_auto] h-full gap-4">
         <div className="flex items-end">
-          <h2 className="">{title}</h2>
-        </div>
-        <div className="flex items-start">
           <CustomAudioPlayer />
+        </div>
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="italic">{title}</h2>
+          <div className="rounded-full bg-primary text-primary-foreground text-xs px-2 p-1">{ext}</div>
         </div>
       </div>
     </div>

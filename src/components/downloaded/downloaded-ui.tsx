@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { GripIcon, MenuIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
-import { thinIconStyle } from "@/components/lib/thin-icon-style"
+import { controlIconClassName, thinIconStyle } from "@/lib/icon-style"
+import { Icon } from "@/components/ocodo-ui/icon"
 
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
   if (!fileName) return undefined
@@ -38,7 +39,7 @@ export const DownloadedUI: FC = () => {
         return fileName
       })
       return getFileType(fileName)
-  })
+    })
   }
 
   const handleDelete = async (fileName: string) => {
@@ -64,18 +65,16 @@ export const DownloadedUI: FC = () => {
       <div className="grid grid-cols-1 gap-y-1">
         {selectedFile && (
           <div className="my-4 relative">
-            <div className="absolute z-10 top-1 right-1 opacity-50 hover:opacity-80">
-              <Button
-                variant={'ghost'}
-                size={'icon'}
+            <div className="absolute z-10 top-2 right-2">
+              <Icon
+                Icon={XIcon}
+                className={controlIconClassName}
                 onClick={() => {
                   setSelectedFile(() => {
                     audioStop()
                     return undefined
                   })
-                }}>
-                <XIcon />
-              </Button>
+                }} />
             </div>
             {selectedFile && mediaType === 'video' && <VideoPlayer fileName={selectedFile} />}
             {selectedFile && mediaType === 'audio' && <AudioPlayer fileName={selectedFile} />}

@@ -4,9 +4,9 @@ import { isUrlValid } from "@/lib/is-url-valid"
 import { CopyIcon, HeadphonesIcon, VideoIcon } from "lucide-react";
 import { useState, type FC, type RefObject } from "react"
 import { toast } from "sonner"
-import { cn } from "@/lib/utils"
 import { Icon } from "@/components/ocodo-ui/icon"
 import { Img } from "react-image"
+import { controlIconClassName } from "@/lib/icon-style";
 interface YoutubeSearchResultRowType {
   id: string
   title: string
@@ -92,11 +92,6 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
     }
   }
 
-  const controlIconClassName = cn(
-    "hover:bg-accent/20",
-    "p-1 rounded-full",
-  )
-
   return (
     <div className="cursor-pointer bg-background rounded-xl shadow-xl hover:shadow-2xl relative flex flex-col overflow-clip"
       onMouseEnter={(e) => {
@@ -113,7 +108,7 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
 
       <Img src={thumbnails} className="object-cover" />
       {showControls &&
-        <div className="bg-background/30 rounded-full hover:bg-background/80 absolute p-2 top-4 right-4 flex gap-2">
+        <div className="bg-background/50 rounded-full hover:bg-background/80 absolute p-2 top-4 right-4 flex gap-2">
           <Icon
             onClick={downloadVideo}
             Icon={VideoIcon}

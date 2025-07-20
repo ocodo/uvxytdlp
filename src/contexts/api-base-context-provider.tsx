@@ -122,7 +122,7 @@ const ApiBaseProvider: React.FC<ApiBaseProviderProps> = ({ children }) => {
     apiFetch,
   };
 
-  if (loading || logoWait) {
+  if (logoWait || loading) {
     return (
       <ConnectingStatusView ready={!!apiBase} onDone={() => setLogoWait(false)} error={error} />
     );

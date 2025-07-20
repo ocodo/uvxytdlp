@@ -4,7 +4,7 @@ import { DownloaderInput } from "@/components/downloader/downloader-input";
 import { IndeterminateProgress } from "../ocodo-ui/indeterminate-progress";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
 import { Progress } from "@/components/ui/progress";
-import { thinIconStyle } from "@/components/lib/thin-icon-style";
+import { thinIconStyle } from "@/lib/icon-style";
 
 export function DownloaderUI() {
   const {

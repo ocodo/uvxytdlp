@@ -1,5 +1,5 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
-import { thinIconStyle } from "@/components/lib/thin-icon-style"
+import { thinIconStyle } from "@/lib/icon-style"
 import LongPressButton from "@/components/ocodo-ui/long-press-button"
 import { useApiBase } from "@/contexts/api-base-context"
 import { useDownloaded } from "@/contexts/downloaded-context"

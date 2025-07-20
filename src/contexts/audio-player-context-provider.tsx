@@ -6,6 +6,10 @@ import { toast } from 'sonner';
 
 interface AudioPlayerContextValue {
   audioElement: HTMLAudioElement | undefined;
+  audioMute: () => boolean;
+  setAudioMute: (newValue: boolean) => void;
+  audioVolume: () => number | undefined;
+  setAudioVolume: (newValue: number) => void;
   audioStop: () => void;
   audioPlay: () => void;
   audioPause: () => void;
@@ -136,9 +140,33 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
     }
   };
 
+  const audioMute = () => !!audioRef?.current?.muted
+
+  const audioVolume = () => audioRef?.current?.volume
+
+  const setAudioMute = (newValue: boolean) => {
+    if (audioRef.current) {
+      audioRef.current.muted = newValue;
+    } else {
+      toast.error(`Unable to connect audio player`)
+    }
+  }
+
+  const setAudioVolume = (newValue: number) => {
+    if (audioRef.current) {
+      audioRef.current.volume = newValue;
+    } else {
+      toast.error(`Unable to connect audio player`)
+    }
+  }
+
   return (
     <AudioPlayerContext.Provider value={{
       audioElement: audioRef.current,
+      audioMute,
+      setAudioMute,
+      audioVolume,
+      setAudioVolume,
       audioStop,
       audioPlay,
       audioPause,
