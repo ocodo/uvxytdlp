@@ -68,7 +68,23 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
   const throttledFetchDownloadedFiles = useThrottle(fetchDownloadedFiles, 1000)
 
   const searchResults = (query: string) => {
-    return downloadedFiles.filter(file => file.name.toLowerCase().includes(query.toLowerCase()))
+    const lowerCaseQuery = query.toLowerCase().trim()
+    if (!lowerCaseQuery) {
+      // sort by mtime descending if no query
+      return [...downloadedFiles].sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime())
+    }
+
+    const queryWords = lowerCaseQuery.split(/\s+/).filter(Boolean)
+
+    return downloadedFiles
+      .map(file => {
+        const lowerCaseName = file.name.toLowerCase()
+        const score = queryWords.reduce((acc, word) => (lowerCaseName.includes(word) ? acc + 1 : acc), 0)
+        return { file, score }
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.file)
   }
 
   const deleteFile = useCallback(async (fileName: string) => {
