@@ -101,7 +101,7 @@ export const CustomAudioPlayer: FC = () => {
               <div
                 onMouseOut={() => setShowVolumeSlider(false)}
                 onMouseMove={(e) => e}
-                className="absolute flex flex-col items-center justify-center left-0 bottom-0 right-0 bg-background/75 px-2 pt-2 rounded-full shadow">
+                className="absolute touch-none flex flex-col items-center justify-center left-0 bottom-0 right-0 bg-background/75 px-2 pt-2 rounded-full shadow">
                 <VolumeSlider audioVolume={audioVolume} setAudioVolume={(newValue: number) => {
                   setAudioVolume(
                     () => {

@@ -29,7 +29,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
                      justify-center items-center sm:border sm:rounded-xl`}>
       <div className='flex flex-row items-center justify-center'>
         <Img
-          className="h-[15em] bg-background/20 rounded-xl"
+          className="h-[15em] bg-background/20 rounded-xl object-cover"
           src={`${apiBase}/thumbnail/${fileName}`}
           unloader={<UvxYtdlpIcon
             size={301}
