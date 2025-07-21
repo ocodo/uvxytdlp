@@ -1,3 +1,5 @@
+export {}
+
 const smallCapsToAsciiTable: Record<string, string> = {
   "ᴀ": "a",
   "ʙ": "b",
@@ -26,14 +28,15 @@ const smallCapsToAsciiTable: Record<string, string> = {
   "ᴢ": "z",
 };
 
-type StringMapper = (string: string) => string;
+declare global {
+    interface String {
+        smallCapsToAscii(): string;
+    }
+}
 
-export const smallCapsToAscii: StringMapper = (string: string) => {
-  return string
+String.prototype.smallCapsToAscii = function(): string {
+  return this
     .split("")
-    .map((c: string) => {
-      if (Object.keys(smallCapsToAsciiTable).includes(c)) return smallCapsToAsciiTable[c];
-      return c;
-    })
+    .map((c: string) => smallCapsToAsciiTable[c] || c)
     .join("");
 };

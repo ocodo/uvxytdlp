@@ -4,7 +4,8 @@ import { useLocalStorage } from '@/hooks/use-local-storage'
 import { useThrottle } from '@/hooks/use-throttle'
 import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
 import { normalizeUnicodeText as tr } from 'normalize-unicode-text'
-import { smallCapsToAscii } from '@/lib/smallcaps-to-ascii'
+import { levenshtein } from '@/lib/levenshtein'
+import '@/lib/smallcaps-to-ascii';
 
 export interface DownloadedFileType {
   name: string
@@ -69,29 +70,48 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const throttledFetchDownloadedFiles = useThrottle(fetchDownloadedFiles, 1000)
 
-  const searchResults = (query: string) => {
-
-    const normalizedQuery = tr(query.trim())
+  const searchResults = (query: string, levenshteinThreshold: number = 3) => {
+    const normalizedQuery = tr(query.trim());
     if (!normalizedQuery) {
-      // sort by mtime descending if no query
-      return [...downloadedFiles].sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime())
+      // Sort by mtime descending if no query
+      return [...downloadedFiles].sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
     }
 
-    const queryWords = normalizedQuery.split(/\s+/).filter(Boolean)
+    const queryWords = normalizedQuery.split(/\s+/).filter(Boolean);
 
     return downloadedFiles
       .map(file => {
-        const normalizedName = smallCapsToAscii(tr(file.name)
-          .toLocaleLowerCase()
-          .replace(/\s/g, ''))
-          console.log(normalizedName)
-        const score = queryWords.reduce((acc: number, word: string) => (normalizedName.includes(word) ? acc + 1 : acc), 0)
-        return { file, score }
+        const normalizedName = tr(file.name).toLocaleLowerCase().smallCapsToAscii();
+
+        // Calculate Levenshtein scores for each query word and each word in the file name
+        const levenshteinScores = normalizedName.split(' ').reduce((scores: number[], nw) => {
+          queryWords.forEach(qw => {
+            const distance = levenshtein(qw, nw);  // Fuzzy match using Levenshtein distance
+            if (distance <= levenshteinThreshold) {
+              // Calculate the "fuzziness" score: closer matches give higher scores
+              scores.push(levenshteinThreshold - distance);
+            }
+          });
+          return scores;
+        }, []);
+
+        // Fuzziness score based on Levenshtein distances (weight it more if needed)
+        const levUp = levenshteinScores.reduce((acc, lev_s) => acc + lev_s, 0);
+
+        // Calculate direct word matches (for exact matches)
+        const wordMatchScore = queryWords.reduce((acc: number, word: string) =>
+          normalizedName.includes(word) ? acc + 1 : acc, 0);
+
+        // Combine fuzzy match (levUp) and exact word matches (wordMatchScore)
+        const score = levUp + wordMatchScore;
+
+        return { file, score };
       })
       .filter(item => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(item => item.file)
-  }
+      .sort((a, b) => b.score - a.score || new Date(b.file.mtime).getSeconds() - new Date(a.file.mtime).getSeconds())
+      .map(item => item.file);
+  };
+
 
   const deleteFile = useCallback(async (fileName: string) => {
     if (apiFetch) {

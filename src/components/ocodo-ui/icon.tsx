@@ -19,6 +19,6 @@ export const Icon: FC<IconProps> = ({
       className
     )}
   >
-    <Icon {...props} style={thinIconStyle} />
+    <Icon {...props} className="w-4 h-4" style={thinIconStyle} />
   </div>
 )
