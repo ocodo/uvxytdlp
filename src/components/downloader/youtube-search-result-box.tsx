@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Icon } from "@/components/ocodo-ui/icon"
 import { Img } from "react-image"
 import { controlIconClassName } from "@/lib/icon-style";
+import { cn } from "@/lib/utils";
 interface YoutubeSearchResultRowType {
   id: string
   title: string
@@ -108,19 +109,19 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
 
       <Img src={thumbnails} className="object-cover" />
       {showControls &&
-        <div className="bg-background/50 rounded-full hover:bg-background/80 absolute p-2 top-4 right-4 flex gap-2">
+        <div className="bg-background/30 rounded-full hover:bg-foreground/70 absolute p-2 top-2 right-2 flex gap-2 transition-all duration-500">
           <Icon
             onClick={downloadVideo}
             Icon={VideoIcon}
-            className={controlIconClassName} />
+            className={cn(controlIconClassName, "text-background/60 hover:text-background")} />
           <Icon
             onClick={downloadAudio}
             Icon={HeadphonesIcon}
-            className={controlIconClassName} />
+            className={cn(controlIconClassName, "text-background/60 hover:text-background")} />
           <Icon
             Icon={CopyIcon}
             onClick={copyYoutubeUrl}
-            className={controlIconClassName} />
+            className={cn(controlIconClassName, "text-background/60 hover:text-background")} />
         </div>
       }
       <div className="px-4 py-2">

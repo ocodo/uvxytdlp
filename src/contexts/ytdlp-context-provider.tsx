@@ -88,6 +88,7 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
   const clearLog = () => setLog("")
 
   const startDownload = useCallback(async (downloadUrl: string = "", downloadFormat?: string) => {
+
     if (downloadUrl == "" || !isUrlValid(downloadUrl)) {
       downloadUrl = hashUrl !== "" ? hashUrl : inputUrl
       if (inputUrl !== downloadUrl) {
@@ -105,9 +106,10 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
     setLog("Starting download process...\n")
     setProgress(0)
 
-
     try {
       const cliArgs = downloadFormat && formatTemplates[downloadFormat] ? formatTemplates[downloadFormat] : templateCliArg
+      console.log(`CLI Args: ${cliArgs}`)
+      console.log(`CLI Args: ${downloadFormat}`)
       if (apiFetch) {
         try {
           const encodedUrl = encodeURIComponent(downloadUrl)

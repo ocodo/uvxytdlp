@@ -22,8 +22,9 @@ export function DownloaderUI() {
         / addtional track downloads spin up */}
       {isLoading &&
         <div className="flex items-center gap-4">
-          {progress <= 1 && (<IndeterminateProgress />)}
-          {progress >= 3 && (<Progress value={progress} max={100} />)}
+          {progress >= 3
+            ? <Progress value={progress} max={100} />
+            : <IndeterminateProgress />}
           <div
             className="hover:bg-foreground/20 cursor-pointer p-2 rounded-full transition-all duration-500"
             onClick={(e) => {

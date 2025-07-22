@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import type React from 'react'
 import { type FC } from 'react'
 import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon'
+import { thinIconStyle } from '@/lib/icon-style'
 
 interface HeadingProps {
   title?: string
@@ -31,7 +32,7 @@ export const Heading: FC<HeadingProps> = ({ topLine, topLineClassName }) => {
       <div className="flex items-stretch justify-between p-2">
         <SettingsDialog>
           <div className="p-2 hover:bg-accent cursor-pointer rounded-lg">
-            <Menu className="h-4 w-4" />
+            <Menu className="h-6 w-6" style={thinIconStyle} />
           </div>
         </SettingsDialog>
         <div className='flex flex-row gap-4 items-end'>

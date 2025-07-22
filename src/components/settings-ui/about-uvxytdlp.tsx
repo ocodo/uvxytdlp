@@ -6,7 +6,7 @@ import type { FC } from "react";
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 
 export const AboutUvxYtdlp: FC = () => (
-  <div className="p-4">
+  <div className="p-4 h-[50vh]">
     <div className="font-black tracking-tighter text-5xl">
       <UvxYtdlpIcon
 

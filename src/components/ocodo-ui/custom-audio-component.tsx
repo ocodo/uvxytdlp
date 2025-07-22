@@ -1,4 +1,4 @@
-import { thinIconStyle } from "@/lib/icon-style";
+import { controlIconClassName, thinIconStyle } from "@/lib/icon-style";
 import { ToggleStateButton } from "@/components/ocodo-ui/toggle-state-button";
 import { SeekBar } from "@/components/ui/seek-bar";
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider";
@@ -57,16 +57,10 @@ export const CustomAudioPlayer: FC = () => {
     return `${minutes}:${paddedSeconds}`;
   };
 
-  const controlIconClassName = cn(
-    "hover:bg-accent/20 w-6 h-6",
-    "rounded-full cursor-pointer",
-    "p-2 hover:bg-foreground/10 w-10 h-10 rounded-full",
-  );
-
   return (
     <>
       <div className="w-full">
-        <div className="flex items-center justify-center px-1">
+        <div className="flex items-center justify-center px-1 gap-4">
           <Rewind
             onClick={() => audioRewind('5%')}
             style={thinIconStyle}

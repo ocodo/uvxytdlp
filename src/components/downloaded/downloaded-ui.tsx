@@ -3,11 +3,10 @@ import { useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-co
 import { VideoPlayer } from "@/components/downloaded/video-player"
 import { AudioPlayer } from "@/components/downloaded/audio-player"
 import { DowloadedFile } from "@/components/downloaded/downloaded-file"
-import { Button } from "@/components/ui/button"
 import { GripIcon, MenuIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
-import { controlIconClassName, thinIconStyle } from "@/lib/icon-style"
+import { controlIconClassName, inputResetIconClasses, thinIconStyle } from "@/lib/icon-style"
 import { Icon } from "@/components/ocodo-ui/icon"
 
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
@@ -122,15 +121,10 @@ const SearchDownloaded: FC<SearchDownloadedProps> = ({ searchQuery, setSearchQue
           placeholder='Downloads...'
           value={searchQuery}
         />
-        <Button
-          className="cursor-pointer hover:bg-card/10 transition-color duration-500
-                     text-foreground/20 hover:text-foreground
-                     absolute right-2 top-1/2 -translate-y-1/2 z-10"
+        <Icon
+          className={inputResetIconClasses}
           onClick={() => setSearchQuery('')}
-          variant={'ghost'}
-          size={'icon'}>
-          <XIcon />
-        </Button>
+          Icon={XIcon} />
       </div>
       <div
         className="hover:bg-foreground/20 cursor-pointer p-2 rounded-full transition-all duration-500"

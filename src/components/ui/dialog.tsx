@@ -5,7 +5,8 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { thinIconStyle } from "@/lib/icon-style"
+import { controlIconClassName, thinIconStyle } from "@/lib/icon-style"
+import { Icon } from "@/components/ocodo-ui/icon"
 
 function Dialog({
   ...props
@@ -70,9 +71,11 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className={cn("absolute z-10 top-3 right-3 rounded-full p-1.5 transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-offset-background disabled:pointer-events-none data-[state=open]:bg-background/80 cursor-pointer bg-accent text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4")}
           >
-            <XIcon style={thinIconStyle} />
+            <Icon
+              className={cn("absolute z-10 top-3 right-3", controlIconClassName, "bg-background hover:bg-foreground/20 border-none text-foreground/40 hover:text-foreground/70")}
+              Icon={XIcon}
+              style={thinIconStyle} />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

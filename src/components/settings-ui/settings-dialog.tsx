@@ -7,18 +7,16 @@ interface SettingsDialogProps {
   children: React.ReactNode
 }
 
-export const SettingsDialog: React.FC<SettingsDialogProps> = ({children}) => {
+export const SettingsDialog: React.FC<SettingsDialogProps> = ({ children }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
       <DialogContent className='p-4' >
-        <Description style={{display:'none'}}>Settings</Description>
-        <DialogTitle style={{display:'none'}}>App Settings</DialogTitle>
-        <div className=''>
-          <SettingsTabs />
-        </div>
+        <Description style={{ display: 'none' }}>Settings</Description>
+        <DialogTitle style={{ display: 'none' }}>App Settings</DialogTitle>
+        <SettingsTabs />
       </DialogContent>
     </Dialog>
   )

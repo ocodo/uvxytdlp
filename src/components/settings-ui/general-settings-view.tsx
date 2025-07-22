@@ -23,7 +23,7 @@ export const GeneralSettingsView: FC = () => {
   const { setAudioAutoPlay, audioAutoPlay } = useAudioPlayerContext();
 
   return (
-    <Card className="max-w-[92%]">
+    <Card className="max-w-[92%]  h-[50vh]">
       <CardHeader>
         <CardTitle>General Settings</CardTitle>
       </CardHeader>

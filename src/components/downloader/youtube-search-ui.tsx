@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input"
 import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { YoutubeSearchResultBox } from "@/components/downloader/youtube-search-result-box"
 import { debounce } from "@/lib/debounce"
-import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
+import { Icon } from "@/components/ocodo-ui/icon"
+import { inputResetIconClasses } from "@/lib/icon-style"
 
 export const YoutubeSearchUI: FC = () => {
   const { setQuery, results, setResults } = useYoutubeSearchContext()
@@ -29,18 +30,14 @@ export const YoutubeSearchUI: FC = () => {
             onChange={(event: React.ChangeEvent) => debouncedSearch(event.currentTarget)}
             className="border-none rounded-none md:flex-1 sm:border-foreground/15 sm:rounded-full h-12"
           />
-          <Button
-            className="cursor-pointer hover:bg-card/10 transition-color duration-500
-                     text-foreground/20 hover:text-foreground
-                     absolute right-1 top-1/2 -translate-y-1/2"
+          <Icon
+            className={inputResetIconClasses}
             onClick={() => {
               setQuery('');
               setResults([]);
             }}
-            variant={'ghost'}
-            size={'icon'}>
-            <XIcon />
-          </Button>
+            Icon={XIcon} />
+
         </div>
       </div>
       {results.length > 0 &&

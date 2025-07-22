@@ -1,5 +1,5 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
-import { thinIconStyle } from "@/lib/icon-style"
+import { gridButtonClasses, gridClasses, gridNameClasses, listButtonClasses, listClasses, listNameClasses, roundButtonClasses, thinIconStyle } from "@/lib/icon-style"
 import LongPressButton from "@/components/ocodo-ui/long-press-button"
 import { useApiBase } from "@/contexts/api-base-context"
 import { useDownloaded } from "@/contexts/downloaded-context"
@@ -25,8 +25,6 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { file, handlePlay, handleDownload, handleDelete, isDeleting } = props
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
-
-  const roundButtonClasses = "rounded-full hover:bg-foreground/20 cursor-pointer p-2 animate-all duration-500"
 
   const image = () => (
     <div
@@ -73,7 +71,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     <div className={roundButtonClasses}
       onClick={() => handleDownload(file.name)} >
       <DownloadIcon
-        className="h-6 w-6cursor-pointer"
+        className="h-6 w-6 cursor-pointer"
         style={thinIconStyle}
       />
     </div>
@@ -99,19 +97,8 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </LongPressButton>
   )
 
-  const gridClasses = `grid grid-cols-1 rounded-xl shadow-xl hover:shadow-2xl bg-card`
-  const listClasses = `flex flex-row items-end justify-between
-                       even:bg-background/10 odd:bg-background/80
-                       align-bottom border-b py-3 sm:py-1`
-
-  const isGrid = viewType == 'grid'
-  const isList = viewType == 'list'
-
-  const gridNameClasses = "bg-background pt-2 px-4 truncate sm:whitespace-normal text-sm"
-  const listNameClasses = "px-3 py-2 truncate sm:whitespace-normal"
-
-  const gridButtonClasses = "flex flex-row bg-background rounded-b-xl items-center justify-center gap-x-6 pb-2"
-  const listButtonClasses = "flex flex-row items-center justify-end  gap-x-6"
+const isGrid = viewType == 'grid'
+const isList = viewType == 'list'
 
   return (
     <div className={isList ? listClasses : gridClasses}>

@@ -20,15 +20,16 @@ export const CookiesSettingsView: FC = () => {
   }
 
   return (
-    <Card className="max-w-[85%]">
+    <Card className="max-w-[85%] h-[50vh]">
       <CardHeader>
         <CardTitle>Cookies Settings</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4 max-h-[30vh]">
+      <CardContent className="flex flex-col gap-4 overflow-scroll">
         <Label>YouTube Cookies</Label>
         <Textarea
-          rows={5}
-          className="text-sm font-mono max-w-[75vw]"
+          spellCheck={false}
+          rows={9}
+          className="text-sm font-mono max-w-[75vw] bg-background"
           placeholder="Paste Youtube Browser Cookies. Used when YouTube won't allow anonymous access."
           defaultValue={youtubeCookies}
           onBlur={updateOnChange}
