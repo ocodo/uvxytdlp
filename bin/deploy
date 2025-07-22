@@ -1,21 +1,16 @@
 #!/bin/bash
 
-${FASTAPI_PORT:=5150}
 ${VITE_PORT:=5175}
 ${YTDLP_DOWNLOADS:=/mnt/Mirage/ytdlp-downloads}
-${SERVER_CONFIG:=~/}
 ${UVXYTDLP_CONTAINER:=uvxytdlp-ui-container}
-# use: for local build docker.io/library/uvxytdlp-ui from git root
-${DOCKER_IMAGE:=ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:latest}
+${DOCKER_IMAGE:=docker.io/library/uvxytdlp-ui}
 
 docker stop ${UVXYTDLP_CONTAINER}
 docker rm ${UVXYTDLP_CONTAINER}
 
 sudo docker run -d \
-     -p ${FASTAPI_PORT}:8000 \
      -p ${VITE_PORT}:80 \
      -v ${YTDLP_DOWNLOADS}:/ytdlp-downloads \
-     -v ${SERVER_CONFIG}:/var/www/html/server_config \
      --name ${UVXYTDLP_CONTAINER} \
      ${DOCKER_IMAGE}
 
