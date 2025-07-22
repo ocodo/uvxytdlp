@@ -9,7 +9,7 @@ fi
 
 cd $gitroot
 
-if ! command -v jq; then
+if ! command -v jq 2>&1 > /dev/null; then
     echo "Error: jq not installed, required"
     exit 2
 fi
@@ -19,6 +19,11 @@ uvxytdlp_project=$(jq -r '.name' < package.json)
 if [[ $uvxytdlp_project != "uvxytdlp-ui" ]]; then
     echo "Error: not in uvxytdlp-ui project dir"
     exit 3
+fi
+
+if ! git diff-index --quiet HEAD -- ;then
+    echo "Error: all changes must be committed before release as $1"
+    exit 7
 fi
 
 tagname=$(git tag --sort=-committerdate | head -1 2> /dev/null)
@@ -48,11 +53,11 @@ replace_tag_reference_in_file() {
     fi
 }
 
-ls README.md
 replace_tag_reference_in_file $1 README.md
-ls src/lib/version.ts
 replace_tag_reference_in_file $1 src/lib/version.ts
+replace_tag_reference_in_file $1 apiserver/app.py
 
+git diff
 git add --all
 git commit -m $1
 git tag $1

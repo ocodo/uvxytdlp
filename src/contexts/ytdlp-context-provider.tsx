@@ -20,6 +20,7 @@ import { useHashUrl } from '@/contexts/hashurl-context'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { YtdlpContext } from '@/contexts/ytdlp-context'
 import { toast } from 'sonner'
+import { flushSync } from 'react-dom'
 
 interface YtdlpProviderProps {
   children: ReactNode
@@ -88,96 +89,95 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
   const clearLog = () => setLog("")
 
   const startDownload = useCallback(async (downloadUrl: string = "", downloadFormat?: string) => {
-
-    if (downloadUrl == "" || !isUrlValid(downloadUrl)) {
-      downloadUrl = hashUrl !== "" ? hashUrl : inputUrl
-      if (inputUrl !== downloadUrl) {
-        setInputUrl(downloadUrl)
-      }
-      if (!isUrlValid(downloadUrl)) {
-        const invalidUrlMessage = `Invalid YouTube URL provided: ${downloadUrl}`
-        console.log(invalidUrlMessage)
-        toast(invalidUrlMessage)
-        setLog(invalidUrlMessage)
-        return
-      }
-    }
-    setIsLoading(true)
-    setLog("Starting download process...\n")
-    setProgress(0)
-
-    try {
-      const cliArgs = downloadFormat && formatTemplates[downloadFormat] ? formatTemplates[downloadFormat] : templateCliArg
-      console.log(`CLI Args: ${cliArgs}`)
-      console.log(`CLI Args: ${downloadFormat}`)
-      if (apiFetch) {
-        try {
-          const encodedUrl = encodeURIComponent(downloadUrl)
-          const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${cliArgs} ${restrictedFilenames ? ' --restrict-filenames ' : ''}`)
-
-          if (!response.ok || !response.body) {
-            const errorText = await response.text()
-            const errorMessage = `Error: ${response.status}\n${errorText}`
-            console.log(errorMessage)
-            setLog(prevLog => prevLog + errorMessage)
-            setIsLoading(false)
-            setProgress(0)
-            return
-          }
-
-          const reader = response.body.getReader()
-          const decoder = new TextDecoder('utf-8')
-          let buffer = ''
-
-          while (true) {
-            const { done, value } = await reader.read()
-            const chunkString = decoder.decode(value, { stream: true })
-            if (done) break
-
-            buffer += chunkString
-            const lines = buffer.split('\n')
-            buffer = lines.pop() || ''
-
-            for (const line of lines) {
-              console.log(line)
-              if (line.startsWith(`{ "percent": `)) {
-                try {
-                  const progressLineJson = JSON.parse(line)
-                  const percentage = progressLineJson.percent
-                  console.log(`parsed percentage: ${percentage}`)
-                  setProgress(percentage) // Update progress (0 to 1)
-                } catch (jsonError) {
-                  console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
-                }
-              } else {
-                setLog(prevLog => prevLog + line + '\n')
-              }
-            }
-          }
-
-          // Process any remaining buffer after the stream ends
-          if (buffer) {
-            setLog(prevLog => prevLog + buffer + '\n')
-          }
-
-          // Final actions upon successful stream completion
-          fetchDownloadedFiles()
-          setProgress(1) // Set to 100% on successful completion (0-1 scale)
-          setInputUrl("")
-          setHashUrl("")
-          setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
-
-        } catch (error) {
-          console.error("Failed to stream or parse ytdlp output:", error)
-          setLog(prevLog => prevLog + `\nNetwork, stream, or parsing error: ${String(error)}`)
-          setProgress(0) // Reset or indicate error state
-        } finally {
-          setIsLoading(false)
+    flushSync(async () => {
+      if (downloadUrl == "" || !isUrlValid(downloadUrl)) {
+        downloadUrl = hashUrl !== "" ? hashUrl : inputUrl
+        if (inputUrl !== downloadUrl) {
+          setInputUrl(downloadUrl)
+        }
+        if (!isUrlValid(downloadUrl)) {
+          const invalidUrlMessage = `Invalid YouTube URL provided: ${downloadUrl}`
+          console.log(invalidUrlMessage)
+          toast(invalidUrlMessage)
+          setLog(invalidUrlMessage)
+          return
         }
       }
-    } catch {
-      toast(`Invalid media format`)
-    }
+      setIsLoading(true)
+      setLog("Starting download process...\n")
+      setProgress(0)
+
+      try {
+        const cliArgs = downloadFormat && formatTemplates[downloadFormat] ? formatTemplates[downloadFormat] : templateCliArg
+        if (apiFetch) {
+          try {
+            const encodedUrl = encodeURIComponent(downloadUrl)
+            const response = await apiFetch(`/ytdlp?url=${encodedUrl}&args=${cliArgs} ${restrictedFilenames ? ' --restrict-filenames ' : ''}`)
+
+            if (!response.ok || !response.body) {
+              const errorText = await response.text()
+              const errorMessage = `Error: ${response.status}\n${errorText}`
+              console.log(errorMessage)
+              setLog(prevLog => prevLog + errorMessage)
+              setIsLoading(false)
+              setProgress(0)
+              return
+            }
+
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder('utf-8')
+            let buffer = ''
+
+            while (true) {
+              const { done, value } = await reader.read()
+              const chunkString = decoder.decode(value, { stream: true })
+              if (done) break
+
+              buffer += chunkString
+              const lines = buffer.split('\n')
+              buffer = lines.pop() || ''
+
+              for (const line of lines) {
+                console.log(line)
+                if (line.startsWith(`{ "percent": `)) {
+                  try {
+                    const progressLineJson = JSON.parse(line)
+                    const percentage = progressLineJson.percent
+                    console.log(`parsed percentage: ${percentage}`)
+                    setProgress(percentage) // Update progress (0 to 1)
+                  } catch (jsonError) {
+                    console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
+                  }
+                } else {
+                  setLog(prevLog => prevLog + line + '\n')
+                }
+              }
+            }
+
+            // Process any remaining buffer after the stream ends
+            if (buffer) {
+              setLog(prevLog => prevLog + buffer + '\n')
+            }
+
+            // Final actions upon successful stream completion
+            fetchDownloadedFiles()
+            setProgress(1) // Set to 100% on successful completion (0-1 scale)
+            setInputUrl("")
+            setHashUrl("")
+            setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
+
+          } catch (error) {
+            console.error("Failed to stream or parse ytdlp output:", error)
+            setLog(prevLog => prevLog + `\nNetwork, stream, or parsing error: ${String(error)}`)
+            setProgress(0) // Reset or indicate error state
+          } finally {
+            setIsLoading(false)
+          }
+        }
+      } catch {
+        toast(`Invalid media format`)
+      }
+    })
   }, [apiFetch,
     templateCliArg,
     setHashUrl,

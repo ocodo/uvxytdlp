@@ -1,5 +1,5 @@
 import asyncio
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, APIRouter
 from fastapi.responses import HTMLResponse
 from omegaconf import OmegaConf
 from youtube_search import YoutubeSearch
@@ -17,10 +17,11 @@ from starlette.responses import PlainTextResponse, FileResponse, StreamingRespon
 from pydantic import BaseModel
 
 app = FastAPI(
-    title="API for uvxytdlp-ui",
-    version="binary-cheesecake",
+    title="API for uvxytdlp",
+    version=" fruity-warheads",
     docs_url=None,
     redoc_url=None,
+    openapi_url="/api/openapi.json",
 )
 
 app.add_middleware(
@@ -29,6 +30,8 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+api = APIRouter()
 
 # Configure basic logging for the application
 logging.basicConfig(
@@ -313,31 +316,6 @@ async def _stream_subprocess_output(
             process.kill()
             await process.wait()
 
-
-@app.get("/docs", include_in_schema=False)
-async def api_documentation(request: Request):
-    return HTMLResponse("""
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Elements in HTML</title>
-
-    <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
-  </head>
-  <body>
-
-    <elements-api
-      apiDescriptionUrl="openapi.json"
-      router="hash"
-    />
-
-  </body>
-</html>""")
-
-
 def cookies_filepath(domain):
     return os.path.join(download_dir, f"{domain}.cookies")
 
@@ -388,7 +366,7 @@ def read_ytcookies():
         return None
 
 
-@app.get("/ytsearch/{query}")
+@api.get("/ytsearch/{query}")
 def search_youtube(query: str):
     """Search youtube return results"""
     return YoutubeSearch(query, max_results=16).to_dict()
@@ -398,14 +376,14 @@ class Cookies(BaseModel):
     cookies: str
 
 
-@app.post("/ytcookies")
+@api.post("/ytcookies")
 def save_ytcookies(payload: Cookies):
     """Saves the provided YouTube cookies to a file."""
 
     return write_ytcookies(payload.cookies), 201
 
 
-@app.get("/ytcookies")
+@api.get("/ytcookies")
 def get_ytcookies():
     """return the saved YouTube cookies"""
     cookies = read_ytcookies()
@@ -415,7 +393,7 @@ def get_ytcookies():
     return {"message": "No cookies found"}, 404
 
 
-@app.get("/ytdlp")
+@api.get("/ytdlp")
 async def download_via_ytdlp(url: str, args: str):
     global download_dir
     url = unquote(url)
@@ -517,7 +495,7 @@ def serve_file_from_dir(filename: str, base_dir: str, force_download: bool = Fal
         )
 
 
-@app.get("/assets/{filename:path}")
+@api.get("/assets/{filename:path}")
 def get_content_assets(filename: str):
     """Get json list of asset files for given filename"""
     basename, ext = os.path.splitext(filename)
@@ -528,7 +506,7 @@ def get_content_assets(filename: str):
     return files
 
 
-@app.get("/thumbnail/{filename:path}")
+@api.get("/thumbnail/{filename:path}")
 def get_thumbnail(filename: str):
     assets = get_content_assets(filename)
     extensions_to_filter = [".webp", ".png", ".jpg", ".jpeg"]
@@ -544,17 +522,17 @@ def get_thumbnail(filename: str):
     )
 
 
-@app.get("/download/{filename:path}")
+@api.get("/download/{filename:path}")
 def download_content(filename: str):
     return serve_file_from_dir(filename, download_dir, force_download=True)
 
 
-@app.get("/downloaded/{filename:path}")
+@api.get("/downloaded/{filename:path}")
 def get_downloaded_content(filename: str):
     return serve_file_from_dir(filename, download_dir, force_download=False)
 
 
-@app.get("/downloaded")
+@api.get("/downloaded")
 def get_downloaded():
     try:
         files, errors = downloaded_files()
@@ -571,7 +549,7 @@ def get_downloaded():
         )
 
 
-@app.delete("/downloaded/{filename:path}")  # fmt: skip
+@api.delete("/downloaded/{filename:path}")  # fmt: skip
 def delete_downloaded_file(filename: str):
     """
     Deletes a specific media file from the download directory,
@@ -610,8 +588,8 @@ def delete_downloaded_file(filename: str):
         logger.exception(f"Error deleting file {full_path}: {e}")
 
 
-@app.get("/health", tags=["Health"])
-@app.head("/health", tags=["Health"])
+@api.get("/health", tags=["api"])
+@api.head("/health", tags=["api"])
 def health_check():
     """
     A simple health check endpoint that confirms the API server is running.
@@ -619,3 +597,30 @@ def health_check():
     Kubernetes) and load balancers to verify service availability.
     """
     return {"status": "ok"}
+
+
+@api.get("/docs", include_in_schema=False)
+async def api_documentation(request: Request):
+    return HTMLResponse("""
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Elements in HTML</title>
+
+    <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
+  </head>
+  <body>
+
+    <elements-api
+      apiDescriptionUrl="/api/openapi.json"
+      router="hash"
+    />
+
+  </body>
+</html>""")
+
+
+app.include_router(api, prefix="/api", tags=["api"])

@@ -25,7 +25,6 @@ COPY --from=frontend-builder /app/dist /var/www/html
 COPY apiserver/lighttpd.conf /etc/lighttpd/lighttpd.conf
 COPY apiserver/ /app/apiserver
 COPY apiserver/docker.config.yaml /app/apiserver/config.yaml
-
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 ENV PATH="/app/apiserver/.venv/bin:$PATH"
@@ -35,11 +34,10 @@ WORKDIR /app/apiserver
 RUN uv venv
 RUN uv sync
 
-EXPOSE 5000
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/health || exit 1
+  CMD curl -f http://localhost/api/health || exit 1
 
 # Change CMD to execute the start script
 CMD ["/app/apiserver/start.sh"]
