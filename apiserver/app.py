@@ -111,7 +111,7 @@ def extract_filename_from_merger_log(target_line):
 
 
 def squeeze_spaces(input_string):
-    return re.sub(r'\s+', ' ', input_string).strip()
+    return re.sub(r"\s+", " ", input_string).strip()
 
 
 def sanitize_filename_group(filename):
@@ -125,13 +125,14 @@ def sanitize_filename_group(filename):
     if filename.endswith(".info.json"):
         base_name = filename[: -len(".info.json")]
 
-    cleaned_base = squeeze_spaces(base_name.
-                                  replace("[", "").
-                                  replace("]", "").
-                                  replace("#", " ").
-                                  replace("&", " ").
-                                  replace("*", " ").
-                                  replace("_", " "))
+    cleaned_base = squeeze_spaces(
+        base_name.replace("[", "")
+        .replace("]", "")
+        .replace("#", " ")
+        .replace("&", " ")
+        .replace("*", " ")
+        .replace("_", " ")
+    )
 
     # Scan download_dir for files starting with the same base name
     for f in os.listdir(download_dir):
@@ -316,6 +317,7 @@ async def _stream_subprocess_output(
             process.kill()
             await process.wait()
 
+
 def cookies_filepath(domain):
     return os.path.join(download_dir, f"{domain}.cookies")
 
@@ -366,19 +368,21 @@ def read_ytcookies():
         return None
 
 
+class Cookies(BaseModel):
+    cookies: str
+
+
 @api.get("/ytsearch/{query}")
 def search_youtube(query: str):
     """Search youtube return results"""
-    return YoutubeSearch(query, max_results=16).to_dict()
-
-
-class Cookies(BaseModel):
-    cookies: str
+    return YoutubeSearch(query, max_results=48).to_dict()
 
 
 @api.post("/ytcookies")
 def save_ytcookies(payload: Cookies):
     """Saves the provided YouTube cookies to a file."""
+    if read_ytcookies() == payload.cookies:
+        return "", 304
 
     return write_ytcookies(payload.cookies), 201
 

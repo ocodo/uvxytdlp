@@ -28,18 +28,18 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
 
   const image = () => (
     <div
-      className="flex flex-col justify-center items-center relative gap-1 bg-background rounded-t-xl"
+      className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl"
       onClick={() => handlePlay(file.name)}>
       <div className={`absolute cursor-pointer opacity-10
                        transition-opacity duration-500 hover:opacity-100
                        rounded-full bg-background/30
-                       w-20 h-20 mb-[22px]
+                       w-20 mb-[22px]
                        flex flex-row items-center justify-center`}>
         <PlayIcon
           style={{ stroke: '#fff', ...thinIconStyle }}
           className="w-12 h-12 ml-[3px]" />
       </div>
-      <div className=" rounded-t-xl overflow-hidden rounded-b-none w-full h-[230px] flex flex-row items-center justify-center">
+      <div className=" rounded-t-xl overflow-hidden rounded-b-none w-full h-[165px] flex flex-row items-center justify-center">
         <Img
           className="object-cover"
           src={`${apiBase}/thumbnail/${file.name}`}
@@ -57,7 +57,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const playButton = () => (
+  const PlayButton = () => (
     <div className={roundButtonClasses}
       onClick={() => handlePlay(file.name)} >
       <PlayIcon
@@ -67,7 +67,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const downloadButton = () => (
+  const DownloadButton = () => (
     <div className={roundButtonClasses}
       onClick={() => handleDownload(file.name)} >
       <DownloadIcon
@@ -77,12 +77,12 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const deleteButton = () => (
+  const DeleteButton = () => (
     <LongPressButton
       onLongPress={() => handleDelete(file.name)}
-      longPressDuration={700}
-      fillUpColorClass="dark:bg-red-800 bg-red-400"
-      className={`cursor-pointer animate-color hover:border-red-500/40 hover:bg-red-500/20
+      longPressDuration={1000}
+      fillUpColorClass="dark:bg-red-700 bg-red-700"
+      className={`cursor-pointer animate-color hover:border-red-700
                   border-[1pt] border-transparent animate-all duration-500`}
     >
       {isDeleting === file.name ? (
@@ -109,7 +109,9 @@ const isList = viewType == 'list'
       </div>
       <div
         className={isList ? listButtonClasses : gridButtonClasses}>
-        {playButton()}{downloadButton()}{deleteButton()}
+        <PlayButton />
+        <DownloadButton />
+        <DeleteButton />
       </div>
     </div>
   )
