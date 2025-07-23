@@ -18,7 +18,7 @@ from pydantic import BaseModel
 
 app = FastAPI(
     title="API for uvxytdlp",
-    version=" glowing-carpet",
+    version=" pancake-geometry",
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",
