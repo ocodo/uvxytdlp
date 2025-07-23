@@ -77,7 +77,10 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
       return [...downloadedFiles].sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
     }
 
-    const queryWords = normalizedQuery.split(/\s+/).filter(Boolean);
+    const queryWords = normalizedQuery
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
 
     return downloadedFiles
       .map(file => {
