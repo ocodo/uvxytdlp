@@ -1,20 +1,21 @@
-import asyncio
-from fastapi import FastAPI, HTTPException, Request, APIRouter
-from fastapi.responses import HTMLResponse
-from omegaconf import OmegaConf
-from youtube_search import YoutubeSearch
-import glob
 import os
 import re
+import glob
+import asyncio
 import shlex
-from pathlib import Path
-from datetime import datetime, timedelta
 import subprocess
 import logging
 from urllib.parse import unquote
+from pathlib import Path
+from datetime import datetime, timedelta
+from fastapi import FastAPI, HTTPException, Request, APIRouter
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
 from pydantic import BaseModel
+from omegaconf import OmegaConf
+from youtube_search import YoutubeSearch
 
 app = FastAPI(
     title="API for uvxytdlp",
@@ -39,7 +40,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# --- Load Configuration from config.toml ---
 config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
 download_dir = os.path.join(os.path.dirname(__file__), "./downloads")
 
@@ -628,3 +628,4 @@ async def api_documentation(request: Request):
 
 
 app.include_router(api, prefix="/api", tags=["api"])
+app.mount("/", StaticFiles(directory="dist", html=True), name="vite_dist")

@@ -1,43 +1,29 @@
-# ---- #1: Build Frontend ----
-FROM node:20-alpine AS frontend-builder
+FROM guergeiro/pnpm:22-8 AS frontend-builder
 
 WORKDIR /app
-
-RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml ./
 COPY vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html ./
 COPY src ./src
 COPY public ./public
+COPY apiserver ./apiserver
 
 RUN pnpm install
 RUN pnpm exec vite build
 
-# ---- #2: Integrate with lightty and server ----
-FROM debian:bullseye-slim
+FROM ghcr.io/astral-sh/uv:0.8-python3.11-bookworm
 
-RUN apt-get update && \
-    apt-get install -y lighttpd python3 curl ca-certificates procps ffmpeg && \
-    apt-get clean
-
-COPY --from=frontend-builder /app/dist /var/www/html
-
-COPY apiserver/lighttpd.conf /etc/lighttpd/lighttpd.conf
 COPY apiserver/ /app/apiserver
 COPY apiserver/docker.config.yaml /app/apiserver/config.yaml
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-ENV PATH="/app/apiserver/.venv/bin:$PATH"
-ENV UVX_EXPECTED_PATH=/bin/uvx
+COPY --from=frontend-builder /app/apiserver/dist /app/apiserver/dist
+ENV PATH=/app/apiserver/.venv/bin:$PATH
 
 WORKDIR /app/apiserver
-RUN uv venv
-RUN uv sync
 
-EXPOSE 80
+RUN uv venv --relocatable --clear
+RUN uv sync --frozen
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/api/health || exit 1
+EXPOSE 8000
 
-# Change CMD to execute the start script
-CMD ["/app/apiserver/start.sh"]
+CMD ["./start.sh"]

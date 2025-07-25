@@ -39,7 +39,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
           style={{ stroke: '#fff', ...thinIconStyle }}
           className="w-12 h-12 ml-[3px]" />
       </div>
-      <div className=" rounded-t-xl overflow-hidden rounded-b-none w-full h-[165px] flex flex-row items-center justify-center">
+      <div className=" rounded-t-xl overflow-hidden rounded-b-none w-full h-[200px] flex flex-row items-center justify-center">
         <Img
           className="object-cover"
           src={`${apiBase}/thumbnail/${file.name}`}
