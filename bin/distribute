@@ -1,25 +1,37 @@
 #!/bin/bash
 
-gitroot=$(git rev-parse --show-toplevel)
+PROOT=$(git rev-parse --show-toplevel)
 
-if [[ -z $gitroot ]]; then
+FILES=(
+  "$PROOT/README.md"
+  "$PROOT/src/lib/version.ts"
+  "$PROOT/apiserver/app.py"
+)
+
+GHCRIO_URL="ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui"
+
+usage() {
+      cat <<EOF
+Usage: $0 <new-tagname>
+
+README.md and src/lib/version.ts will be patched with the new tagname
+EOF
+
+}
+
+if [[ -z $PROOT ]]; then
     echo "Error: Not in a git repository"
     exit 1
 fi
 
-cd $gitroot
+cd $PROOT
 
 if ! command -v jq 2>&1 > /dev/null; then
     echo "Error: jq not installed, required"
     exit 2
 fi
 
-uvxytdlp_project=$(jq -r '.name' < package.json)
-
-if [[ $uvxytdlp_project != "uvxytdlp-ui" ]]; then
-    echo "Error: not in uvxytdlp-ui project dir"
-    exit 3
-fi
+PROJECT=$(jq -r '.name' < package.json)
 
 if ! git diff-index --quiet HEAD -- ;then
     echo "Error: all changes must be committed before release as $1"
@@ -37,7 +49,7 @@ if [[ $# != 1 ]]; then
     cat <<EOF
 Usage: $0 <new-tagname>
 
-README.md and src/lib/version.ts will be patched with the new tagname
+$FILES will be patched with the new tagname
 EOF
     exit 5
 fi
@@ -53,9 +65,10 @@ replace_tag_reference_in_file() {
     fi
 }
 
-replace_tag_reference_in_file $1 README.md
-replace_tag_reference_in_file $1 src/lib/version.ts
-replace_tag_reference_in_file $1 apiserver/app.py
+for file in $FILES
+do
+replace_tag_reference_in_file $1 $file
+done
 
 git diff
 git add --all
@@ -68,8 +81,8 @@ Committed/Tagged $1
 
 Push to github to trigger docker build and release as:
 
- - ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:latest
- - ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:$1
+ - $GHCRIO_URL:latest
+ - $GHCRIO_URL:$1
 
 To revert, avoid push and:
 

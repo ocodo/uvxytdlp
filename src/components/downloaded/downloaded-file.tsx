@@ -33,7 +33,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
       <div className={`absolute cursor-pointer opacity-10
                        transition-opacity duration-500 hover:opacity-100
                        rounded-full bg-background/30
-                       w-20 mb-[22px]
+                       w-20 h-20 mb-[22px]
                        flex flex-row items-center justify-center`}>
         <PlayIcon
           style={{ stroke: '#fff', ...thinIconStyle }}

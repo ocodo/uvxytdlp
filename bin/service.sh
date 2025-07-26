@@ -1,16 +1,21 @@
 #!/bin/bash
 
-VITE_PORT=${1:-5175}
-FASTAPI_PORT=${2:-5150}
+# DEV Mode for Vite & FastAPI pair
+
+PROOT=$(git rev-parse --show-toplevel)
+VITE_LOG=$PROOT/vite-dev.log
+FASTAPI_LOG=$PROOT/fastapi-dev.log
+
+FASTAPI_PORT=${1:-5150}
 
 cd apiserver
+. .venv/bin/activate
 .venv/bin/fastapi dev --port $FASTAPI_PORT --host 0.0.0.0 &
 FASTAPI_PID=$!
 
-eval $(/home/jason/.local/share/fnm/fnm env --shell bash)
-
 cd ..
-vite --host 0.0.0.0 --port $VITE_PORT --config ___vite.config.ts &
+eval $($HOME/.local/share/fnm/fnm env --shell bash)
+vite build --watch &
 VITE_PID=$!
 
 function cleanup {
