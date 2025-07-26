@@ -19,7 +19,7 @@ from youtube_search import YoutubeSearch
 
 app = FastAPI(
     title="API for uvxytdlp",
-    version=" pancake-geometry",
+    version=" bananacream-prophecy",
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",

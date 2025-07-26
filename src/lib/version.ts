@@ -1,1 +1,1 @@
-export const VERSION = "pancake-geometry"
+export const VERSION = "bananacream-prophecy"
