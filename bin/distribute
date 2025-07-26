@@ -65,7 +65,7 @@ replace_tag_reference_in_file() {
     fi
 }
 
-for file in $FILES
+for file in "${FILES[@]}"
 do
 replace_tag_reference_in_file $1 $file
 done
