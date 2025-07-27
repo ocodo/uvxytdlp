@@ -46,28 +46,34 @@ if [[ -z $tagname ]]; then
 fi
 
 if [[ $# != 1 ]]; then
-    cat <<EOF
-Usage: $0 <new-tagname>
-
-$FILES will be patched with the new tagname
-EOF
+  usage
     exit 5
+fi
+
+export newtag=$(tr ' ' '-' <<<$1) # spaces to dashes
+
+if [[ $(git tag --list) == *$newtag* ]]; then
+  cat <<EOF
+$newtag is already used:
+
+$(git show $newtag)
+EOF
+  exit 8
 fi
 
 replace_tag_reference_in_file() {
     if [[ $# == 2 && -f $2 ]]; then
-	export newtag=$(tr ' ' '-' <<<$1) # spaces to dashes
-	sed -i'' "s/$tagname/$newtag/" $2
+      sed -i'' "s/$tagname/$newtag/" $2
+      export newtag=$(tr ' ' '-' <<<$1) # spaces to dashes
     else
-	usage "$(basename $0)" $tagname
-	echo "\nError: $2 file not found\n"
-	exit 6
+      echo "\nError: $2 file not found\n"
+      exit 6
     fi
 }
 
 for file in "${FILES[@]}"
 do
-replace_tag_reference_in_file $1 $file
+  replace_tag_reference_in_file $1 $file
 done
 
 git diff

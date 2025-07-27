@@ -26,12 +26,13 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
-  const image = () => (
+  const Image = () => (
     <div
-      className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl"
+      className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl group"
       onClick={() => handlePlay(file.name)}>
       <div className={`absolute cursor-pointer opacity-10
-                       transition-opacity duration-500 hover:opacity-100
+                       group-hover:opacity-100
+                       transition-opacity duration-500
                        rounded-full bg-background/30
                        w-20 h-20 mb-[22px]
                        flex flex-row items-center justify-center`}>
@@ -97,12 +98,12 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </LongPressButton>
   )
 
-const isGrid = viewType == 'grid'
-const isList = viewType == 'list'
+  const isGrid = viewType == 'grid'
+  const isList = viewType == 'list'
 
   return (
     <div className={isList ? listClasses : gridClasses}>
-      {isGrid && image()}
+      {isGrid && <Image />}
       <div
         className={isList ? listNameClasses : gridNameClasses}>
         {file.name}
