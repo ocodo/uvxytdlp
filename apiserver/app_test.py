@@ -1,6 +1,5 @@
 # app_test.py
 import pytest
-from pathlib import Path
 import os
 import shutil
 from fastapi.testclient import TestClient

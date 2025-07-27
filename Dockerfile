@@ -13,6 +13,10 @@ RUN pnpm exec vite build
 
 FROM ghcr.io/astral-sh/uv:0.8-python3.11-bookworm
 
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get clean
+
 COPY apiserver/ /app/apiserver
 COPY apiserver/docker.config.yaml /app/apiserver/config.yaml
 

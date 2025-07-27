@@ -452,14 +452,19 @@ async def download_via_ytdlp(url: str, args: str):
         f"Executing command: {' '.join(shlex.quote(part) for part in full_command)}"
     )
 
-    process = await asyncio.create_subprocess_exec(
-        *full_command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        env={**os.environ, "PYTHONUNBUFFERED": "1"},
-    )
-
     full_command_str = " ".join(full_command)
+
+    try:
+        process = await asyncio.create_subprocess_exec(
+            *full_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        )
+
+    except Exception as e:
+        logging.exception(f"Failed to start process: {full_command_str}")
+        raise HTTPException(status_code=500, detail=f"Failed to start process: {e}")
 
     return StreamingResponse(
         _stream_subprocess_output(process, url, full_command_str),
@@ -573,7 +578,7 @@ def delete_downloaded_file(filename: str):
     try:
         os.remove(full_path)
 
-        media_exts = [".mp3", ".mp4", ".m4a", ".mkv"]
+        media_exts = [".mp3", ".mp4", ".m4a", ".mkv", ".webm"]
         exts = [".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"]
 
         other_media_files = any(
