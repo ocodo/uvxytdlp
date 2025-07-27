@@ -65,32 +65,6 @@ if __name__ == "__main__":
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "last_ytdlprefresh.txt")
 REFRESH_INTERVAL = timedelta(days=1)
 
-# --- locate uvx
-UVX_FALLBACK_PATHS = [
-    os.path.expanduser("~/.local/bin/uvx"),
-]
-
-UVX_EXPECTED_PATH = None
-
-UVX_PATH_ENV = os.environ.get("UVX_EXPECTED_PATH")
-
-if UVX_PATH_ENV:
-    UVX_EXPECTED_PATH = UVX_PATH_ENV
-elif UVX_FALLBACK_PATHS:
-    for path in UVX_FALLBACK_PATHS:
-        if os.path.exists(path):
-            UVX_EXPECTED_PATH = path
-            break
-
-if __name__ == "__main__":
-    if UVX_EXPECTED_PATH:
-        print(f"\nSuccessfully determined uvx path: {UVX_EXPECTED_PATH}")
-    else:
-        print(
-            "\nCould not locate uvx. Please ensure it's installed or set UVX_EXPECTED_PATH."
-        )
-
-
 def extract_filename_from_merger_log(target_line):
     """
     Extract the filename from a quoted path in the target line.
@@ -405,14 +379,8 @@ async def download_via_ytdlp(url: str, args: str):
     logger.info(f"download dir is: {download_dir}")
     logger.info(f"Received request for URL: {url} with args: {args}")
 
-    if not (
-        os.path.exists(UVX_EXPECTED_PATH) and os.access(UVX_EXPECTED_PATH, os.X_OK)
-    ):
-        logger.error(f"uvx not found or not executable at {UVX_EXPECTED_PATH}.")
-        return PlainTextResponse("UVX required on server", status_code=500)
-
-    logger.info(f"Using uvx from: {UVX_EXPECTED_PATH}")
-    uvx_command_parts = [UVX_EXPECTED_PATH]
+    # We expect uvx in path, or fail
+    uvx_command_parts = ["uvx"]
 
     if should_refresh_cache():
         uvx_command_parts.append("--no-cache")
@@ -464,7 +432,7 @@ async def download_via_ytdlp(url: str, args: str):
 
     except Exception as e:
         logging.exception(f"Failed to start process: {full_command_str}")
-        raise HTTPException(status_code=500, detail=f"Failed to start process: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to start process: {full_command} {e}")
 
     return StreamingResponse(
         _stream_subprocess_output(process, url, full_command_str),
