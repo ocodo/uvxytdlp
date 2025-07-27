@@ -1,6 +1,6 @@
 # uvxytdlp-ui
 
-[![](https://img.shields.io/badge/icecream-chromacrawl-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
+[![](https://img.shields.io/badge/chromatic-cheesecake-blue?style=for-the-badge)](https://github.com/ocodo/uvxytlp/pkgs/container/uvxytdlp%2Fuvxytdlp-ui)
 
 Download and playback web video and audio locally, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp), [uvx](https://astral.sh/uv) with [Vite](https://vitejs.dev), [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), [Shadcn/ui](https://ui.shadcn.com) and [FastAPI](https://fastapi.tiangolo.com/) providing the basis for the WebUI and API Service.
 
@@ -33,7 +33,7 @@ sudo docker run -d \
   -p 8080:80 \
   -v /path/to/your/downloads:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:icecream-chromacrawl
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:chromatic-cheesecake
 ```
 
 Then go to http://localhost:8080

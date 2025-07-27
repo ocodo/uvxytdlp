@@ -1,1 +1,1 @@
-export const VERSION = "icecream-chromacrawl"
+export const VERSION = "chromatic-cheesecake"
