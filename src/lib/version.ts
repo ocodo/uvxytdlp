@@ -1,1 +1,1 @@
-export const VERSION = "chromatic-cheesecake"
+export const VERSION = "magnesium-milkshake"
