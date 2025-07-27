@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException, Request, APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import PlainTextResponse, FileResponse, StreamingResponse
+from starlette.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from omegaconf import OmegaConf
 from youtube_search import YoutubeSearch
