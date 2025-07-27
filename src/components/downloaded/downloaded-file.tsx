@@ -26,7 +26,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
-  const Image = () => (
+  const image = () => (
     <div
       className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl group"
       onClick={() => handlePlay(file.name)}>
@@ -58,7 +58,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const PlayButton = () => (
+  const playButton = () => (
     <div className={roundButtonClasses}
       onClick={() => handlePlay(file.name)} >
       <PlayIcon
@@ -68,7 +68,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const DownloadButton = () => (
+  const downloadButton = () => (
     <div className={roundButtonClasses}
       onClick={() => handleDownload(file.name)} >
       <DownloadIcon
@@ -78,7 +78,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
     </div>
   )
 
-  const DeleteButton = () => (
+  const deleteButton = () => (
     <LongPressButton
       onLongPress={() => handleDelete(file.name)}
       longPressDuration={1000}
@@ -103,16 +103,16 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
 
   return (
     <div className={isList ? listClasses : gridClasses}>
-      {isGrid && <Image />}
+      {isGrid && image()}
       <div
         className={isList ? listNameClasses : gridNameClasses}>
         {file.name}
       </div>
       <div
         className={isList ? listButtonClasses : gridButtonClasses}>
-        <PlayButton />
-        <DownloadButton />
-        <DeleteButton />
+        {playButton()}
+        {downloadButton()}
+        {deleteButton()}
       </div>
     </div>
   )
