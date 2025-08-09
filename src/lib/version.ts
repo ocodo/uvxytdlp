@@ -1,1 +1,1 @@
-export const VERSION = "magnesium-milkshake"
+export const VERSION = "chronological-milkshake"
