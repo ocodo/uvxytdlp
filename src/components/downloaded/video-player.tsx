@@ -60,7 +60,7 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
   }, [videoRef])
 
   return (
-    <div className="w-full relative bg-black rounded-md overflow-hidden">
+    <div className="w-full relative bg-black rounded-3xl overflow-hidden">
       {!isPlaying && <div className="z-1 absolute top-0 left-0 w-full text-sm p-2 bg-card/80">{title}</div>}
       <video
         key={url}

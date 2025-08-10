@@ -3,3 +3,5 @@ downloads:
   download_dir: /mnt/Mirage/ytdlp-downloads
   # Downloaded Content that is visible in the content browser
   visible_content: ["mp4","mp3","m4a","mkv"]
+
+wallpapers: /mnt/Mirage/ai_art/meta-photo-style-ai

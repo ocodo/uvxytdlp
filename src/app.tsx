@@ -17,9 +17,10 @@ import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
 
 const AppContent = () => {
-  const { apiBase, loading, error } = useApiBase()
+  const { apiBase, loading } = useApiBase()
   const { downloadedFiles } = useDownloaded()
-  if (loading || error || !apiBase) {
+
+  if (loading || !apiBase) {
     return undefined
   }
   return (
@@ -27,7 +28,7 @@ const AppContent = () => {
       <Heading
         title="uvxytdlp-ui"
       />
-      <div className="border rounded-none sm:rounded-lg bg-card sm:m-4 sm:pt-2 sm:pb-2">
+      <div className="border rounded-none sm:rounded-xl bg-card/60 backdrop-blur-lg sm:m-4 sm:pt-2 sm:pb-2">
         <div className="sm:px-4 grid grid-cols-1 gap-1">
           <>
             <DownloaderUI />

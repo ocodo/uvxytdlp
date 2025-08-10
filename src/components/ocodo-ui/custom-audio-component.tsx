@@ -191,7 +191,7 @@ const VolumeControl: FC<VolumeControlProps> = ({
         }}
       />
       <div
-        className={cn(controlIconClassName)}
+        className={cn('mt-2', controlIconClassName)}
         onClick={() => setAudioMute(!audioMute)}
       >
         {audioMute

@@ -27,8 +27,8 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
   }, [fileName, apiBase, setSrc])
 
   return (
-    <div className={`select-none grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 p-4
-                     justify-center items-center sm:border sm:rounded-x relative`}>
+    <div className={`select-none grid grid-cols-1 md:grid-cols-[auto_1fr] sm:m-3 gap-4 p-4
+                     justify-center items-center relative`}>
       <div
         onClick={() => toggleAudioPlayPause()}
         className='group flex flex-row items-center justify-center'

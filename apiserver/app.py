@@ -5,6 +5,7 @@ import asyncio
 import shlex
 import subprocess
 import logging
+import random
 from urllib.parse import unquote
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -563,6 +564,23 @@ def delete_downloaded_file(filename: str):
         return {"message": f"File '{filename}' deleted successfully."}
     except Exception as e:
         logger.exception(f"Error deleting file {full_path}: {e}")
+
+
+@api.get("/random-image")
+def get_random_image():
+    image_dir = config.wallpapers or "/images"
+    if os.path.exists(image_dir):
+        image_files = [
+            f
+            for f in os.listdir(image_dir)
+            if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp"))
+        ]
+        if not image_files:
+            return {"info": "No images found in the specified path."}
+        random_image = random.choice(image_files)
+        image_path = os.path.join(image_dir, random_image)
+        return FileResponse(image_path)
+    return {"info": f"{image_dir} doesn't exist"}
 
 
 @api.get("/health", tags=["api"])

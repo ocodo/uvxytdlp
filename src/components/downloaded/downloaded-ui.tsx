@@ -60,10 +60,10 @@ export const DownloadedUI: FC = () => {
   }
 
   return (
-    <div className="bg-card sm:pb-2">
+    <div>
       <div className="grid grid-cols-1 gap-y-1">
         {selectedFile && (
-          <div className="my-4 relative">
+          <div className="relative">
             <div className="absolute z-10 top-2 right-2">
               <Icon
                 Icon={XIcon}
@@ -85,7 +85,7 @@ export const DownloadedUI: FC = () => {
             setSearchQuery={setSearchQuery}
           />
         </div>
-        <div className="w-[vw-100]">
+        <div className="w-[vw-100] mb-4">
           <DownloadedFilteredBySearch
             searchResults={searchResults}
             searchQuery={searchQuery}
@@ -98,7 +98,7 @@ export const DownloadedUI: FC = () => {
           />
         </div>
       </div>
-    </div >
+    </div>
   )
 }
 
