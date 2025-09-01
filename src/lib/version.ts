@@ -1,1 +1,1 @@
-export const VERSION = "chronological-milkshake"
+export const VERSION = "mango-defenestration"
