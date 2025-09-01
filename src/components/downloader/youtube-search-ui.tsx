@@ -34,6 +34,9 @@ export const YoutubeSearchUI: FC = () => {
             className={inputResetIconClasses}
             onClick={() => {
               setQuery('');
+              if (searchInput.current && searchInput.current.value != '') {
+                searchInput.current.value = '';
+              }
               setResults([]);
             }}
             Icon={XIcon} />
@@ -49,7 +52,6 @@ export const YoutubeSearchUI: FC = () => {
                   (result) =>
                     <YoutubeSearchResultBox
                       key={result.id}
-                      searchInput={searchInput}
                       {...result}
                     />
                 )

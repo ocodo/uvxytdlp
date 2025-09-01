@@ -1,8 +1,7 @@
-import { useYoutubeSearchContext } from "@/contexts/youtube-search-context"
 import { useYtdlpContext } from "@/contexts/ytdlp-context"
 import { isUrlValid } from "@/lib/is-url-valid"
 import { CopyIcon, HeadphonesIcon, VideoIcon } from "lucide-react";
-import { useState, type FC, type RefObject } from "react"
+import { useState, type FC } from "react"
 import { toast } from "sonner"
 import { Icon } from "@/components/ocodo-ui/icon"
 import { Img } from "react-image"
@@ -20,11 +19,7 @@ interface YoutubeSearchResultRowType {
   url_suffix: string
 }
 
-interface YoutubeSearchResultRowProps extends YoutubeSearchResultRowType {
-  searchInput: RefObject<HTMLInputElement | undefined>
-}
-
-export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: YoutubeSearchResultRowProps) => {
+export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowType> = (props: YoutubeSearchResultRowType) => {
 
   const {
     duration,
@@ -32,8 +27,7 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
     channel,
     title,
     thumbnails,
-    url_suffix,
-    searchInput,
+    url_suffix
   } = props
 
   const [showControls, setShowControls] = useState<boolean>(false)
@@ -51,10 +45,6 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
     setFormat,
   } = useYtdlpContext()
 
-  const {
-    setResults
-  } = useYoutubeSearchContext()
-
   const downloadVideo = () => {
     setFormat(videoFormat)
     downloadContent()
@@ -68,10 +58,6 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowProps> = (props: Y
     const url = youtubeUrl();
     if (isUrlValid(url)) {
       setInputUrl(url)
-      if (searchInput.current) {
-        searchInput.current.value = ""
-      }
-      setResults([])
       setTimeout(() => {
         toast(`Downloading ${format} / ${title} / ${url}`)
         startDownload(url)
