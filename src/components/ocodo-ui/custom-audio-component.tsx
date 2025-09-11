@@ -79,6 +79,7 @@ export const CustomAudioPlayer: FC = () => {
       console.log(audioElement.currentTime)
       if (wavesurf.wavesurfer) {
         wavesurf.wavesurfer.getMediaElement().volume = 0
+        wavesurf.wavesurfer.getMediaElement().currentTime = currentTime
       }
     }
   }, [currentTime, audioElement])
