@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { FastForward, PauseIcon, PlayIcon, Rewind, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState, type Dispatch, type FC, type SetStateAction } from "react";
 import { VolumeSlider } from "@/components/ocodo-ui/volume-slider";
+import { useWavesurfer } from '@wavesurfer/react'
 
 export const CustomAudioPlayer: FC = () => {
   const [showVolumeSlider, setShowVolumeSlider] = useState<boolean>(false)
@@ -57,6 +58,31 @@ export const CustomAudioPlayer: FC = () => {
     return `${minutes}:${paddedSeconds}`;
   };
 
+  const waveriderRef = useRef(null)
+
+  const wavesurf = useWavesurfer({
+    container: waveriderRef,
+    url: audioElement?.src,
+    waveColor: 'hsla(200, 26%, 49%, 0.25)',
+    progressColor: 'oklch(50% 0.2 200.872)',
+    height: 60,
+    barWidth: 8,
+    barGap: 3,
+    barRadius: 50,
+    autoplay: true,
+    interact: false,
+    cursorWidth: 0,
+  })
+
+  useEffect(() => {
+    if (audioElement) {
+      console.log(audioElement.currentTime)
+      if (wavesurf.wavesurfer) {
+        wavesurf.wavesurfer.getMediaElement().volume = 0
+      }
+    }
+  }, [currentTime, audioElement])
+
   return (
     <>
       <div className="w-full">
@@ -103,18 +129,24 @@ export const CustomAudioPlayer: FC = () => {
             )}
           </div>
         </div>
-        <SeekBar
-          value={currentTime}
-          duration={duration}
-          onChange={(e) => {
-            const newTime = parseFloat(e.target.value)
-            setCurrentTime(newTime)
-            setProgress((newTime / duration) * 100)
-            if (audioElement) {
-              audioElement.currentTime = newTime
-            }
-          }}
-        />
+        <div className="relative w-full">
+          <SeekBar
+            value={wavesurf.currentTime}
+            duration={duration}
+            onChange={(e) => {
+              const newTime = parseFloat(e.target.value)
+              setCurrentTime(newTime)
+              setProgress((newTime / duration) * 100)
+              if (audioElement) {
+                audioElement.currentTime = newTime
+                if (wavesurf.wavesurfer) {
+                  wavesurf.wavesurfer.getMediaElement().currentTime = newTime
+                }
+              }
+            }}
+          />
+          <div ref={waveriderRef} className="absolute top-[-0.5em] left-0 w-full" />
+        </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
           <span>{formatTime(currentTime)}</span>
           <span className="text-xl">{formatTime(currentTime)}</span>

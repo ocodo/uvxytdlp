@@ -20,6 +20,7 @@
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
     "@tailwindcss/vite": "^4.1.10",
+    "@wavesurfer/react": "^1.0.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "geist": "^1.4.2",
@@ -33,7 +34,8 @@
     "sonner": "^2.0.5",
     "styled-components": "^6.1.19",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "wavesurfer.js": "^7.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

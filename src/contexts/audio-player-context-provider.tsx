@@ -186,7 +186,7 @@ export const AudioPlayerProvider: FC<AudioPlayerProviderProps> = ({ children }) 
       setAudioAutoPlay,
     }}>
       <audio
-	id="audio-element"
+        id="audio-element"
         ref={audioRef as React.RefObject<HTMLAudioElement>}
         src={src}
         autoPlay={audioAutoPlay}

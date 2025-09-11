@@ -38,6 +38,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.10
         version: 4.1.10(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1))
+      '@wavesurfer/react':
+        specifier: ^1.0.11
+        version: 1.0.11(react@19.1.0)(wavesurfer.js@7.10.1)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -80,6 +83,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.10)
+      wavesurfer.js:
+        specifier: ^7.10.1
+        version: 7.10.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.0
@@ -1790,6 +1796,12 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0
+
+  '@wavesurfer/react@1.0.11':
+    resolution: {integrity: sha512-DRpaA3MRTKy4Jby12xvoHASa+w31FZtxaqanXcJjfqNqfamkKi8VJfRnz+Uub9LkpdgoAc3g5SuZF75lEcGgzQ==}
+    peerDependencies:
+      react: ^18.2.0 || ^19.0.0
+      wavesurfer.js: '>=7.7.14'
 
   '@xobotyi/scrollbar-width@1.9.5':
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
@@ -3777,6 +3789,9 @@ packages:
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
 
+  wavesurfer.js@7.10.1:
+    resolution: {integrity: sha512-tF1ptFCAi8SAqKbM1e7705zouLC3z4ulXCg15kSP5dQ7VDV30Q3x/xFRcuVIYTT5+jB/PdkhiBRCfsMshZG1Ug==}
+
   webidl-conversions@7.0.0:
     resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
     engines: {node: '>=12'}
@@ -5475,6 +5490,11 @@ snapshots:
       vite: 6.3.5(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)
     transitivePeerDependencies:
       - supports-color
+
+  '@wavesurfer/react@1.0.11(react@19.1.0)(wavesurfer.js@7.10.1)':
+    dependencies:
+      react: 19.1.0
+      wavesurfer.js: 7.10.1
 
   '@xobotyi/scrollbar-width@1.9.5': {}
 
@@ -7921,6 +7941,8 @@ snapshots:
   walker@1.0.8:
     dependencies:
       makeerror: 1.0.12
+
+  wavesurfer.js@7.10.1: {}
 
   webidl-conversions@7.0.0: {}
 
