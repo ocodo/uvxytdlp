@@ -1,1 +1,1 @@
-export const VERSION = "caustic-strawberry"
+export const VERSION = "silky-cyborg"
