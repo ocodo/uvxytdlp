@@ -6,7 +6,7 @@ const useLocalStorage = <T extends StorableValue>(key: string, initialValue: T) 
   const [value, setValue] = useState<T>(() => {
     try {
       const storedValue = localStorage.getItem(key);
-      if (storedValue !== undefined) {
+      if (storedValue) {
         return JSON.parse(storedValue) as T;
       } else {
         localStorage.setItem(key, JSON.stringify(initialValue));

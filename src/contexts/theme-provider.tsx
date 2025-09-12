@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect, type FC, type ReactNode } from "react";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { ThemeContext } from "@/contexts/theme-context";
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("theme", "light");
 
   useEffect(() => {

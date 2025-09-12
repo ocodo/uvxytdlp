@@ -4,9 +4,11 @@ import { SeekBar } from "@/components/ui/seek-bar";
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider";
 import { cn } from "@/lib/utils";
 import { FastForward, PauseIcon, PlayIcon, Rewind, Volume2, VolumeX } from "lucide-react";
-import { useEffect, useRef, useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { useContext, useEffect, useRef, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from "react";
 import { VolumeSlider } from "@/components/ocodo-ui/volume-slider";
 import { useWavesurfer } from '@wavesurfer/react'
+import { WavesurferSettingsContext } from "@/contexts/wavesurfer-settings-context";
 
 export const CustomAudioPlayer: FC = () => {
   const [showVolumeSlider, setShowVolumeSlider] = useState<boolean>(false)
@@ -27,7 +29,17 @@ export const CustomAudioPlayer: FC = () => {
     setProgress,
     setCurrentTime,
     duration,
+    audioAutoPlay,
   } = useAudioPlayerContext()
+
+  const {
+    height,
+    waveColor,
+    progressColor,
+    barGap,
+    barWidth,
+    barRadius,
+  } = useContext(WavesurferSettingsContext)
 
   useEffect(() => setAudioVolume(audioVolumeController())
     , [audioVolumeController, setAudioVolumeController, setAudioVolume]);
@@ -39,7 +51,6 @@ export const CustomAudioPlayer: FC = () => {
     if (audioMuteController() != !!audioMute) {
       setAudioMuteController(!!audioMute);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioMute])
 
 
@@ -63,15 +74,15 @@ export const CustomAudioPlayer: FC = () => {
   const wavesurf = useWavesurfer({
     container: waveriderRef,
     url: audioElement?.src,
-    waveColor: 'hsla(200, 26%, 49%, 0.25)',
-    progressColor: 'oklch(50% 0.2 200.872)',
-    height: 60,
-    barWidth: 8,
-    barGap: 3,
-    barRadius: 50,
-    autoplay: true,
-    interact: false,
+    autoplay: audioAutoPlay,
     cursorWidth: 0,
+    interact: false,
+    height,
+    waveColor,
+    progressColor,
+    barGap,
+    barWidth,
+    barRadius,
   })
 
   useEffect(() => {

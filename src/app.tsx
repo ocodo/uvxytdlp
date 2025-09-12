@@ -15,6 +15,7 @@ import ApiBaseProvider from "@/contexts/api-base-context-provider"
 import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
 import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
+import { WavesurferSettingsProvider } from "@/contexts/wavesurfer-settings-provider"
 
 const AppContent = () => {
   const { apiBase, loading } = useApiBase()
@@ -79,7 +80,9 @@ function App() {
                 <YoutubeSearchProvider>
                   <YtdlpProvider>
                     <CookiesSettingsProvider>
-                      <AppContent />
+                      <WavesurferSettingsProvider>
+                        <AppContent />
+                      </WavesurferSettingsProvider>
                     </CookiesSettingsProvider>
                   </YtdlpProvider>
                 </YoutubeSearchProvider>
