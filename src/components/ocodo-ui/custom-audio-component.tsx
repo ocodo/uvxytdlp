@@ -148,7 +148,7 @@ export const CustomAudioPlayer: FC = () => {
           />
           <div ref={waveriderRef} className="absolute top-[-0.5em] left-0 w-full" />
         </div>
-        <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mt-8">
           <span>{formatTime(currentTime)}</span>
           <span className="text-xl">{formatTime(currentTime)}</span>
           <span>{'-' + formatTime(duration - currentTime)}</span>
