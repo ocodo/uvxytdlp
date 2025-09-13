@@ -1,12 +1,14 @@
+import { SelectState } from "@/components/ocodo-ui/select-state";
+import { SwitchState } from "@/components/ocodo-ui/switch-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider";
 import { useDownloaded, ViewTypes } from "@/contexts/downloaded-context";
-import { useYtdlpContext } from "@/contexts/ytdlp-context";
-import { AudioFormats, VideoFormats } from "@/lib/template-formats";
-import type { FC } from "react";
 import { useVideoPlayerContext } from "@/contexts/video-player-context-provider";
-import { SelectState } from "@/components/ocodo-ui/select-state";
-import { SwitchState } from "@/components/ocodo-ui/switch-state";
+import { WavesurferSettingsContext } from "@/contexts/wavesurfer-settings-context";
+import { useYtdlpContext } from "@/contexts/ytdlp-context";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { AudioFormats, VideoFormats } from "@/lib/template-formats";
+import { useContext, type FC } from "react";
 
 export const GeneralSettingsView: FC = () => {
   const {
@@ -22,8 +24,41 @@ export const GeneralSettingsView: FC = () => {
   const { setVideoAutoPlay, videoAutoPlay } = useVideoPlayerContext();
   const { setAudioAutoPlay, audioAutoPlay } = useAudioPlayerContext();
 
+  const {
+    setBarGap,
+    setBarWidth,
+    setBarRadius
+  } = useContext(WavesurferSettingsContext)
+
+  type WavesurferStyle = 'simple' | 'full'
+
+  const wavesurferStyleMap = {
+    simple: {
+      barGap: 3,
+      barWidth: 8,
+      barRadius: 15,
+      icon: '',
+    },
+    full: {
+      barGap: 0,
+      barWidth: 0,
+      barRadius: 0,
+      icon: '',
+    },
+  }
+
+  const [ wavesurferStyle,  setWavesurferStyle ] = useLocalStorage<string>('wavesurfer-style', 'simple')
+
+  const handleWavesurferSetting = (newValue: string) => {
+    const value = newValue as WavesurferStyle
+    setWavesurferStyle(value)
+    setBarGap(wavesurferStyleMap[value].barGap)
+    setBarWidth(wavesurferStyleMap[value].barWidth)
+    setBarRadius(wavesurferStyleMap[value].barRadius)
+  }
+
   return (
-    <Card className="max-w-[92%]  h-[50vh]">
+    <Card className="max-w-[92%]  h-[60vh]">
       <CardHeader>
         <CardTitle>General Settings</CardTitle>
       </CardHeader>
@@ -57,13 +92,23 @@ export const GeneralSettingsView: FC = () => {
             choices={VideoFormats}
             state={videoFormat}
             setState={setVideoFormat}
-            />
+          />
           <SelectState
             layout="row"
             label={`Audio Format`}
             choices={AudioFormats}
             state={audioFormat}
             setState={setAudioFormat}
+          />
+          <SelectState
+            layout="row"
+            label={`Audio player preview`}
+            choices={{
+              full: 'full',
+              simple: 'simple',
+            }}
+            state={wavesurferStyle}
+            setState={handleWavesurferSetting}
           />
         </div>
       </CardContent>
