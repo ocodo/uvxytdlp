@@ -32,22 +32,23 @@ export const GeneralSettingsView: FC = () => {
 
   type WavesurferStyle = 'simple' | 'full'
 
+  // TODO: Image assets
   const wavesurferStyleMap = {
     simple: {
       barGap: 3,
       barWidth: 8,
       barRadius: 15,
-      icon: '',
+      icon: `/images/simple.png`,
     },
     full: {
       barGap: 0,
       barWidth: 0,
       barRadius: 0,
-      icon: '',
+      icon: `/images/full.png`,
     },
   }
 
-  const [ wavesurferStyle,  setWavesurferStyle ] = useLocalStorage<string>('wavesurfer-style', 'simple')
+  const [wavesurferStyle, setWavesurferStyle] = useLocalStorage<string>('wavesurfer-style', 'simple')
 
   const handleWavesurferSetting = (newValue: string) => {
     const value = newValue as WavesurferStyle
