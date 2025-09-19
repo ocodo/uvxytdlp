@@ -11,6 +11,8 @@ export interface DownloadedFileType {
   name: string
   size: number
   mtime: string
+  title?: string
+  description?: string
 }
 
 export interface DownloadedPayload {

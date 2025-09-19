@@ -6,6 +6,7 @@ import shlex
 import subprocess
 import logging
 import random
+import json
 from urllib.parse import unquote
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -150,14 +151,27 @@ def downloaded_files():
         if is_file and ext.removeprefix(".") in visible_content:
             try:
                 stat_info = entry.stat()
-                files.append(
-                    {
-                        "name": entry.name,
-                        "mtime": stat_info.st_mtime,
-                        "ctime": stat_info.st_ctime,
-                        "size": stat_info.st_size,
-                    }
-                )
+                entry_info = {
+                    "name": entry.name,
+                    "mtime": stat_info.st_mtime,
+                    "ctime": stat_info.st_ctime,
+                    "size": stat_info.st_size,
+                }
+
+                info_json_file = f'{Path(download_dir, Path(entry.name).stem)}.info.json'
+                logger.info(f'info file: {info_json_file}')
+                if Path(info_json_file).exists():
+                    entry_info["info"] = f'{Path(info_json_file)}'
+                    json_data = json.loads(Path(info_json_file).read_text(encoding='utf-8'))
+                    entry_info["title"] = json_data.get('title')
+                    logger.info(f'keys: {json_data.keys()}')
+
+                description_file = f'{Path(download_dir, Path(entry.name).stem)}.description'
+                logger.info(f'description file: {description_file}')
+                if Path(description_file).exists():
+                    entry_info["description"] = Path(description_file).read_text(encoding='utf-8')
+
+                files.append(entry_info)
             except Exception as e:
                 logger.error(f"Error getting info for file {entry.name}: {e}")
                 errors.append(e)

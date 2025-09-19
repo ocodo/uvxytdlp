@@ -2,18 +2,14 @@ import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
 import { gridButtonClasses, gridClasses, gridNameClasses, listButtonClasses, listClasses, listNameClasses, roundButtonClasses, thinIconStyle } from "@/lib/icon-style"
 import LongPressButton from "@/components/ocodo-ui/long-press-button"
 import { useApiBase } from "@/contexts/api-base-context"
-import { useDownloaded } from "@/contexts/downloaded-context"
+import { useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-context"
 import { DownloadIcon, PlayIcon, Trash2Icon } from "lucide-react"
 
 import type React from "react"
 import { Img } from "react-image"
 
 interface DowloadedFileProps {
-  file: {
-    name: string
-    mtime: string
-    size: number
-  }
+  file: DownloadedFileType
   handlePlay: (name: string) => void
   handleDelete: (name: string) => void
   handleDownload: (name: string) => void
@@ -26,7 +22,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
-  const image = () => (
+  const ContentImage = () => (
     <div
       className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl group"
       onClick={() => handlePlay(file.name)}>
@@ -103,10 +99,10 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
 
   return (
     <div className={isList ? listClasses : gridClasses}>
-      {isGrid && image()}
+      {isGrid && ContentImage()}
       <div
         className={isList ? listNameClasses : gridNameClasses}>
-        {file.name}
+        {file.title || file.name}
       </div>
       <div
         className={isList ? listButtonClasses : gridButtonClasses}>

@@ -21,7 +21,7 @@ export const listClasses = `flex flex-row items-end justify-between
                             even:bg-background/10 odd:bg-background/80
                             align-bottom border-b py-3 sm:py-1`
 
-export const gridNameClasses = "bg-background pt-2 px-4 truncate sm:whitespace-normal text-sm"
+export const gridNameClasses = "bg-background pt-2 px-4 truncate sm:whitespace-normal text-xs"
 export const listNameClasses = "px-3 py-2 truncate sm:whitespace-normal"
 
 export const gridButtonClasses = "flex flex-row bg-background rounded-b-xl items-center justify-center gap-x-6 pb-2"

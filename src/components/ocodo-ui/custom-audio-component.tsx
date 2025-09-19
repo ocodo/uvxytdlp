@@ -116,7 +116,6 @@ export const CustomAudioPlayer: FC = () => {
             style={thinIconStyle}
             className={cn(controlIconClassName)}
           />
-          <div></div>
           <div
             className="relative"
             onMouseOver={() => setShowVolumeSlider(true)}
