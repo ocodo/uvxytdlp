@@ -22,7 +22,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
-  const presentDuration = (duration: string | null) => {
+  const formatDuration = (duration: string | null) => {
     if (duration == null) {
       return ''
     }
@@ -115,7 +115,7 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
         className={isList ? listNameClasses : gridNameClasses}>
         {file.title || file.name}
         <div className="text-xs">
-          {presentDuration(file.duration)}
+          {formatDuration(file.duration)}
         </div>
       </div>
       <div
