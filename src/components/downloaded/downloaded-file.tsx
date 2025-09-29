@@ -22,6 +22,17 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
   const { apiBase } = useApiBase()
   const { viewType } = useDownloaded()
 
+  const presentDuration = (duration: string | null) => {
+    if (duration == null) {
+      return ''
+    }
+    if (duration?.includes(':')) {
+      return duration
+    } else {
+      return `${duration}s`
+    }
+  }
+
   const ContentImage = () => (
     <div
       className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl group"
@@ -103,6 +114,9 @@ export const DowloadedFile: React.FC<DowloadedFileProps> = (props) => {
       <div
         className={isList ? listNameClasses : gridNameClasses}>
         {file.title || file.name}
+        <div className="text-xs">
+          {presentDuration(file.duration)}
+        </div>
       </div>
       <div
         className={isList ? listButtonClasses : gridButtonClasses}>

@@ -13,6 +13,7 @@ export interface DownloadedFileType {
   mtime: string
   title?: string
   description?: string
+  duration: string
 }
 
 export interface DownloadedPayload {
