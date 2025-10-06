@@ -88,6 +88,15 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
 
   const clearLog = () => setLog("")
 
+  const updateProgress = (newValue: number) => {
+    if (newValue > 1) {
+      document.title = `uvxytdlp ${newValue.toFixed(0)}%`
+    } else {
+      document.title = `uvxytdlp`
+    }
+    setProgress(newValue)
+  }
+
   const startDownload = useCallback(async (downloadUrl: string = "", downloadFormat?: string) => {
     flushSync(async () => {
       if (downloadUrl == "" || !isUrlValid(downloadUrl)) {
@@ -120,7 +129,7 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
               console.log(errorMessage)
               setLog(prevLog => prevLog + errorMessage)
               setIsLoading(false)
-              setProgress(0)
+              updateProgress(0)
               return
             }
 
@@ -144,7 +153,7 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
                     const progressLineJson = JSON.parse(line)
                     const percentage = progressLineJson.percent
                     console.log(`parsed percentage: ${percentage}`)
-                    setProgress(percentage) // Update progress (0 to 1)
+                    updateProgress(percentage) // Update progress (0 to 1)
                   } catch (jsonError) {
                     console.error("Failed to parse progress JSON:", jsonError, "Line:", line);
                   }
@@ -161,7 +170,7 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
 
             // Final actions upon successful stream completion
             fetchDownloadedFiles()
-            setProgress(1) // Set to 100% on successful completion (0-1 scale)
+            updateProgress(1) // Set to 100% on successful completion (0-1 scale)
             setInputUrl("")
             setHashUrl("")
             setLog(prevLog => prevLog + "\nDownload process completed.") // Add a final success message
@@ -169,7 +178,7 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
           } catch (error) {
             console.error("Failed to stream or parse ytdlp output:", error)
             setLog(prevLog => prevLog + `\nNetwork, stream, or parsing error: ${String(error)}`)
-            setProgress(0) // Reset or indicate error state
+            updateProgress(0) // Reset or indicate error state
           } finally {
             setIsLoading(false)
           }
