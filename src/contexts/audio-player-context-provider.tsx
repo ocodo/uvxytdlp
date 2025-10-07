@@ -1,4 +1,4 @@
-import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useLocalStorage } from 'usehooks-ts';
 import { parseTime } from '@/lib/parse-time';
 import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode, FC, Dispatch, SetStateAction } from 'react';
