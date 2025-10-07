@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useApiBase } from '@/contexts/api-base-context'
-import { useLocalStorage } from '@/hooks/use-local-storage'
+import { useLocalStorage } from 'usehooks-ts'
 import { useThrottle } from '@/hooks/use-throttle'
 import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
 import { normalizeUnicodeText as tr } from 'normalize-unicode-text'

@@ -1,6 +1,6 @@
 import { useApiBase } from '@/contexts/api-base-context';
 import { CookieSettingsContext } from '@/contexts/cookie-settings-context';
-import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useLocalStorage } from 'usehooks-ts';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 

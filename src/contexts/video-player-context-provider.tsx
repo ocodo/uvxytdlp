@@ -1,4 +1,4 @@
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocalStorage } from "usehooks-ts";
 import { createContext, useContext, type FC, type ReactNode } from "react";
 
 interface VideoPlayerContextValue {

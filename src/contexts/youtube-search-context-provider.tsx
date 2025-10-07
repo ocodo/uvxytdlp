@@ -1,6 +1,7 @@
 import { useApiBase } from "@/contexts/api-base-context";
 import { YoutubeSearchContext } from "@/contexts/youtube-search-context"
-import { useEffect, useState, type Dispatch, type FC, type ReactNode, type SetStateAction } from "react"
+import { useEffect, useState } from "react"
+import type { Dispatch, FC, ReactNode, SetStateAction } from "react"
 import { toast } from "sonner";
 
 interface YoutubeSearchResultType {

@@ -6,7 +6,7 @@ import { useDownloaded, ViewTypes } from "@/contexts/downloaded-context";
 import { useVideoPlayerContext } from "@/contexts/video-player-context-provider";
 import { WavesurferSettingsContext } from "@/contexts/wavesurfer-settings-context";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocalStorage } from "usehooks-ts";
 import { AudioFormats, VideoFormats } from "@/lib/template-formats";
 import { useContext, type FC } from "react";
 

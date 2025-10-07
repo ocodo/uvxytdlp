@@ -1,5 +1,5 @@
 import { useEffect, type FC, type ReactNode } from "react";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocalStorage } from "usehooks-ts";
 import { ThemeContext } from "@/contexts/theme-context";
 
 export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {

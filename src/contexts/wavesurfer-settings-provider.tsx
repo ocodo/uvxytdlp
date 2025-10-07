@@ -1,5 +1,5 @@
 import { WavesurferSettingsContext } from "@/contexts/wavesurfer-settings-context";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocalStorage } from "usehooks-ts";
 import type { FC, ReactNode } from "react";
 
 export interface WavesurferSettingsContextType {
