@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, type RefObject } from "react"
 
 interface VideoPlayerProps {
   fileName: string
+  setSelectedFile: (newValue: string) => void
 }
 
 const fileToTitle = (fileName: string): string => fileName.replace(/\.[^/.]+$/, "")
 
-export function VideoPlayer({ fileName }: VideoPlayerProps) {
+export function VideoPlayer({ fileName, setSelectedFile }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(undefined)
   const title = fileToTitle(fileName)
@@ -43,6 +44,10 @@ export function VideoPlayer({ fileName }: VideoPlayerProps) {
     const videoElement = videoRef.current
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.key === 'Escape' || event.key === 'q') && videoElement && document.activeElement === videoElement) {
+        setSelectedFile('')
+      }
+
       if (event.key === 'f' && videoElement && document.activeElement === videoElement) {
         event.preventDefault()
         if (document.fullscreenElement === videoElement) {

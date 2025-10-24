@@ -75,7 +75,7 @@ export const DownloadedUI: FC = () => {
                   })
                 }} />
             </div>
-            {selectedFile && mediaType === 'video' && <VideoPlayer fileName={selectedFile} />}
+            {selectedFile && mediaType === 'video' && <VideoPlayer fileName={selectedFile} setSelectedFile={setSelectedFile}/>}
             {selectedFile && mediaType === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
