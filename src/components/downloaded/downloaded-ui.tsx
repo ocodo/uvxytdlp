@@ -6,7 +6,7 @@ import { DowloadedFile } from "@/components/downloaded/downloaded-file"
 import { GripIcon, MenuIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
-import { controlIconClassName, inputResetIconClasses, thinIconStyle } from "@/lib/icon-style"
+import { controlIconClassName, inputResetIconClasses, thinIconStyle } from "@/lib/style"
 import { Icon } from "@/components/ocodo-ui/icon"
 
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
@@ -160,6 +160,10 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   searchQuery
 }) => {
 
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  
+
   const { viewType } = useDownloaded()
   const listClasses = "flex flex-col justify-items"
   const gridClasses = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
@@ -167,12 +171,16 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
 
     <div className={viewType == 'grid' ? gridClasses : listClasses} >
       {
-        searchResults(searchQuery).map((file) => (
+        searchResults(searchQuery).map((file, idx) => (
           <DowloadedFile
             handleDelete={handleDelete}
             handlePlay={handlePlay}
             handleDownload={handleDownload}
             isDeleting={isDeleting}
+            isExpanded={expandedIndex === idx}
+            onToggleExpand={() =>
+              setExpandedIndex(expandedIndex === idx ? null : idx)
+            }
             selectedFile={selectedFile}
             key={file.name}
             file={file} />

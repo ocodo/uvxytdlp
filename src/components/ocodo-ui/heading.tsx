@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import type React from 'react'
 import { type FC } from 'react'
 import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon'
-import { thinIconStyle } from '@/lib/icon-style'
+import { thinIconStyle } from '@/lib/style'
 
 interface HeadingProps {
   title?: string

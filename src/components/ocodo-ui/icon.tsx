@@ -1,4 +1,4 @@
-import { thinIconStyle } from "@/lib/icon-style";
+import { thinIconStyle } from "@/lib/style";
 import { cn } from "@/lib/utils";
 import { type LucideProps } from "lucide-react";
 import type { FC } from "react";

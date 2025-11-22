@@ -5,7 +5,7 @@ import { useState, type FC } from "react"
 import { toast } from "sonner"
 import { Icon } from "@/components/ocodo-ui/icon"
 import { Img } from "react-image"
-import { controlIconClassName } from "@/lib/icon-style";
+import { controlIconClassName } from "@/lib/style";
 import { cn } from "@/lib/utils";
 interface YoutubeSearchResultRowType {
   id: string

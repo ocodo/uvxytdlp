@@ -5,7 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { controlIconClassName, thinIconStyle } from "@/lib/icon-style"
+import { controlIconClassName, thinIconStyle } from "@/lib/style"
 import { Icon } from "@/components/ocodo-ui/icon"
 
 function Dialog({

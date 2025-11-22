@@ -5,7 +5,7 @@ import { useEffect, type FC } from 'react';
 import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon';
 import { useAudioPlayerContext } from '@/contexts/audio-player-context-provider';
 import { PauseIcon, PlayIcon } from 'lucide-react';
-import { thinIconStyle } from '@/lib/icon-style';
+import { thinIconStyle } from '@/lib/style';
 
 interface AudioPlayerProps {
   fileName: string;

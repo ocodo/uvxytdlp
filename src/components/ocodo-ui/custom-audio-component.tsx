@@ -1,4 +1,4 @@
-import { controlIconClassName, thinIconStyle } from "@/lib/icon-style";
+import { controlIconClassName, thinIconStyle } from "@/lib/style";
 import { ToggleStateButton } from "@/components/ocodo-ui/toggle-state-button";
 import { SeekBar } from "@/components/ui/seek-bar";
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider";

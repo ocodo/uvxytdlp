@@ -5,7 +5,7 @@ import { YoutubeSearchResultBox } from "@/components/downloader/youtube-search-r
 import { debounce } from "@/lib/debounce"
 import { XIcon } from "lucide-react"
 import { Icon } from "@/components/ocodo-ui/icon"
-import { inputResetIconClasses } from "@/lib/icon-style"
+import { inputResetIconClasses } from "@/lib/style"
 
 export const YoutubeSearchUI: FC = () => {
   const { setQuery, results, setResults } = useYoutubeSearchContext()
