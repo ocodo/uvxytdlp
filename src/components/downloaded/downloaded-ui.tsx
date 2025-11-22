@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
 import { controlIconClassName, inputResetIconClasses, thinIconStyle } from "@/lib/style"
 import { Icon } from "@/components/ocodo-ui/icon"
+import { cn } from "@/lib/utils"
 
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
   if (!fileName) return undefined
@@ -67,7 +68,7 @@ export const DownloadedUI: FC = () => {
             <div className="absolute z-10 top-2 right-2">
               <Icon
                 Icon={XIcon}
-                className={controlIconClassName}
+                className={cn(controlIconClassName, 'hover:bg-foreground/90 hover:text-background/80 transition-colors duration-800')}
                 onClick={() => {
                   setSelectedFile(() => {
                     audioStop()
