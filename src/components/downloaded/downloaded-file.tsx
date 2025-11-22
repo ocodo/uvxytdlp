@@ -133,12 +133,10 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
     return (
       <div className={isList ? listClasses : gridClasses}>
         {isGrid && <ContentImage />}
-
         <div className={isList ? listNameClasses : gridNameClasses}>
           {file.title || file.name}
           <div className="text-xs">{formatDuration(file.duration)}</div>
         </div>
-
         <div className={isList ? listButtonClasses : gridButtonClasses}>
           <PlayButtonControl />
           <DownloadButtonControl />
@@ -152,20 +150,12 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
   return (
     <div className={cn(gridClasses, "col-span-full p-4")}>
       <div className="flex flex-row gap-4 items-start">
-
         <div className="w-1/4 min-w-[180px]">
           <ContentImage />
         </div>
-
         <div className="flex flex-col gap-2 flex-1">
           <div className="font-bold text-lg">{file.title || file.name}</div>
           <div className="text-xs">{formatDuration(file.duration)}</div>
-
-          {/* Placeholder expanded content */}
-          <div className="text-sm opacity-70">
-            Expanded view — add your future metadata/details here.
-          </div>
-
           <div className="flex flex-row gap-2 mt-2">
             <PlayButtonControl />
             <DownloadButtonControl />
