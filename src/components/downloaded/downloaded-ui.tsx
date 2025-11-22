@@ -75,7 +75,7 @@ export const DownloadedUI: FC = () => {
                   })
                 }} />
             </div>
-            {selectedFile && mediaType === 'video' && <VideoPlayer fileName={selectedFile} setSelectedFile={setSelectedFile}/>}
+            {selectedFile && mediaType === 'video' && <VideoPlayer fileName={selectedFile} setSelectedFile={setSelectedFile} />}
             {selectedFile && mediaType === 'audio' && <AudioPlayer fileName={selectedFile} />}
           </div>
         )}
@@ -176,9 +176,11 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
             handleDownload={handleDownload}
             isDeleting={isDeleting}
             isExpanded={expandedIndex === idx}
-            onToggleExpand={() =>
-              setExpandedIndex(expandedIndex === idx ? null : idx)
-            }
+            onToggleExpand={() => {
+              setExpandedIndex( (prev) => {
+                return prev === idx ? null : idx
+              })
+            }}
             selectedFile={selectedFile}
             key={file.name}
             file={file} />
