@@ -1,1 +1,1 @@
-export const VERSION = "algebraic-dunce-array"
+export const VERSION = "myriad-facepalms"
