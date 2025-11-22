@@ -60,12 +60,12 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
 
   const ContentImage = () => (
     <div
-      className="flex flex-col justify-center items-center relative gap-1 bg-black rounded-t-xl group"
+      className={`flex flex-col justify-center items-center relative gap-1 bg-black group ${isExpanded ? 'rounded-xl' : 'rounded-t-xl'}`}
       onClick={() => handlePlay(file.name)}
     >
       <div
         className="
-          absolute cursor-pointer opacity-10 group-hover:opacity-100 
+          absolute cursor-pointer opacity-10 group-hover:opacity-100
           transition-opacity duration-500 rounded-full bg-background/30
           w-20 h-20 mb-[22px] flex items-center justify-center
         "
