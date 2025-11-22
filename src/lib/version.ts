@@ -1,1 +1,1 @@
-export const VERSION = "moronic-diversion-must-fail"
+export const VERSION = "algebraic-dunce-array"
