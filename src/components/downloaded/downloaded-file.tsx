@@ -20,6 +20,7 @@ import {
   EllipsisVerticalIcon,
   PlayIcon,
   Trash2Icon,
+  XIcon,
 } from "lucide-react";
 
 import { Img } from "react-image";
@@ -34,7 +35,8 @@ interface DowloadedFileProps {
   selectedFile?: string;
   isDeleting?: string;
   isExpanded: boolean;
-  onToggleExpand: () => void;
+  onToggleExpand: () => void
+  onCollapse: () => void
 }
 
 export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
@@ -46,6 +48,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
     isDeleting,
     isExpanded,
     onToggleExpand,
+    onCollapse,
   } = props;
 
   const { apiBase } = useApiBase();
@@ -121,12 +124,32 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
     </LongPressButton>
   );
 
-  const MoreButtonControl = () => (
-    <EllipsisVerticalIcon
-      style={thinIconStyle}
-      onClick={onToggleExpand}
-      className={cn(roundButtonClasses, "cursor-pointer w-10 h-10")}
-    />
+  const ExpandControls = () => (
+      <EllipsisVerticalIcon
+        style={thinIconStyle}
+        onClick={onToggleExpand}
+        className={
+          cn(
+            roundButtonClasses,
+            "cursor-pointer w-10 h-10",
+          )
+        }
+      />
+  );
+
+  const CollapseControls = () => (
+      <XIcon
+        style={thinIconStyle}
+        onClick={onCollapse}
+        className={
+          cn(
+            roundButtonClasses,
+            "cursor-pointer w-10 h-10",
+            'border-[0.5px] border-foreground',
+            'hover:bg-foreground/30 transition-colors duration-500'
+          )
+        }
+      />
   );
 
   if (!isExpanded) {
@@ -141,7 +164,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
           <PlayButtonControl />
           <DownloadButtonControl />
           <DeleteButtonControl />
-          <MoreButtonControl />
+          <ExpandControls />
         </div>
       </div>
     );
@@ -160,10 +183,9 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
             <PlayButtonControl />
             <DownloadButtonControl />
             <DeleteButtonControl />
-            <MoreButtonControl /> {/* This now closes it */}
+            <CollapseControls />
           </div>
         </div>
-
       </div>
     </div>
   );

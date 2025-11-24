@@ -167,7 +167,6 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   const listClasses = "flex flex-col justify-items"
   const gridClasses = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
   return (
-
     <div className={viewType == 'grid' ? gridClasses : listClasses} >
       {
         searchResults(searchQuery).map((file, idx) => (
@@ -178,7 +177,12 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
             isDeleting={isDeleting}
             isExpanded={expandedIndex === idx}
             onToggleExpand={() => {
-              setExpandedIndex( (prev) => {
+              setExpandedIndex((prev) => {
+                return prev === idx ? null : idx
+              })
+            }}
+            onCollapse={() => {
+              setExpandedIndex((prev) => {
                 return prev === idx ? null : idx
               })
             }}
