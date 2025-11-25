@@ -5,7 +5,7 @@ import { useEffect, type FC } from 'react';
 import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon';
 import { useAudioPlayerContext } from '@/contexts/audio-player-context-provider';
 import { PauseIcon, PlayIcon } from 'lucide-react';
-import { thinIconStyle } from '@/lib/style';
+import { extClasses, thinIconStyle } from '@/lib/style';
 
 interface AudioPlayerProps {
   fileName: string;
@@ -71,7 +71,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
         </div>
         <div className="flex items-start justify-between gap-4">
           <h2 className="italic">{title}</h2>
-          <div className="rounded-full bg-primary text-primary-foreground text-xs px-2 p-1">{ext}</div>
+          <div className={extClasses}>{ext}</div>
         </div>
       </div>
     </div>

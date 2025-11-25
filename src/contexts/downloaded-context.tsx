@@ -1,19 +1,33 @@
-/* eslint-disable react-refresh/only-export-components */
-import { useApiBase } from '@/contexts/api-base-context'
-import { useLocalStorage } from 'usehooks-ts'
-import { useThrottle } from '@/hooks/use-throttle'
-import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
-import { normalizeUnicodeText as tr } from 'normalize-unicode-text'
-import { levenshtein } from '@/lib/levenshtein'
+import { useApiBase } from '@/contexts/api-base-context';
+import { useLocalStorage } from 'usehooks-ts';
+import { useThrottle } from '@/hooks/use-throttle';
+import React, { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react';
+import { normalizeUnicodeText as tr } from 'normalize-unicode-text';
+import { levenshtein } from '@/lib/levenshtein';
 import '@/lib/smallcaps-to-ascii';
 
-export interface DownloadedFileType {
-  name: string
-  size: number
-  mtime: string
-  title?: string
-  description?: string
-  duration: string
+export interface DownloadedFileType extends VideoMetadata {
+  name: string;
+  size: number;
+  mtime: string;
+}
+
+export interface VideoMetadata {
+  duration: string;
+  title: string;
+  uploader?: string;
+  description?: string;
+  tags?: string[];
+  view_count?: number;
+  upload_date?: string;
+  like_count?: number;
+  dislike_count?: number;
+  subtitles_available?: boolean;
+  subtitles_languages?: string[];
+  license?: string;
+  region_restricted?: boolean;
+  available_regions?: string[];
+  thumbnail_url?: string;
 }
 
 export interface DownloadedPayload {

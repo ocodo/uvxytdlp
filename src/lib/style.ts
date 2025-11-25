@@ -30,3 +30,5 @@ export const listButtonClasses = "flex flex-row items-center justify-end  gap-x-
 export const inputResetIconClasses = `cursor-pointer hover:bg-card/10 transition-color duration-500
                                       text-foreground/50 hover:text-foreground
                                       absolute right-1 top-1/2 -translate-y-1/2`
+
+export const extClasses = `rounded-full bg-primary text-primary-foreground text-xs px-2 p-1 w-fit`

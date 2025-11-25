@@ -164,6 +164,7 @@ def downloaded_files():
                     entry_info["info"] = f'{Path(info_json_file)}'
                     json_data = json.loads(Path(info_json_file).read_text(encoding='utf-8'))
                     entry_info["title"] = json_data.get('title')
+                    entry_info["tags"] = json_data.get('tags')
                     entry_info["duration"] = json_data.get('duration_string')
 
                 description_file = f'{Path(download_dir, Path(entry.name).stem)}.description'

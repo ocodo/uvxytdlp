@@ -1,5 +1,6 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import {
+  extClasses,
   gridButtonClasses,
   gridClasses,
   gridNameClasses,
@@ -125,31 +126,32 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
   );
 
   const ExpandControls = () => (
-      <EllipsisVerticalIcon
-        style={thinIconStyle}
-        onClick={onToggleExpand}
-        className={
-          cn(
-            roundButtonClasses,
-            "cursor-pointer w-10 h-10",
-          )
-        }
-      />
+    <EllipsisVerticalIcon
+      style={thinIconStyle}
+      fill={'currentColor'}
+      onClick={onToggleExpand}
+      className={
+        cn(
+          roundButtonClasses,
+          "cursor-pointer w-10 h-10",
+        )
+      }
+    />
   );
 
   const CollapseControls = () => (
-      <XIcon
-        style={thinIconStyle}
-        onClick={onCollapse}
-        className={
-          cn(
-            roundButtonClasses,
-            "cursor-pointer w-10 h-10",
-            'border-[0.5px] border-foreground',
-            'hover:bg-foreground/30 transition-colors duration-500'
-          )
-        }
-      />
+    <XIcon
+      style={thinIconStyle}
+      onClick={onCollapse}
+      className={
+        cn(
+          roundButtonClasses,
+          "cursor-pointer w-10 h-10",
+          'border-[0.5px] border-foreground',
+          'hover:bg-foreground/30 transition-colors duration-500'
+        )
+      }
+    />
   );
 
   if (!isExpanded) {
@@ -177,14 +179,30 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
           <ContentImage />
         </div>
         <div className="flex flex-col gap-2 flex-1">
-          <div className="font-bold text-lg">{file.title || file.name}</div>
-          <div className="text-xs">{formatDuration(file.duration)}</div>
           <div className="flex flex-row gap-2 mt-2">
             <PlayButtonControl />
             <DownloadButtonControl />
             <DeleteButtonControl />
             <CollapseControls />
           </div>
+          <div className="text-xl tracking-tighter font-bold">{file.title || file.name}</div>
+          <div className="text-xs">{formatDuration(file.duration)}</div>
+
+          {file.tags && file.tags.length > 0 &&
+            <>
+              <div className="text-xl tracking-tighter font-bold">
+                Tags
+              </div>
+              <div className="flex gap-2 items-center justify-start flex-wrap">
+                {
+                  file.tags?.map(
+                    tag => <div className={extClasses}>{tag}</div>
+                  )
+                }
+              </div>
+            </>
+          }
+
         </div>
       </div>
     </div>
