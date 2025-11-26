@@ -32,3 +32,6 @@ export const inputResetIconClasses = `cursor-pointer hover:bg-card/10 transition
                                       absolute right-1 top-1/2 -translate-y-1/2`
 
 export const extClasses = `rounded-full bg-primary text-primary-foreground text-xs px-2 p-1 w-fit`
+export const itemClasses = extClasses;
+export const itemHeadingClasses = `text-xl tracking-tighter font-bold`;
+export const itemsColectionClasses = `flex gap-2 items-center justify-start flex-wrap`;

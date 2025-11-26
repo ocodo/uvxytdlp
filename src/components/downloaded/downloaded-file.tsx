@@ -1,9 +1,11 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import {
-  extClasses,
   gridButtonClasses,
   gridClasses,
   gridNameClasses,
+  itemClasses,
+  itemHeadingClasses,
+  itemsColectionClasses,
   listButtonClasses,
   listClasses,
   listNameClasses,
@@ -36,8 +38,8 @@ interface DowloadedFileProps {
   selectedFile?: string;
   isDeleting?: string;
   isExpanded: boolean;
-  onToggleExpand: () => void
-  onCollapse: () => void
+  onToggleExpand: () => void;
+  onCollapse: () => void;
 }
 
 export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
@@ -64,7 +66,9 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
 
   const ContentImage = () => (
     <div
-      className={`flex flex-col justify-center items-center relative gap-1 bg-black group ${isExpanded ? 'rounded-xl' : 'rounded-t-xl'}`}
+      className={`flex flex-col justify-center items-center relative gap-1 bg-black group ${
+        isExpanded ? "rounded-xl" : "rounded-t-xl"
+      }`}
       onClick={() => handlePlay(file.name)}
     >
       <div
@@ -105,7 +109,10 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
   );
 
   const DownloadButtonControl = () => (
-    <div className={roundButtonClasses} onClick={() => handleDownload(file.name)}>
+    <div
+      className={roundButtonClasses}
+      onClick={() => handleDownload(file.name)}
+    >
       <DownloadIcon className="h-6 w-6" style={thinIconStyle} />
     </div>
   );
@@ -125,17 +132,44 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
     </LongPressButton>
   );
 
+  interface ItemProps<T extends keyof DownloadedFileType> {
+    file: DownloadedFileType;
+    field: T;
+    // e.g. "tags", "categories" etc... assume collections.
+    label?: string; // override label text like "Tags"
+  }
+
+  const CollectionItem = <T extends keyof DownloadedFileType>({
+    file,
+    field,
+    label,
+  }: ItemProps<T>) => {
+    const values = file?.[field];
+
+    if (!Array.isArray(values) || values.length === 0) return null;
+
+    return (
+      <>
+        <div className={itemHeadingClasses}>
+          {label ?? field.charAt(0).toUpperCase() + field.slice(1)}
+        </div>
+        <div className={itemsColectionClasses}>
+          {values.map((value) => (
+            <div key={String(value)} className={itemClasses}>
+              {value}
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  };
+
   const ExpandControls = () => (
     <EllipsisVerticalIcon
       style={thinIconStyle}
-      fill={'currentColor'}
+      fill={"currentColor"}
       onClick={onToggleExpand}
-      className={
-        cn(
-          roundButtonClasses,
-          "cursor-pointer w-10 h-10",
-        )
-      }
+      className={cn(roundButtonClasses, "cursor-pointer w-10 h-10")}
     />
   );
 
@@ -143,14 +177,12 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
     <XIcon
       style={thinIconStyle}
       onClick={onCollapse}
-      className={
-        cn(
-          roundButtonClasses,
-          "cursor-pointer w-10 h-10",
-          'border-[0.5px] border-foreground',
-          'hover:bg-foreground/30 transition-colors duration-500'
-        )
-      }
+      className={cn(
+        roundButtonClasses,
+        "cursor-pointer w-10 h-10",
+        "border-[0.5px] border-foreground",
+        "hover:bg-foreground/30 transition-colors duration-500"
+      )}
     />
   );
 
@@ -185,24 +217,15 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
             <DeleteButtonControl />
             <CollapseControls />
           </div>
-          <div className="text-xl tracking-tighter font-bold">{file.title || file.name}</div>
+          <div className="text-xl tracking-tighter font-bold">
+            {file.title || file.name}
+          </div>
           <div className="text-xs">{formatDuration(file.duration)}</div>
-
-          {file.tags && file.tags.length > 0 &&
-            <>
-              <div className="text-xl tracking-tighter font-bold">
-                Tags
-              </div>
-              <div className="flex gap-2 items-center justify-start flex-wrap">
-                {
-                  file.tags?.map(
-                    tag => <div className={extClasses}>{tag}</div>
-                  )
-                }
-              </div>
-            </>
-          }
-
+          <CollectionItem file={file} field="tags" label="Tags" />
+          <div>
+            <div className={itemHeadingClasses}>Description</div>
+            <div>{file.description}</div>
+          </div>
         </div>
       </div>
     </div>
