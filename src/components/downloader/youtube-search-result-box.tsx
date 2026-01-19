@@ -95,19 +95,19 @@ export const YoutubeSearchResultBox: FC<YoutubeSearchResultRowType> = (props: Yo
 
       <Img src={thumbnails} className="object-cover" />
       {showControls &&
-        <div className="bg-background/30 rounded-full hover:bg-foreground/70 absolute p-2 top-2 right-2 flex gap-2 transition-all duration-500">
+        <div className="bg-background/20 rounded-full hover:bg-foreground absolute p-2 top-2 right-2 flex gap-2 transition-all duration-500">
           <Icon
             onClick={downloadVideo}
             Icon={VideoIcon}
-            className={cn(controlIconClassName, "text-background/60 hover:text-background")} />
+            className={cn(controlIconClassName, "text-background")} />
           <Icon
             onClick={downloadAudio}
             Icon={HeadphonesIcon}
-            className={cn(controlIconClassName, "text-background/60 hover:text-background")} />
+            className={cn(controlIconClassName, "text-background")} />
           <Icon
             Icon={CopyIcon}
             onClick={copyYoutubeUrl}
-            className={cn(controlIconClassName, "text-background/60 hover:text-background")} />
+            className={cn(controlIconClassName, "text-background")} />
         </div>
       }
       <div className="px-4 py-2">
