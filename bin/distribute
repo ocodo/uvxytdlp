@@ -97,7 +97,7 @@ To revert, avoid push and:
 
 EOF
 else
-cat < EOF
+cat <<EOF
 ERROR - No changes in git index
 EOF
 fi
