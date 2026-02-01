@@ -1,1 +1,1 @@
-export const VERSION = "circuit-song"
+export const VERSION = "glutinous-manipulator"
