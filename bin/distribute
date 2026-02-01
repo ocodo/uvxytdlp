@@ -38,7 +38,7 @@ if ! git diff-index --quiet HEAD -- ;then
     exit 7
 fi
 
-tagname=$(git tag --sort=-committerdate | head -1 2> /dev/null)
+tagname=${tagname:-$(git tag --sort=-committerdate | head -1 2> /dev/null)}
 
 if [[ -z $tagname ]]; then
     echo "Error: No previous tag found, exiting..."
