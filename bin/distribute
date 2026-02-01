@@ -76,7 +76,7 @@ do
   replace_tag_reference_in_file $1 $file
 done
 
-git diff
+if [[ $(git diff) != "" ]];then
 git add --all
 git commit -m $1
 git tag $1
@@ -96,3 +96,8 @@ To revert, avoid push and:
   git tag -d $1
 
 EOF
+else
+cat < EOF
+ERROR - No changes in git index
+EOF
+fi
