@@ -87,7 +87,7 @@ export const DownloadedProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const throttledFetchDownloadedFiles = useThrottle(fetchDownloadedFiles, 1000)
 
-  const searchResults = (query: string, levenshteinThreshold: number = 3) => {
+  const searchResults = (query: string, levenshteinThreshold: number = 1) => {
     const normalizedQuery = tr(query.trim());
     if (!normalizedQuery) {
       // Sort by mtime descending if no query
