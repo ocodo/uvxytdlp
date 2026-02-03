@@ -5,7 +5,8 @@ import path from 'path'
 
 export default defineConfig({
   server: {
-    allowedHosts: []
+    allowedHosts: [],
+    proxy: { 'api/': 'http://helios:7150' }
   },
   build: {
     outDir: 'apiserver/dist',

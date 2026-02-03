@@ -25,7 +25,7 @@ const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefine
 type MediaType = 'video' | 'audio' | undefined
 
 export const DownloadedUI: FC = () => {
-  const { deleteFile, searchResults, browserDownloadFile } = useDownloaded()
+  const { deleteFile, searchResults, browserDownloadFile, isLoading } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | undefined>(undefined)
   const [mediaType, setMediaType] = useState<MediaType>(undefined)
   const [isDeleting, setIsDeleting] = useState<string | undefined>(undefined)
@@ -87,6 +87,8 @@ export const DownloadedUI: FC = () => {
           />
         </div>
         <div className="w-[vw-100] mb-4">
+        {isLoading
+        ? <div className="text-3xl font-black tracking-tighter">Loading</div> :
           <DownloadedFilteredBySearch
             searchResults={searchResults}
             searchQuery={searchQuery}
@@ -97,6 +99,7 @@ export const DownloadedUI: FC = () => {
             isDeleting={isDeleting}
             selectedFile={selectedFile}
           />
+        }
         </div>
       </div>
     </div>
