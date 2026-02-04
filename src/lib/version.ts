@@ -1,1 +1,1 @@
-export const VERSION = "glutinous-manipulator"
+export const VERSION = "bigly-tyrannus"
