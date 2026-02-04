@@ -85,6 +85,7 @@ input:not([type="range"]):not([type="date"]):not([type="datetime-local"]):not([t
 
 body {
   min-height: 100vh;
+  background-color: var(--background);
 }
 
 @theme inline {
@@ -204,32 +205,3 @@ li {
   font-weight: 700;
 }
 
-.body-background-image {
-  background: var(--body-background-image-url) no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  opacity: 0;
-  transition: opacity 10s linear;
-}
-
-.body-background-image.visible {
-  opacity: 1;
-}
-
-.body-background-gradient {
-  background: linear-gradient(to bottom,
-      rgba(233, 237, 222, 1) 0%,
-      rgba(233, 237, 222, 0) 200px,
-      hsla(76, 29%, 90%, 0.1) 500px,
-      rgb(233, 237, 222) 1000px);
-  background-attachment: fixed;
-}
-
-.dark.body-background-gradient {
-  background: linear-gradient(to bottom,
-      rgba(33, 33, 33, 1) 0%,
-      rgba(33, 33, 33, 0) 200px,
-      rgba(33, 33, 33, 0.1) 500px,
-      rgb(33, 33, 33) 1000px);
-  background-attachment: fixed;
-}

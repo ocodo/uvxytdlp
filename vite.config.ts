@@ -6,7 +6,13 @@ import path from 'path'
 export default defineConfig({
   server: {
     allowedHosts: [],
-    proxy: { 'api/': 'http://helios:7150' }
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9333/api',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '')
+      }
+     }
   },
   build: {
     outDir: 'apiserver/dist',

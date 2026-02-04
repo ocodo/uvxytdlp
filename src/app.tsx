@@ -16,10 +16,11 @@ import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
 import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
 import { WavesurferSettingsProvider } from "@/contexts/wavesurfer-settings-provider"
+import { OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon"
 
 const AppContent = () => {
   const { apiBase, loading } = useApiBase()
-  const { downloadedFiles } = useDownloaded()
+  const { downloadedFiles, isLoading } = useDownloaded()
 
   if (loading || !apiBase) {
     return undefined
@@ -35,9 +36,18 @@ const AppContent = () => {
             <DownloaderUI />
             <YoutubeSearchUI />
             {
-              Array.isArray(downloadedFiles) && downloadedFiles.length > 0
-              &&
-              <DownloadedUI />
+              isLoading
+                ?
+                <div className="flex flex-row items-center-safe justify-center">
+                  <OcodoLoaderIcon className="w-10 h-10 animate-spin" />
+                </div>
+                : Array.isArray(downloadedFiles) && downloadedFiles.length > 0
+                  ?
+                  < DownloadedUI />
+                  :
+                  <div className="text-8xl">
+                    No Downloaded Content...
+                  </div>
             }
           </>
         </div>
