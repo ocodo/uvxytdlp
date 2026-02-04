@@ -8,9 +8,9 @@ interface OcodoLoaderIconProps extends SVGProps<SVGSVGElement> {
 
 export const OcodoLoaderIcon: FC<OcodoLoaderIconProps> = (props) => {
   const {
-    ringColor= '#00000000',
-    spinnerColor= '#FFF5',
-    spinnerWidth= 18.5,
+    ringColor = '#00000000',
+    spinnerColor = '#FFF5',
+    spinnerWidth = 18.5,
   } = props
 
   return (
@@ -38,3 +38,24 @@ export const OcodoLoaderIcon: FC<OcodoLoaderIconProps> = (props) => {
   )
 }
 
+export const LoaderBanner: FC<{ message?: string }> = ({ message }) => {
+
+  return (
+    <div className={`
+          p-2 pr-5 rounded-full text-foreground/35 animate-pulse bg-background border-3 border-foreground/10
+          text-center text-2xl font-bold tracking-tighter
+          min-w-200
+          flex flex-row items-center justify-between
+        `}>
+      <OcodoLoaderIcon
+        ringColor="transparent"
+        spinnerColor="var(--foreground)"
+        opacity={0.3}
+        className="w-16 h-16 animate-spin"
+      />
+      <div>
+        {message ? message : `Loading...`}
+      </div>
+    </div>
+  )
+}

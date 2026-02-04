@@ -16,7 +16,7 @@ import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
 import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
 import { WavesurferSettingsProvider } from "@/contexts/wavesurfer-settings-provider"
-import { OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon"
+import { LoaderBanner, OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon"
 
 const AppContent = () => {
   const { apiBase, loading } = useApiBase()
@@ -39,7 +39,7 @@ const AppContent = () => {
               isLoading
                 ?
                 <div className="flex flex-row items-center-safe justify-center">
-                  <OcodoLoaderIcon ringColor="transparent" className="animate-spin w-22 h-22" />
+                  <LoaderBanner message="Fetch Downloads"/>
                 </div>
                 : Array.isArray(downloadedFiles) && downloadedFiles.length > 0
                   ?
