@@ -39,11 +39,11 @@ const AppContent = () => {
               isLoading
                 ?
                 <div className="flex flex-row items-center-safe justify-center">
-                  <OcodoLoaderIcon className="w-10 h-10 animate-spin" />
+                  <OcodoLoaderIcon ringColor="transparent" className="animate-spin w-22 h-22" />
                 </div>
                 : Array.isArray(downloadedFiles) && downloadedFiles.length > 0
                   ?
-                  < DownloadedUI />
+                  <DownloadedUI />
                   :
                   <div className="text-8xl">
                     No Downloaded Content...

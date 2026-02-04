@@ -8,8 +8,8 @@ interface OcodoLoaderIconProps extends SVGProps<SVGSVGElement> {
 
 export const OcodoLoaderIcon: FC<OcodoLoaderIconProps> = (props) => {
   const {
-    ringColor= '#00000030',
-    spinnerColor= '#FFFFFF',
+    ringColor= '#00000000',
+    spinnerColor= '#FFF5',
     spinnerWidth= 18.5,
   } = props
 
