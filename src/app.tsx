@@ -16,7 +16,10 @@ import { AudioPlayerProvider } from "@/contexts/audio-player-context-provider"
 import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
 import { WavesurferSettingsProvider } from "@/contexts/wavesurfer-settings-provider"
-import { LoaderBanner, OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon"
+import { OcodoLoaderBanner } from "@/components/ocodo-ui/ocodo-loader-icon"
+import { DowloadQueueModal } from "@/components/download-queue-modal";
+import { LucideAntenna, LucideDisc, LucideDisc2, LucideDisc3 } from "lucide-react"
+import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
 
 const AppContent = () => {
   const { apiBase, loading } = useApiBase()
@@ -39,15 +42,17 @@ const AppContent = () => {
               isLoading
                 ?
                 <div className="flex flex-row items-center-safe justify-center">
-                  <LoaderBanner message="Fetch Downloads"/>
+                  <OcodoLoaderBanner message="Fetch Downloads" />
                 </div>
                 : Array.isArray(downloadedFiles) && downloadedFiles.length > 0
                   ?
                   <DownloadedUI />
                   :
-                  <div className="text-8xl">
-                    No Downloaded Content...
-                  </div>
+                  <>
+                    <div className="p-3 pb-0 text-4xl font-thin tracking-tighter flex flex-row items-center gap-4">
+                      <UvxYtdlpIcon className="opacity-30" size={160} strokeWidth={1} /> Your archive has no downloaded content, get some...
+                    </div>
+                  </>
             }
           </>
         </div>
@@ -82,25 +87,26 @@ function App() {
 
   return (
     <ThemeProvider>
-      <ApiBaseProvider>
-        <AudioPlayerProvider>
-          <VideoPlayerProvider>
-            <DownloadedProvider>
-              <HashUrlProvider>
+      <HashUrlProvider>
+        <ApiBaseProvider>
+          <AudioPlayerProvider>
+            <VideoPlayerProvider>
+              <DownloadedProvider>
                 <YoutubeSearchProvider>
                   <YtdlpProvider>
                     <CookiesSettingsProvider>
                       <WavesurferSettingsProvider>
                         <AppContent />
+                        <DowloadQueueModal />
                       </WavesurferSettingsProvider>
                     </CookiesSettingsProvider>
                   </YtdlpProvider>
                 </YoutubeSearchProvider>
-              </HashUrlProvider>
-            </DownloadedProvider>
-          </VideoPlayerProvider>
-        </AudioPlayerProvider>
-      </ApiBaseProvider>
+              </DownloadedProvider>
+            </VideoPlayerProvider>
+          </AudioPlayerProvider>
+        </ApiBaseProvider>
+      </HashUrlProvider>
     </ThemeProvider >
   )
 }

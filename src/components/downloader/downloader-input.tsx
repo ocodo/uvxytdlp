@@ -1,10 +1,10 @@
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { isUrlValid } from '@/lib/is-url-valid'
-import { OcodoLoaderIcon } from '@/components/ocodo-ui/ocodo-loader-icon'
-import { HeadphonesIcon, VideoIcon } from 'lucide-react'
-import { useYtdlpContext } from '@/contexts/ytdlp-context'
-import { type FC } from "react"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { isUrlValid } from "@/lib/is-url-valid";
+import { OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon";
+import { HeadphonesIcon, List, VideoIcon } from "lucide-react";
+import { useYtdlpContext } from "@/contexts/ytdlp-context";
+import type { FC } from "react";
 
 export const DownloaderInput: FC = () => {
   const {
@@ -14,7 +14,8 @@ export const DownloaderInput: FC = () => {
     audioFormat,
     videoFormat,
     startDownload,
-  } = useYtdlpContext()
+    setShowQueueInput,
+  } = useYtdlpContext();
 
   return (
     <>
@@ -51,6 +52,12 @@ export const DownloaderInput: FC = () => {
               aria-label="Download Audio"
               className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
               <HeadphonesIcon className="h-6 w-6" />
+            </Button>
+            <Button
+              onClick={() => setShowQueueInput(true)}
+              aria-label="Download Queue"
+              className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
+              <List className="h-6 w-6" />
             </Button>
           </div>
         )}

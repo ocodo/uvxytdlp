@@ -39,36 +39,42 @@ export interface YtdlpContextType {
 
   // Logging
   log: string
-  setLog: Dispatch<SetStateAction<string>>
-  clearLog: () => void
-  showLog: boolean
-  setShowLog: (newValue: boolean) => void
+  setLog: Dispatch<SetStateAction<string>>;
+  clearLog: () => void;
+  showLog: boolean;
+  setShowLog: (newValue: boolean) => void;
 
   // Configuration
-  templateCliArg: string
-  setTemplateCliArg: Dispatch<SetStateAction<string>>
+  templateCliArg: string;
+  setTemplateCliArg: Dispatch<SetStateAction<string>>;
 
-  setVideoFormat: Dispatch<SetStateAction<VideoFormat>>
-  videoFormat: VideoFormat
+  setVideoFormat: Dispatch<SetStateAction<VideoFormat>>;
+  videoFormat: VideoFormat;
 
-  setAudioFormat: Dispatch<SetStateAction<AudioFormat>>
-  audioFormat: AudioFormat
+  setAudioFormat: Dispatch<SetStateAction<AudioFormat>>;
+  audioFormat: AudioFormat;
 
-  setFormat: Dispatch<SetStateAction<MediaFormat>>
-  format: MediaFormat
+  setFormat: Dispatch<SetStateAction<MediaFormat>>;
+  format: MediaFormat;
 
-  setDefaultFormat: Dispatch<SetStateAction<MediaFormat>>
-  defaultFormat: MediaFormat
+  setDefaultFormat: Dispatch<SetStateAction<MediaFormat>>;
+  defaultFormat: MediaFormat;
 
   // restrictedFilenames
-  restrictedFilenames: boolean
-  setRestrictedFilenames: (newValue: boolean) => void
+  restrictedFilenames: boolean;
+  setRestrictedFilenames: (newValue: boolean) => void;
 
   // Progress
-  progress: number
+  progress: number;
+
+  // Queue input
+  showQueueInput: boolean;
+  setShowQueueInput: Dispatch<SetStateAction<boolean>>;
+
 }
 
 export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
+  const [showQueueInput, setShowQueueInput] = useState<boolean>(false);
   const [inputUrl, setInputUrl] = useState<string>("")
   const [log, setLog] = useState<string>("")
   const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false)
@@ -203,22 +209,18 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (hashUrl) {
-      startDownload()
+      if (hashUrl)
+        startDownload()
     }
   }, [hashUrl, setHashUrl, startDownload])
 
   const value = {
-    // Core URL State
     inputUrl,
     setInputUrl,
     hashUrl,
     setHashUrl,
-
-    // Download Actions & Status
     startDownload,
     isLoading,
-
-    // Formats
     defaultFormat,
     setDefaultFormat,
     format,
@@ -227,21 +229,17 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
     setVideoFormat,
     audioFormat,
     setAudioFormat,
-
-    // Logging
     log,
     setLog,
     clearLog,
     showLog,
     setShowLog,
-
-    // Configuration
     templateCliArg,
     setTemplateCliArg,
     restrictedFilenames,
     setRestrictedFilenames,
-
-    // Progress
+    setShowQueueInput,
+    showQueueInput,
     progress,
   }
 

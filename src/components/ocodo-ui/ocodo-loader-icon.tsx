@@ -38,7 +38,7 @@ export const OcodoLoaderIcon: FC<OcodoLoaderIconProps> = (props) => {
   )
 }
 
-export const LoaderBanner: FC<{ message?: string }> = ({ message }) => {
+export const OcodoLoaderBanner: FC<{ message?: string }> = ({ message }) => {
 
   return (
     <div className={`
