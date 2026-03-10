@@ -21,7 +21,7 @@ from youtube_search import YoutubeSearch
 
 app = FastAPI(
     title="API for uvxytdlp",
-    version=" pavlov-woofwoof",
+    version=" dysfunction-at-all-levels",
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",
