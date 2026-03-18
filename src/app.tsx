@@ -17,8 +17,7 @@ import { YoutubeSearchUI } from "@/components/downloader/youtube-search-ui"
 import { VideoPlayerProvider } from "@/contexts/video-player-context-provider"
 import { WavesurferSettingsProvider } from "@/contexts/wavesurfer-settings-provider"
 import { OcodoLoaderBanner } from "@/components/ocodo-ui/ocodo-loader-icon"
-import { DowloadQueueModal } from "@/components/download-queue-modal";
-import { LucideAntenna, LucideDisc, LucideDisc2, LucideDisc3 } from "lucide-react"
+import { DowloadQueueModal } from "@/components/downloader/download-queue-modal";
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
 
 const AppContent = () => {
