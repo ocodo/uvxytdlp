@@ -2,6 +2,7 @@ import os
 import re
 import glob
 import asyncio
+from slugify import slugify
 import shlex
 import subprocess
 import logging
@@ -152,6 +153,8 @@ def downloaded_files():
             try:
                 stat_info = entry.stat()
                 entry_info = {
+                    "id": slugify(entry.name),
+                    "slug": slugify(entry.name),
                     "name": entry.name,
                     "mtime": stat_info.st_mtime,
                     "ctime": stat_info.st_ctime,
@@ -163,6 +166,12 @@ def downloaded_files():
                 if Path(info_json_file).exists():
                     entry_info["info"] = f'{Path(info_json_file)}'
                     json_data = json.loads(Path(info_json_file).read_text(encoding='utf-8'))
+
+                    if json_data.get('id'):
+                        entry_info["id"] = json_data.get('id')
+                    elif json_data.get('title'):
+                        entry_info["id"] = slugify(json_data.get('title'))
+
                     entry_info["title"] = json_data.get('title')
                     entry_info["tags"] = json_data.get('tags')
                     entry_info["duration"] = json_data.get('duration_string')
@@ -171,6 +180,7 @@ def downloaded_files():
                 logger.info(f'description file: {description_file}')
                 if Path(description_file).exists():
                     entry_info["description"] = Path(description_file).read_text(encoding='utf-8')
+
 
                 files.append(entry_info)
             except Exception as e:

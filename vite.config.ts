@@ -5,10 +5,10 @@ import path from 'path'
 
 export default defineConfig({
   server: {
-    allowedHosts: [],
+    allowedHosts: ['uvxytdlp.hub'],
     proxy: {
       '/api': {
-        target: 'http://localhost:9333/api',
+        target: 'http://localhost:7175/api',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, '')
       }

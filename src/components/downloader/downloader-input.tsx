@@ -20,6 +20,12 @@ export const DownloaderInput: FC = () => {
   return (
     <>
       <div className="flex items-center gap-2">
+        <Button
+          onClick={() => setShowQueueInput(true)}
+          aria-label="Download Queue"
+          className={`w-12 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
+          <List className="h-6 w-6" />
+        </Button>
         <Input
           type="url"
           placeholder="Video Page URL to download..."
@@ -53,12 +59,7 @@ export const DownloaderInput: FC = () => {
               className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
               <HeadphonesIcon className="h-6 w-6" />
             </Button>
-            <Button
-              onClick={() => setShowQueueInput(true)}
-              aria-label="Download Queue"
-              className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
-              <List className="h-6 w-6" />
-            </Button>
+
           </div>
         )}
       </div>

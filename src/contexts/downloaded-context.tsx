@@ -7,12 +7,14 @@ import { levenshtein } from '@/lib/levenshtein';
 import '@/lib/smallcaps-to-ascii';
 
 export interface DownloadedFileType extends VideoMetadata {
+  id: string;
   name: string;
   size: number;
   mtime: string;
 }
 
 export interface VideoMetadata {
+  id: string;
   duration: string;
   title: string;
   uploader?: string;

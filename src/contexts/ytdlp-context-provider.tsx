@@ -27,50 +27,36 @@ interface YtdlpProviderProps {
 }
 
 export interface YtdlpContextType {
-  // Core URL State
   inputUrl: string
   setInputUrl: Dispatch<SetStateAction<string>>
   hashUrl: string
   setHashUrl: Dispatch<SetStateAction<string>>
-
-  // Download Actions & Status
   startDownload: (downloadUrl?: string, downloadFormat?: string) => Promise<void>
   isLoading: boolean
-
-  // Logging
   log: string
   setLog: Dispatch<SetStateAction<string>>;
   clearLog: () => void;
   showLog: boolean;
   setShowLog: (newValue: boolean) => void;
-
-  // Configuration
   templateCliArg: string;
   setTemplateCliArg: Dispatch<SetStateAction<string>>;
-
   setVideoFormat: Dispatch<SetStateAction<VideoFormat>>;
   videoFormat: VideoFormat;
-
   setAudioFormat: Dispatch<SetStateAction<AudioFormat>>;
   audioFormat: AudioFormat;
-
   setFormat: Dispatch<SetStateAction<MediaFormat>>;
   format: MediaFormat;
-
   setDefaultFormat: Dispatch<SetStateAction<MediaFormat>>;
   defaultFormat: MediaFormat;
-
-  // restrictedFilenames
   restrictedFilenames: boolean;
   setRestrictedFilenames: (newValue: boolean) => void;
-
-  // Progress
   progress: number;
-
-  // Queue input
   showQueueInput: boolean;
   setShowQueueInput: Dispatch<SetStateAction<boolean>>;
-
+  queueUrls: string[];
+  setQueueUrls: Dispatch<SetStateAction<string[]>>;
+  addQueueUrl: (url: string) => void;
+  removeQueueUrl: (url: string) => void;
 }
 
 export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
@@ -91,8 +77,22 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
   const { hashUrl, setHashUrl } = useHashUrl()
   const { apiFetch } = useApiBase()
   const { fetchDownloadedFiles } = useDownloaded()
+  const [queueUrls, setQueueUrls] = useState<string[]>([]);
 
   const clearLog = () => setLog("")
+
+  const removeQueueUrl = (url: string) => {
+    setQueueUrls((prev) => prev.filter(item => item !== url));
+  }
+
+  const addQueueUrl = (url: string) => {
+    setQueueUrls((prev) => {
+      if (prev.includes(url)) {
+        return prev;
+      }
+      return [url, ...prev];
+    })
+  }
 
   const updateProgress = (newValue: number) => {
     if (newValue > 1) {
@@ -241,6 +241,10 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
     setShowQueueInput,
     showQueueInput,
     progress,
+    queueUrls,
+    setQueueUrls,
+    addQueueUrl,
+    removeQueueUrl,
   }
 
   return <YtdlpContext.Provider value={value}>

@@ -1,5 +1,6 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import {
+  deepLinkText,
   gridButtonClasses,
   gridClasses,
   gridNameClasses,
@@ -19,6 +20,9 @@ import {
   type DownloadedFileType,
 } from "@/contexts/downloaded-context";
 import {
+  ClipboardCheck,
+  ClipboardCopy,
+  ClipboardCopyIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   PlayIcon,
@@ -29,6 +33,7 @@ import {
 import { Img } from "react-image";
 import { cn } from "@/lib/utils";
 import { type FC } from "react";
+import { toast } from "sonner";
 
 interface DowloadedFileProps {
   file: DownloadedFileType;
@@ -66,25 +71,24 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
 
   const ContentImage = () => (
     <div
-      className={`flex flex-col justify-center items-center relative gap-1 bg-black group ${
-        isExpanded ? "rounded-xl" : "rounded-t-xl"
-      }`}
+      className={`flex flex-col justify-center items-center relative gap-1 bg-black group ${isExpanded ? "rounded-xl" : "rounded-t-xl"
+        }`}
       onClick={() => handlePlay(file.name)}
     >
       <div
         className="
           absolute cursor-pointer opacity-10 group-hover:opacity-100
           transition-opacity duration-500 rounded-full bg-background/30
-          w-20 h-20 mb-[22px] flex items-center justify-center
+          w-20 h-20 mb-5.5 flex items-center justify-center
         "
       >
         <PlayIcon
           style={{ stroke: "#fff", ...thinIconStyle }}
-          className="w-12 h-12 ml-[3px]"
+          className="w-12 h-12 ml-0.75"
         />
       </div>
 
-      <div className="rounded-t-xl overflow-hidden w-full h-[200px] flex items-center justify-center">
+      <div className="rounded-t-xl overflow-hidden w-full h-50 flex items-center justify-center">
         <Img
           className="object-cover"
           src={`${apiBase}/thumbnail/${file.name}`}
@@ -104,7 +108,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
 
   const PlayButtonControl = () => (
     <div className={roundButtonClasses} onClick={() => handlePlay(file.name)}>
-      <PlayIcon className="h-6 w-6 ml-[3px]" style={thinIconStyle} />
+      <PlayIcon className="h-6 w-6 ml-0.75" style={thinIconStyle} />
     </div>
   );
 
@@ -150,9 +154,29 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
 
     return (
       <>
+        <div
+          className="flex flex-row items-center gap-2"
+          onClick={async () => {
+            const link = `${location.href}#/downloaded/${file.id}`;
+            await navigator.clipboard.writeText(link)
+            toast(
+              <div className="flex flex-row gap-2 items-center">
+                {link}
+                <ClipboardCheck style={thinIconStyle} />
+              </div>
+            )
+          }}
+        >
+          <div className={cn(deepLinkText, 'flex flex-row items-center gap-2', 'cursor-pointer')}>
+            {location.href}#/downloaded/{file.id}
+            <ClipboardCopyIcon style={thinIconStyle} className="w-4 h-4" />
+          </div>
+        </div>
+
         <div className={itemHeadingClasses}>
           {label ?? field.charAt(0).toUpperCase() + field.slice(1)}
         </div>
+
         <div className={itemsColectionClasses}>
           {values.map((value) => (
             <div key={String(value)} className={itemClasses}>
@@ -207,7 +231,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
   return (
     <div className={cn(gridClasses, "col-span-full p-4")}>
       <div className="flex flex-row gap-4 items-start">
-        <div className="w-1/4 min-w-[180px]">
+        <div className="w-1/4 min-w-45">
           <ContentImage />
         </div>
         <div className="flex flex-col gap-2 flex-1">

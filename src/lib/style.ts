@@ -35,3 +35,5 @@ export const extClasses = `rounded-full bg-primary text-primary-foreground text-
 export const itemClasses = extClasses;
 export const itemHeadingClasses = `text-xl tracking-tighter font-bold`;
 export const itemsColectionClasses = `flex gap-2 items-center justify-start flex-wrap`;
+
+export const deepLinkText = `text-sm text-primary-foreground bg-primary rounded-full px-3`;
