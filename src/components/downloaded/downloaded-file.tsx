@@ -21,10 +21,10 @@ import {
 } from "@/contexts/downloaded-context";
 import {
   ClipboardCheck,
-  ClipboardCopy,
   ClipboardCopyIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
+  NotebookIcon,
   PlayIcon,
   Trash2Icon,
   XIcon,
@@ -40,6 +40,7 @@ interface DowloadedFileProps {
   handlePlay: (name: string) => void;
   handleDelete: (name: string) => void;
   handleDownload: (name: string) => void;
+  handleNotes: (file: DownloadedFileType) => void;
   selectedFile?: string;
   isDeleting?: string;
   isExpanded: boolean;
@@ -53,6 +54,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
     handlePlay,
     handleDownload,
     handleDelete,
+    handleNotes,
     isDeleting,
     isExpanded,
     onToggleExpand,
@@ -118,6 +120,15 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
       onClick={() => handleDownload(file.name)}
     >
       <DownloadIcon className="h-6 w-6" style={thinIconStyle} />
+    </div>
+  );
+
+  const NotesButtonControl = () => (
+    <div
+      className={roundButtonClasses}
+      onClick={() => handleNotes(file)}
+    >
+      <NotebookIcon className="h-6 w-6" style={thinIconStyle} />
     </div>
   );
 
@@ -239,6 +250,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
             <PlayButtonControl />
             <DownloadButtonControl />
             <DeleteButtonControl />
+            <NotesButtonControl />
             <CollapseControls />
           </div>
           <div className="text-xl tracking-tighter font-bold">

@@ -1,4 +1,4 @@
-import { type FC, useState } from "react"
+import { type FC, useEffect, useState } from "react"
 import { useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-context"
 import { VideoPlayer } from "@/components/downloaded/video-player"
 import { AudioPlayer } from "@/components/downloaded/audio-player"
@@ -9,6 +9,7 @@ import { useAudioPlayerContext } from "@/contexts/audio-player-context-provider"
 import { controlIconClassName, inputResetIconClasses, thinIconStyle } from "@/lib/style"
 import { Icon } from "@/components/ocodo-ui/icon"
 import { cn } from "@/lib/utils"
+import { useNotes } from "@/contexts/notes-context"
 
 const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefined => {
   if (!fileName) return undefined
@@ -25,12 +26,23 @@ const getFileType = (fileName: string | undefined): 'video' | 'audio' | undefine
 type MediaType = 'video' | 'audio' | undefined
 
 export const DownloadedUI: FC = () => {
-  const { deleteFile, searchResults, browserDownloadFile } = useDownloaded()
   const [selectedFile, setSelectedFile] = useState<string | undefined>(undefined)
   const [mediaType, setMediaType] = useState<MediaType>(undefined)
   const [isDeleting, setIsDeleting] = useState<string | undefined>(undefined)
   const [searchQuery, setSearchQuery] = useState('')
   const { audioStop } = useAudioPlayerContext()
+  const {
+    deleteFile,
+    searchResults,
+    browserDownloadFile
+  } = useDownloaded()
+
+  const {
+    currentFile,
+    setCurrentFile,
+    showNotesModal,
+    setShowNotesModal,
+  } = useNotes();
 
   const handlePlay = (fileName: string) => {
     setMediaType(() => {
@@ -59,6 +71,18 @@ export const DownloadedUI: FC = () => {
   const handleDownload = (fileName: string) => {
     browserDownloadFile(fileName)
   }
+
+  const handleNotes = (file: DownloadedFileType) => {
+    setShowNotesModal(true);
+    setCurrentFile(file);
+  }
+
+  useEffect(() => {
+    console.log('Setting current file and showing notes modal')
+    console.log(currentFile)
+    console.log('showNotesModal AAAA')
+    console.log(showNotesModal)
+  }, [currentFile, showNotesModal])
 
   return (
     <div>
@@ -93,6 +117,7 @@ export const DownloadedUI: FC = () => {
             setSearchQuery={setSearchQuery}
             handleDelete={handleDelete}
             handleDownload={handleDownload}
+            handleNotes={handleNotes}
             handlePlay={handlePlay}
             isDeleting={isDeleting}
             selectedFile={selectedFile}
@@ -147,6 +172,7 @@ interface DownloadedFilteredBySearchProps {
   handleDelete: (fileName: string) => void
   handleDownload: (fileName: string) => void
   handlePlay: (fileName: string) => void
+  handleNotes: (file: DownloadedFileType) => void
   isDeleting: string | undefined
   selectedFile: string | undefined
 }
@@ -156,6 +182,7 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
   handleDelete,
   handleDownload,
   handlePlay,
+  handleNotes,
   isDeleting,
   selectedFile,
   searchQuery
@@ -174,6 +201,7 @@ const DownloadedFilteredBySearch: FC<DownloadedFilteredBySearchProps> = ({
             handleDelete={handleDelete}
             handlePlay={handlePlay}
             handleDownload={handleDownload}
+            handleNotes={handleNotes}
             isDeleting={isDeleting}
             isExpanded={expandedIndex === idx}
             onToggleExpand={() => {

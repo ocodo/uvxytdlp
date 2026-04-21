@@ -1,11 +1,11 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { DownloadedUI } from "@/components/downloaded/downloaded-ui"
 import { DownloaderUI } from "@/components/downloader/downloader-ui"
 import { Heading } from "@/components/ocodo-ui/heading"
 import { ThemeProvider } from "@/contexts/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { useApiBase } from '@/contexts/api-base-context'
-import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context"
+import { DownloadedProvider, useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-context"
 import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
@@ -19,6 +19,8 @@ import { WavesurferSettingsProvider } from "@/contexts/wavesurfer-settings-provi
 import { OcodoLoaderBanner } from "@/components/ocodo-ui/ocodo-loader-icon"
 import { DowloadQueueModal } from "@/components/downloader/download-queue-modal";
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon"
+import { NotesModal } from "@/components/downloaded/notes-modal"
+import { NotesProvider } from "@/contexts/notes-context-provider"
 
 const AppContent = () => {
   const { apiBase, loading } = useApiBase()
@@ -65,6 +67,7 @@ const AppContent = () => {
 }
 
 function App() {
+
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       console.error("Unhandled error:", event.error)
@@ -93,12 +96,14 @@ function App() {
               <DownloadedProvider>
                 <YoutubeSearchProvider>
                   <YtdlpProvider>
-                    <CookiesSettingsProvider>
-                      <WavesurferSettingsProvider>
-                        <AppContent />
-                        <DowloadQueueModal />
-                      </WavesurferSettingsProvider>
-                    </CookiesSettingsProvider>
+                    <NotesProvider>
+                      <CookiesSettingsProvider>
+                        <WavesurferSettingsProvider>
+                          <AppContent />
+                          <DowloadQueueModal />
+                        </WavesurferSettingsProvider>
+                      </CookiesSettingsProvider>
+                    </NotesProvider>
                   </YtdlpProvider>
                 </YoutubeSearchProvider>
               </DownloadedProvider>
