@@ -101,6 +101,7 @@ function App() {
                         <WavesurferSettingsProvider>
                           <AppContent />
                           <DowloadQueueModal />
+                          <NotesModal />
                         </WavesurferSettingsProvider>
                       </CookiesSettingsProvider>
                     </NotesProvider>

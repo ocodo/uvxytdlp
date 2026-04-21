@@ -573,7 +573,7 @@ def delete_downloaded_file(filename: str):
         os.remove(full_path)
 
         media_exts = [".mp3", ".mp4", ".m4a", ".mkv", ".webm"]
-        exts = [".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg"]
+        exts = [".info.json", ".description", ".webp", ".png", ".jpeg", ".jpg", "txt"]
 
         other_media_files = any(
             path_with_ext_exists(full_path, ext) for ext in media_exts
@@ -589,6 +589,48 @@ def delete_downloaded_file(filename: str):
         return {"message": f"File '{filename}' deleted successfully."}
     except Exception as e:
         logger.exception(f"Error deleting file {full_path}: {e}")
+
+
+class NoteRequest(BaseModel):
+    name: str
+    note: str
+
+
+def safe_note_filename(name: str) -> str:
+    base = Path(name).name
+    stem = Path(base).stem
+
+    if not stem:
+        raise HTTPException(400, "Invalid file name")
+
+    return stem + ".txt"
+
+
+@api.post("/note")
+def save_note(payload: NoteRequest):
+    filename = safe_note_filename(payload.name)
+    file_path = download_dir / filename
+
+    try:
+        file_path.write_text(payload.note, encoding="utf-8")
+    except Exception:
+        raise HTTPException(500, f"Saving note failed for: {payload.name}")
+
+    return {"message": "saved", "file": filename}
+
+
+@api.get("/note/{name}")
+def get_note(name: str):
+    filename = safe_note_filename(name)
+    file_path = download_dir / filename
+
+    if not file_path.exists():
+        raise HTTPException(404, f"Note not found: {name}")
+
+    return {
+        "name": filename,
+        "note": file_path.read_text(encoding="utf-8")
+    }
 
 
 @api.get("/random-image")

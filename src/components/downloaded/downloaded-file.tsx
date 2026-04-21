@@ -126,7 +126,10 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
   const NotesButtonControl = () => (
     <div
       className={roundButtonClasses}
-      onClick={() => handleNotes(file)}
+      onClick={() => {
+        console.log(handleNotes)
+        handleNotes(file)
+      }}
     >
       <NotebookIcon className="h-6 w-6" style={thinIconStyle} />
     </div>

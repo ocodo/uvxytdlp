@@ -38,9 +38,7 @@ export const DownloadedUI: FC = () => {
   } = useDownloaded()
 
   const {
-    currentFile,
     setCurrentFile,
-    showNotesModal,
     setShowNotesModal,
   } = useNotes();
 
@@ -76,13 +74,6 @@ export const DownloadedUI: FC = () => {
     setShowNotesModal(true);
     setCurrentFile(file);
   }
-
-  useEffect(() => {
-    console.log('Setting current file and showing notes modal')
-    console.log(currentFile)
-    console.log('showNotesModal AAAA')
-    console.log(showNotesModal)
-  }, [currentFile, showNotesModal])
 
   return (
     <div>
