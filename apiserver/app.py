@@ -68,6 +68,7 @@ if __name__ == "__main__":
 LAST_REFRESH_FILE = os.path.join(os.path.dirname(__file__), "last_ytdlprefresh.txt")
 REFRESH_INTERVAL = timedelta(days=1)
 
+
 def extract_filename_from_merger_log(target_line):
     """
     Extract the filename from a quoted path in the target line.
@@ -161,26 +162,37 @@ def downloaded_files():
                     "size": stat_info.st_size,
                 }
 
-                info_json_file = f'{Path(download_dir, Path(entry.name).stem)}.info.json'
-                logger.info(f'info file: {info_json_file}')
+                info_json_file = (
+                    f"{Path(download_dir, Path(entry.name).stem)}.info.json"
+                )
+                logger.info(f"info file: {info_json_file}")
                 if Path(info_json_file).exists():
-                    entry_info["info"] = f'{Path(info_json_file)}'
-                    json_data = json.loads(Path(info_json_file).read_text(encoding='utf-8'))
+                    entry_info["info"] = f"{Path(info_json_file)}"
+                    json_data = json.loads(
+                        Path(info_json_file).read_text(encoding="utf-8")
+                    )
 
-                    if json_data.get('id'):
-                        entry_info["id"] = json_data.get('id')
-                    elif json_data.get('title'):
-                        entry_info["id"] = slugify(json_data.get('title'))
+                    if json_data.get("id"):
+                        entry_info["id"] = json_data.get("id")
+                    elif json_data.get("title"):
+                        entry_info["id"] = slugify(json_data.get("title"))
 
-                    entry_info["title"] = json_data.get('title')
-                    entry_info["tags"] = json_data.get('tags')
-                    entry_info["duration"] = json_data.get('duration_string')
+                    entry_info.update(
+                        {
+                            "title": json_data.get("title"),
+                            "tags": json_data.get("tags"),
+                            "duration": json_data.get("duration_string"),
+                        }
+                    )
 
-                description_file = f'{Path(download_dir, Path(entry.name).stem)}.description'
-                logger.info(f'description file: {description_file}')
+                description_file = (
+                    f"{Path(download_dir, Path(entry.name).stem)}.description"
+                )
+                logger.info(f"description file: {description_file}")
                 if Path(description_file).exists():
-                    entry_info["description"] = Path(description_file).read_text(encoding='utf-8')
-
+                    entry_info["description"] = Path(description_file).read_text(
+                        encoding="utf-8"
+                    )
 
                 files.append(entry_info)
             except Exception as e:
@@ -458,7 +470,9 @@ async def download_via_ytdlp(url: str, args: str):
 
     except Exception as e:
         logging.exception(f"Failed to start process: {full_command_str}")
-        raise HTTPException(status_code=500, detail=f"Failed to start process: {full_command} {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to start process: {full_command} {e}"
+        )
 
     return StreamingResponse(
         _stream_subprocess_output(process, url, full_command_str),
@@ -627,10 +641,7 @@ def get_note(name: str):
     if not file_path.exists():
         raise HTTPException(404, f"Note not found: {name}")
 
-    return {
-        "name": filename,
-        "note": file_path.read_text(encoding="utf-8")
-    }
+    return {"name": filename, "note": file_path.read_text(encoding="utf-8")}
 
 
 @api.get("/random-image")
@@ -663,7 +674,8 @@ def health_check():
 
 @api.get("/docs", include_in_schema=False)
 async def api_documentation(request: Request):
-    return HTMLResponse("""
+    return HTMLResponse(
+        """
 <!doctype html>
 <html lang="en">
   <head>
@@ -682,7 +694,8 @@ async def api_documentation(request: Request):
     />
 
   </body>
-</html>""")
+</html>"""
+    )
 
 
 app.include_router(api, prefix="/api", tags=["api"])
