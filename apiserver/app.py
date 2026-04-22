@@ -591,7 +591,7 @@ def delete_downloaded_file(filename: str):
         logger.exception(f"Error deleting file {full_path}: {e}")
 
 
-class NoteRequest(BaseModel):
+class SavedNote(BaseModel):
     name: str
     note: str
 
@@ -607,14 +607,14 @@ def safe_note_filename(name: str) -> str:
 
 
 @api.post("/note")
-def save_note(payload: NoteRequest):
+def save_note(payload: SavedNote):
     filename = safe_note_filename(payload.name)
-    file_path = download_dir / filename
+    file_path = Path(download_dir, filename)
 
     try:
         file_path.write_text(payload.note, encoding="utf-8")
-    except Exception:
-        raise HTTPException(500, f"Saving note failed for: {payload.name}")
+    except Exception as e:
+        raise HTTPException(500, f"Saving note failed for: {payload.name}\n{e}")
 
     return {"message": "saved", "file": filename}
 
@@ -622,7 +622,7 @@ def save_note(payload: NoteRequest):
 @api.get("/note/{name}")
 def get_note(name: str):
     filename = safe_note_filename(name)
-    file_path = download_dir / filename
+    file_path = Path(download_dir, filename)
 
     if not file_path.exists():
         raise HTTPException(404, f"Note not found: {name}")
