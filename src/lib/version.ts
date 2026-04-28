@@ -1,1 +1,1 @@
-export const VERSION = "wip-download-list"
+export const VERSION = "wip-notes"

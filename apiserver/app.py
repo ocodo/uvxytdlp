@@ -22,7 +22,7 @@ from youtube_search import YoutubeSearch
 
 app = FastAPI(
     title="API for uvxytdlp",
-    version=" wip-download-list",
+    version=" wip-notes",
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",
