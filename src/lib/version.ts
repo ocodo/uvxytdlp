@@ -1,1 +1,1 @@
-export const VERSION = "notes-modal-wip"
+export const VERSION = "actions-checkout-v5"

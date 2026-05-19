@@ -22,7 +22,7 @@ from youtube_search import YoutubeSearch
 
 app = FastAPI(
     title="API for uvxytdlp",
-    version=" notes-modal-wip",
+    version=" actions-checkout-v5",
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",
