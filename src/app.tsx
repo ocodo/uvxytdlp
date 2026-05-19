@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { DownloadedUI } from "@/components/downloaded/downloaded-ui"
 import { DownloaderUI } from "@/components/downloader/downloader-ui"
 import { Heading } from "@/components/ocodo-ui/heading"
 import { ThemeProvider } from "@/contexts/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { useApiBase } from '@/contexts/api-base-context'
-import { DownloadedProvider, useDownloaded, type DownloadedFileType } from "@/contexts/downloaded-context"
+import { DownloadedProvider, useDownloaded } from "@/contexts/downloaded-context"
 import { YtdlpProvider } from "@/contexts/ytdlp-context-provider"
 import { toast } from "sonner"
 import { HashUrlProvider } from "@/contexts/hashurl-context"
