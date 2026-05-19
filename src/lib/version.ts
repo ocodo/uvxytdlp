@@ -1,1 +1,1 @@
-export const VERSION = "dockerfile-optimized"
+export const VERSION = "notes-modal-wip"
