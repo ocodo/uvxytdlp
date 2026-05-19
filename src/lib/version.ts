@@ -1,1 +1,1 @@
-export const VERSION = "wip-notes"
+export const VERSION = "dockerfile-optimize-wip"

@@ -33,7 +33,7 @@ sudo docker run -d \
   -p 8080:80 \
   -v /path/to/your/downloads:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:wip-notes
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:dockerfile-optimize-wip
 ```
 
 Then go to http://localhost:8080
