@@ -33,7 +33,7 @@ sudo docker run -d \
   -p 8080:80 \
   -v /path/to/your/downloads:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:notes-modal-no-404
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:docker-build-push-7
 ```
 
 Then go to http://localhost:8080
