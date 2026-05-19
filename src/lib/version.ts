@@ -1,1 +1,1 @@
-export const VERSION = "dockerfile-optimize-wip-2"
+export const VERSION = "dockerfile-optimized"
