@@ -66,7 +66,11 @@ export const NotesProvider: FC<NotesProviderProps> = ({ children }) => {
       )
       if (response.ok) {
         const json: SavedNote = await response.json()
-        setTempNote(json.note)
+        setTempNote(json.note);
+        setNoteLoading(false);
+        return
+      }
+      if (response.status == 404) {
         setNoteLoading(false);
         return
       }
