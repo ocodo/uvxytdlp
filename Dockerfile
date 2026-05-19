@@ -1,35 +1,37 @@
-FROM guergeiro/pnpm:22-8 AS frontend-builder
+FROM guergeiro/pnpm:lts-latest AS frontend-builder
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
+RUN pnpm fetch --prod
+
 COPY vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html ./
 COPY src ./src
 COPY public ./public
 COPY apiserver ./apiserver
 
-RUN pnpm install
+RUN pnpm install -r --offline --frozen-lockfile
 RUN pnpm exec vite build
 
-FROM ghcr.io/astral-sh/uv:0.8-python3.11-bookworm
-
-RUN curl -fsSL https://deno.land/install.sh | sh
-ENV PATH="/root/.deno/bin:$PATH"
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get clean
 
-COPY apiserver/ /app/apiserver
-COPY apiserver/docker.config.yaml /app/apiserver/config.yaml
-
-COPY --from=frontend-builder /app/apiserver/dist /app/apiserver/dist
-ENV PATH=/app/apiserver/.venv/bin:$PATH
+RUN curl -fsSL https://deno.land/install.sh | sh
+ENV PATH="/root/.deno/bin:$PATH"
 
 WORKDIR /app/apiserver
 
-RUN uv venv --relocatable --clear
-RUN uv sync --frozen
+COPY apiserver/pyproject.toml apiserver/uv.lock* ./
+RUN uv sync --frozen --no-dev
+
+COPY apiserver/ .
+COPY --from=frontend-builder /app/apiserver/dist ./dist
+COPY apiserver/docker.config.yaml ./config.yaml
+
+ENV PATH="/app/apiserver/.venv/bin:$PATH"
 
 EXPOSE 8000
 
