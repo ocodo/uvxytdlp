@@ -3,7 +3,7 @@ FROM guergeiro/pnpm:lts-latest AS frontend-builder
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm fetch --prod
+RUN pnpm fetch
 
 COPY vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html ./
 COPY src ./src
