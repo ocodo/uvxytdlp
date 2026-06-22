@@ -30,13 +30,13 @@ Using Docker or Podman...
 
 ```bash
 sudo docker run -d \
-  -p 8080:80 \
+  -p 8080:8000 \
   -v /path/to/your/downloads:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
   ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:docker-build-push-7
 ```
 
-Then go to http://localhost:8080
+Then go to http://localhost:8080 
 
 - - -
 
@@ -90,7 +90,7 @@ To run with `uvxytdlp-ui` note downloads in the container are at is `/ytdlp-down
 
 ```sh
 docker run -d \
-  -p 8080:80 \
+  -p 8080:8000 \
   -v $local_download_dir:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
   docker.io/library/uvxytdlp-ui
