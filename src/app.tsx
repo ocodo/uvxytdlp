@@ -50,8 +50,8 @@ const AppContent = () => {
                   <DownloadedUI />
                   :
                   <>
-                    <div className="p-3 pb-0 text-4xl font-thin tracking-tighter flex flex-row items-center gap-4">
-                      <UvxYtdlpIcon className="opacity-30" size={160} strokeWidth={1} /> Your archive has no downloaded content, get some...
+                    <div className="p-3 pb-0 text-2xl font-thin tracking-tighter flex flex-col items-center justify-center gap-4">
+                      <UvxYtdlpIcon className="opacity-30" size={160} strokeWidth={1} />No downloaded content, get some...
                     </div>
                   </>
             }
