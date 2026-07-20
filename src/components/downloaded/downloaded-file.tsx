@@ -1,6 +1,7 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import {
   deepLinkText,
+  extClasses,
   gridButtonClasses,
   gridClasses,
   gridNameClasses,
@@ -65,6 +66,12 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
   const { viewType } = useDownloaded();
   const isGrid = viewType === "grid";
   const isList = viewType === "list";
+
+  const fileToTitle = (fileName: string): string => fileName.replace(/\.[^/.]+$/, "")
+
+  const fileName = file.name
+  const title = fileToTitle(fileName)
+  const ext = fileName.replace(`${title}.`, '')
 
   const formatDuration = (duration: string | null) => {
     if (!duration) return "";
@@ -231,6 +238,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
         <div className={isList ? listNameClasses : gridNameClasses}>
           {file.title || file.name}
           <div className="text-xs">{formatDuration(file.duration)}</div>
+          { file.title ? <div className={extClasses}>{ext}</div> : null }
         </div>
         <div className={isList ? listButtonClasses : gridButtonClasses}>
           <PlayButtonControl />
@@ -258,6 +266,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
           </div>
           <div className="text-xl tracking-tighter font-bold">
             {file.title || file.name}
+            { file.title ? <div className={extClasses}>{ext}</div> : null }
           </div>
           <div className="text-xs">{formatDuration(file.duration)}</div>
           <CollectionItem file={file} field="tags" label="Tags" />
