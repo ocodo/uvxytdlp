@@ -1,1 +1,1 @@
-export const VERSION = "click-clack"
+export const VERSION = "deno-accessor"
