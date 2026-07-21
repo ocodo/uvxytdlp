@@ -418,7 +418,7 @@ async def download_via_ytdlp(url: str, args: str):
     logger.info(f"Received request for URL: {url} with args: {args}")
 
     # We expect uvx in path, or fail
-    uvx_command_parts = ["uvx"]
+    uvx_command_parts = ["uvx", "--with", "curl-cffi", "--with", "yt-dlp-ejs"]
 
     if should_refresh_cache():
         uvx_command_parts.append("--no-cache")

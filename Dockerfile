@@ -25,6 +25,7 @@ ENV PATH="/root/.deno/bin:$PATH"
 WORKDIR /app/apiserver
 
 COPY apiserver/pyproject.toml apiserver/uv.lock* ./
+
 RUN uv sync --frozen --no-dev
 
 COPY apiserver/ .
