@@ -661,6 +661,16 @@ def get_random_image():
     return {"info": f"{image_dir} doesn't exist"}
 
 
+@api.get("/checkdeno", tags=["api"])
+def checkdeno():
+    result = subprocess.run(
+        ["deno", "eval", "console.log('Hello from Deno')"],
+        capture_output=True,
+        text=True
+    )
+    return {"output": result.stdout, "error": result.stderr}
+
+
 @api.get("/health", tags=["api"])
 @api.head("/health", tags=["api"])
 def health_check():

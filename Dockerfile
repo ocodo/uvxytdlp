@@ -16,11 +16,10 @@ RUN pnpm exec vite build
 FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim
 
 RUN apt-get update && \
-    apt-get install -y ffmpeg && \
-    apt-get clean
-
-RUN curl -fsSL https://deno.land/install.sh | sh
-ENV PATH="/root/.deno/bin:$PATH"
+    apt-get install -y ffmpeg curl unzip && \
+    curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh && \
+    ln -s /usr/local/bin/deno /usr/bin/deno && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/apiserver
 
