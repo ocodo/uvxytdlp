@@ -1,3 +1,3 @@
 # TODO
 
-- trim / clip / chapter / markers... fast, non destructive, to allow excerpt extraction
+- url/bookmarklet to save as mp3
