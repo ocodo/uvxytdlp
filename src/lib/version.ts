@@ -1,1 +1,1 @@
-export const VERSION = "deno-accessor"
+export const VERSION = "correspondent-bombshow"
