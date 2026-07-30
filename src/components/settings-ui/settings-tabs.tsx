@@ -11,7 +11,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsList>
         <TabsTrigger value="settings">Settings</TabsTrigger>
         <TabsTrigger value="cookies">Cookies</TabsTrigger>
-        <TabsTrigger value="bookmarklet">Short cut</TabsTrigger>
+        <TabsTrigger value="bookmarklet">Short cuts</TabsTrigger>
         <TabsTrigger value="about">
           <UvxYtdlpIcon
           fadeDuration={2000}

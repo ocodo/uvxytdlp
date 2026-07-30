@@ -9,6 +9,7 @@ import {
 } from 'react'
 import {
   formatTemplates,
+  getBookmarkletFormat,
   type AudioFormat,
   type MediaFormat,
   type VideoFormat
@@ -65,19 +66,19 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
   const [log, setLog] = useState<string>("")
   const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false)
   const [restrictedFilenames, setRestrictedFilenames] = useLocalStorage<boolean>('restrictedFilenames', false)
-  const [templateCliArg, setTemplateCliArg] = useState<string>("-t mp4")
+  const [templateCliArg, setTemplateCliArg] = useLocalStorage<string>("templateCliArg", "-t mp4")
 
   const [defaultFormat, setDefaultFormat] = useState<MediaFormat>('mp4')
-  const [format, setFormat] = useState<MediaFormat>("mp4")
-  const [videoFormat, setVideoFormat] = useState<VideoFormat>("mp4")
-  const [audioFormat, setAudioFormat] = useState<AudioFormat>("m4a")
+  const [format, setFormat] = useLocalStorage<MediaFormat>("format", "mp4")
+  const [videoFormat, setVideoFormat] = useLocalStorage<VideoFormat>("videoFormat", "mp4")
+  const [audioFormat, setAudioFormat] = useLocalStorage<AudioFormat>("audioFormat", "m4a")
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [progress, setProgress] = useState<number>(0)
   const { hashUrl, setHashUrl } = useHashUrl()
   const { apiFetch } = useApiBase()
   const { fetchDownloadedFiles } = useDownloaded()
-  const [queueUrls, setQueueUrls] = useState<string[]>([]);
+  const [queueUrls, setQueueUrls] = useLocalStorage<string[]>("queueUrls", []);
 
   const clearLog = () => setLog("")
 
@@ -193,13 +194,15 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
         toast(`Invalid media format`)
       }
     })
-  }, [apiFetch,
+  }, [
+    apiFetch,
     templateCliArg,
     setHashUrl,
     hashUrl,
     inputUrl,
     fetchDownloadedFiles,
-    restrictedFilenames])
+    restrictedFilenames
+  ])
 
   useEffect(() => {
     if (Object.keys(formatTemplates).includes(format)) {
@@ -208,11 +211,10 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
   }, [format])
 
   useEffect(() => {
-    if (hashUrl) {
-      if (hashUrl)
-        startDownload()
-    }
-  }, [hashUrl, setHashUrl, startDownload])
+    if (!hashUrl) return;
+
+    startDownload(hashUrl, getBookmarkletFormat(hashUrl));
+  }, [hashUrl, startDownload]);
 
   const value = {
     inputUrl,

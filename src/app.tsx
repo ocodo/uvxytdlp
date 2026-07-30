@@ -45,7 +45,8 @@ const AppContent = () => {
                 <div className="flex flex-row items-center-safe justify-center">
                   <OcodoLoaderBanner message="Fetch Downloads" />
                 </div>
-                : Array.isArray(downloadedFiles) && downloadedFiles.length > 0
+                :
+                Array.isArray(downloadedFiles) && downloadedFiles.length > 0
                   ?
                   <DownloadedUI />
                   :
