@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { getMinifiedBookmarklet } from '@/lib/get-bookmarklet'
@@ -20,6 +20,7 @@ export const YtdlpSupportedSites: React.FC<HasTitle> = ({ title }) => (
     className="flex flex-row"
     href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
     target="_blank"
+    rel="noopener noreferrer"
   >
     {title} <ExternalLink className="w-4 h-4" />
   </a>
@@ -32,20 +33,22 @@ export const BookmarkletSettingsView: React.FC = () => {
   useEffect(() => {
     setIsHttp(window.location.protocol === 'http:')
 
-    const bookmarklet = getMinifiedBookmarklet()
-
     setBookmarklets([
       {
         title: 'Default download',
-        url: bookmarklet,
+        url: getMinifiedBookmarklet(),
       },
       ...Object.values(AudioFormats).map((format) => ({
         title: `Audio (${format})`,
-        url: `${bookmarklet}&uvxytdlp_format=${format}`,
+        url: getMinifiedBookmarklet({
+          format,
+        }),
       })),
       ...Object.values(VideoFormats).map((format) => ({
         title: `Video (${format})`,
-        url: `${bookmarklet}&uvxytdlp_format=${format}`,
+        url: getMinifiedBookmarklet({
+          format,
+        }),
       })),
     ])
   }, [])
@@ -80,10 +83,7 @@ export const BookmarkletSettingsView: React.FC = () => {
             </div>
 
             <pre
-              className={`text-wrap overflow-scroll
-                          p-2 border-1 border-foreground/30
-                          rounded-lg font-bold
-                          bg-background text-xs select-all`}
+              className="text-wrap overflow-scroll p-2 border border-foreground/30 rounded-lg font-bold bg-background text-xs select-all"
               style={{
                 overflowWrap: 'anywhere',
               }}
