@@ -8,7 +8,6 @@ import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon'
 import { thinIconStyle } from '@/lib/style'
 
 interface HeadingProps {
-  title?: string
   topLine?: React.ReactNode
   topLineClassName?: string
 }
@@ -19,10 +18,8 @@ export const Heading: FC<HeadingProps> = ({ topLine, topLineClassName }) => {
       {topLine && (
         <div className={
           cn(
-            `
-            w-full bg-transparent absolute flex items-center
-            justify-end text-foreground/30 top-1 right-20
-            `,
+            "w-full bg-transparent absolute flex items-center",
+            "justify-end text-foreground/30 top-1 right-20",
             topLineClassName
           )}
         >
@@ -37,7 +34,7 @@ export const Heading: FC<HeadingProps> = ({ topLine, topLineClassName }) => {
         </SettingsDialog>
         <div className='flex flex-row gap-4 items-end'>
           <UvxYtdlpIcon size={29} strokeWidth={0.5} />
-          <div className="font-black text-foreground text-3xl tracking-tighter">uvxytdlp</div>
+          <div className="font-black text-3xl tracking-tighter dark text-foreground">uvxytdlp</div>
         </div>
         <ThemeSwitch className="mr-2" />
       </div>
