@@ -1,1 +1,1 @@
-export const VERSION = "coconut-radio"
+export const VERSION = "liger-kibble"
