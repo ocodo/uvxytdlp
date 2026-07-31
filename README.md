@@ -33,7 +33,7 @@ sudo docker run -d \
   -p 8080:8000 \
   -v /path/to/your/downloads:/ytdlp-downloads \
   --name uvxytdlp-ui-container \
-  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:minor-nothings
+  ghcr.io/ocodo/uvxytdlp/uvxytdlp-ui:coconut-radio
 ```
 
 Then go to http://localhost:8080 

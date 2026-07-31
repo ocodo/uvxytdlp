@@ -1,1 +1,1 @@
-export const VERSION = "minor-nothings"
+export const VERSION = "coconut-radio"
