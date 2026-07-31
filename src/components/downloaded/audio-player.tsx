@@ -5,7 +5,7 @@ import { useEffect, type FC } from 'react';
 import { UvxYtdlpIcon } from '@/components/branding/uvxytdlp-icon';
 import { useAudioPlayerContext } from '@/contexts/audio-player-context-provider';
 import { PauseIcon, PlayIcon } from 'lucide-react';
-import { extClasses, thinIconStyle } from '@/lib/style';
+import { extBadgeClasses, thinIconStyle } from '@/lib/style';
 
 interface AudioPlayerProps {
   fileName: string;
@@ -38,15 +38,15 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
                        group-hover:opacity-100
                        transition-opacity duration-500
                        rounded-full bg-background/30
-                       w-20 h-20 mb-[22px]
+                       w-20 h-20 mb-5.5
                        flex flex-row items-center justify-center`}>
           {isPlaying
             ? <PauseIcon
               style={{ stroke: '#fff', ...thinIconStyle }}
-              className="w-12 h-12 ml-[3px]" />
+              className="w-12 h-12 ml-0.75" />
             : <PlayIcon
               style={{ stroke: '#fff', ...thinIconStyle }}
-              className="w-12 h-12 ml-[3px]" />
+              className="w-12 h-12 ml-0.75" />
           }
         </div>
         <div className='flex flex-row items-center justify-center'>
@@ -71,7 +71,7 @@ export const AudioPlayer: FC<AudioPlayerProps> = ({ fileName }) => {
         </div>
         <div className="flex items-start justify-between gap-4">
           <h2 className="italic">{title}</h2>
-          <div className={extClasses}>{ext}</div>
+          <div className={extBadgeClasses}>{ext}</div>
         </div>
       </div>
     </div>

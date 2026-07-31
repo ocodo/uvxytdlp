@@ -31,9 +31,7 @@ const AppContent = () => {
   }
   return (
     <>
-      <Heading
-        title="uvxytdlp-ui"
-      />
+      <Heading />
       <div className="border rounded-none sm:rounded-xl bg-card/60 backdrop-blur-lg sm:m-4 sm:pt-2 sm:pb-2">
         <div className="sm:px-4 grid grid-cols-1 gap-1">
           <>

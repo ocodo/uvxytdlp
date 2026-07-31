@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export const thinIconStyle = {strokeWidth: 0.5};
+export const thinIconStyle = { strokeWidth: 0.5 };
 /*export const controlIconClassName = `text-black/80 hover:text-black
                                         hover:bg-white bg-white/30
                                         border-1 border-black/30
@@ -9,10 +9,10 @@ export const thinIconStyle = {strokeWidth: 0.5};
                                         cursor-pointer`;
 */
 export const controlIconClassName = cn(
-    "hover:bg-accent/20 w-6 h-6",
-    "rounded-full cursor-pointer",
-    "p-2 hover:bg-foreground/10 w-10 h-10 rounded-full",
-  );
+  "hover:bg-accent/20 w-6 h-6",
+  "rounded-full cursor-pointer",
+  "p-2 hover:bg-foreground/10 w-10 h-10 rounded-full",
+);
 
 export const roundButtonClasses = `rounded-full hover:bg-foreground/20 cursor-pointer p-2 animate-all duration-500`
 
@@ -31,9 +31,18 @@ export const inputResetIconClasses = `cursor-pointer hover:bg-card/10 transition
                                       text-foreground/50 hover:text-foreground
                                       absolute right-1 top-1/2 -translate-y-1/2`
 
-export const extClasses = `rounded-full bg-primary text-primary-foreground text-xs px-2 p-1 w-fit`
-export const itemClasses = extClasses;
+export const extBadgeClasses = `select-none rounded-full bg-primary text-primary-foreground text-xs px-2 p-1 w-fit`
+export const itemBadgeClasses = extBadgeClasses;
 export const itemHeadingClasses = `text-xl tracking-tighter font-bold`;
 export const itemsColectionClasses = `flex gap-2 items-center justify-start flex-wrap`;
 
 export const deepLinkText = `text-sm text-primary-foreground bg-primary rounded-full px-3`;
+export const smallLinkText = `text-xs text-foreground`;
+
+export const actionButtonClasses = cn(
+  extBadgeClasses,
+  "border border-transparent",
+  "hover:bg-primary/40 hoverhover:border-primary",
+  "duration-500 transition-color ",
+  "cursor-pointer select-none"
+);

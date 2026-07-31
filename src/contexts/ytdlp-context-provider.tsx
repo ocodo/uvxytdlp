@@ -10,6 +10,7 @@ import {
 import {
   formatTemplates,
   getBookmarkletFormat,
+  uvxytdlp_format,
   type AudioFormat,
   type MediaFormat,
   type VideoFormat
@@ -27,18 +28,24 @@ interface YtdlpProviderProps {
   children: ReactNode
 }
 
+interface DisplayableUvxytdlpUrl {
+  url: string;
+  format: MediaFormat;
+  list: boolean;
+}
+
 export interface YtdlpContextType {
-  inputUrl: string
-  setInputUrl: Dispatch<SetStateAction<string>>
-  hashUrl: string
-  setHashUrl: Dispatch<SetStateAction<string>>
-  startDownload: (downloadUrl?: string, downloadFormat?: string) => Promise<void>
-  isLoading: boolean
-  log: string
+  inputUrl: string;
+  setInputUrl: Dispatch<SetStateAction<string>>;
+  hashUrl: string;
+  setHashUrl: Dispatch<SetStateAction<string>>;
+  startDownload(downloadUrl?: string, downloadFormat?: string): Promise<void>;
+  isLoading: boolean;
+  log: string;
   setLog: Dispatch<SetStateAction<string>>;
-  clearLog: () => void;
+  clearLog(): void;
   showLog: boolean;
-  setShowLog: (newValue: boolean) => void;
+  setShowLog(newValue: boolean): void;
   templateCliArg: string;
   setTemplateCliArg: Dispatch<SetStateAction<string>>;
   setVideoFormat: Dispatch<SetStateAction<VideoFormat>>;
@@ -56,42 +63,73 @@ export interface YtdlpContextType {
   setShowQueueInput: Dispatch<SetStateAction<boolean>>;
   queueUrls: string[];
   setQueueUrls: Dispatch<SetStateAction<string[]>>;
-  addQueueUrl: (url: string) => void;
-  removeQueueUrl: (url: string) => void;
+  addQueueUrl(url: string, format: MediaFormat): void;
+  removeQueueUrl(url: string): void;
+  displayableUvxytdlpUrl(uvxytdlpUrl: string): DisplayableUvxytdlpUrl;
+  downloadQueue(): Promise<void>;
+  clearQueue(): void;
 }
 
 export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
   const [showQueueInput, setShowQueueInput] = useState<boolean>(false);
-  const [inputUrl, setInputUrl] = useState<string>("")
-  const [log, setLog] = useState<string>("")
-  const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false)
-  const [restrictedFilenames, setRestrictedFilenames] = useLocalStorage<boolean>('restrictedFilenames', false)
-  const [templateCliArg, setTemplateCliArg] = useLocalStorage<string>("templateCliArg", "-t mp4")
+  const [inputUrl, setInputUrl] = useState<string>("");
+  const [log, setLog] = useState<string>("");
+  const [showLog, setShowLog] = useLocalStorage<boolean>('showLog', false);
+  const [restrictedFilenames, setRestrictedFilenames] = useLocalStorage<boolean>('restrictedFilenames', false);
+  const [templateCliArg, setTemplateCliArg] = useLocalStorage<string>("templateCliArg", "-t mp4");
 
-  const [defaultFormat, setDefaultFormat] = useState<MediaFormat>('mp4')
-  const [format, setFormat] = useLocalStorage<MediaFormat>("format", "mp4")
-  const [videoFormat, setVideoFormat] = useLocalStorage<VideoFormat>("videoFormat", "mp4")
-  const [audioFormat, setAudioFormat] = useLocalStorage<AudioFormat>("audioFormat", "m4a")
+  const [defaultFormat, setDefaultFormat] = useState<MediaFormat>('mp4');
+  const [format, setFormat] = useLocalStorage<MediaFormat>("format", "mp4");
+  const [videoFormat, setVideoFormat] = useLocalStorage<VideoFormat>("videoFormat", "mp4");
+  const [audioFormat, setAudioFormat] = useLocalStorage<AudioFormat>("audioFormat", "m4a");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [progress, setProgress] = useState<number>(0)
-  const { hashUrl, setHashUrl } = useHashUrl()
-  const { apiFetch } = useApiBase()
-  const { fetchDownloadedFiles } = useDownloaded()
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+  const { hashUrl, setHashUrl } = useHashUrl();
+  const { apiFetch } = useApiBase();
+  const { fetchDownloadedFiles } = useDownloaded();
   const [queueUrls, setQueueUrls] = useLocalStorage<string[]>("queueUrls", []);
 
-  const clearLog = () => setLog("")
+  const clearLog = () => setLog("");
 
-  const removeQueueUrl = (url: string) => {
-    setQueueUrls((prev) => prev.filter(item => item !== url));
+  const uvxytdlpUrlHref = (url: string, format: MediaFormat) => {
+    const uvxytdlpUrl = new URL(url);
+    uvxytdlpUrl.searchParams.append(uvxytdlp_format, format);
+    return uvxytdlpUrl.href;
   }
 
-  const addQueueUrl = (url: string) => {
+  const displayableUvxytdlpUrl = (
+    uvxytdlpUrl: string
+  ): DisplayableUvxytdlpUrl => {
+    const tempUrl = new URL(uvxytdlpUrl);
+    const format = tempUrl.searchParams.get(uvxytdlp_format);
+
+    if (format === null) {
+      throw new Error("Invalid uvxytdlp URL: missing format");
+    }
+
+    tempUrl.searchParams.delete(uvxytdlp_format);
+
+    return {
+      url: tempUrl.href,
+      format: format as MediaFormat,
+      list: false,
+    };
+  };
+
+  const removeQueueUrl = (url: string) => {
+    setQueueUrls((prev) => prev.filter(
+      item => item !== url
+    ));
+  }
+
+  const addQueueUrl = (url: string, format: MediaFormat) => {
+    const uvxytdlpUrl = uvxytdlpUrlHref(url, format)
     setQueueUrls((prev) => {
-      if (prev.includes(url)) {
+      if (prev.includes(uvxytdlpUrl)) {
         return prev;
       }
-      return [url, ...prev];
+      return [uvxytdlpUrl, ...prev];
     })
   }
 
@@ -102,6 +140,16 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
       document.title = `uvxytdlp`
     }
     setProgress(newValue)
+  }
+
+  const clearQueue = async () => {
+    toast("Cleared Queue")
+    setQueueUrls([])
+  }
+
+  const downloadQueue = async () => {
+    toast("Download Queue: not implemented, clears queue only")
+    setQueueUrls([])
   }
 
   const startDownload = useCallback(async (downloadUrl: string = "", downloadFormat?: string) => {
@@ -247,6 +295,9 @@ export const YtdlpProvider: FC<YtdlpProviderProps> = ({ children }) => {
     setQueueUrls,
     addQueueUrl,
     removeQueueUrl,
+    displayableUvxytdlpUrl,
+    downloadQueue,
+    clearQueue,
   }
 
   return <YtdlpContext.Provider value={value}>

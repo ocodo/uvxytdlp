@@ -1,11 +1,11 @@
 import { UvxYtdlpIcon } from "@/components/branding/uvxytdlp-icon";
 import {
   deepLinkText,
-  extClasses,
+  extBadgeClasses,
   gridButtonClasses,
   gridClasses,
   gridNameClasses,
-  itemClasses,
+  itemBadgeClasses,
   itemHeadingClasses,
   itemsColectionClasses,
   listButtonClasses,
@@ -200,7 +200,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
 
         <div className={itemsColectionClasses}>
           {values.map((value) => (
-            <div key={String(value)} className={itemClasses}>
+            <div key={String(value)} className={itemBadgeClasses}>
               {value}
             </div>
           ))}
@@ -238,7 +238,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
         <div className={isList ? listNameClasses : gridNameClasses}>
           {file.title || file.name}
           <div className="text-xs">{formatDuration(file.duration)}</div>
-          { file.title ? <div className={extClasses}>{ext}</div> : null }
+          { file.title ? <div className={extBadgeClasses}>{ext}</div> : null }
         </div>
         <div className={isList ? listButtonClasses : gridButtonClasses}>
           <PlayButtonControl />
@@ -266,7 +266,7 @@ export const DowloadedFile: FC<DowloadedFileProps> = (props) => {
           </div>
           <div className="text-xl tracking-tighter font-bold">
             {file.title || file.name}
-            { file.title ? <div className={extClasses}>{ext}</div> : null }
+            { file.title ? <div className={extBadgeClasses}>{ext}</div> : null }
           </div>
           <div className="text-xs">{formatDuration(file.duration)}</div>
           <CollectionItem file={file} field="tags" label="Tags" />

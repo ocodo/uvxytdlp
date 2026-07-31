@@ -6,7 +6,6 @@ export const formatTemplates: Record<MediaFormat, string> = {
   mp3: "-t mp3",
 }
 
-
 export const VideoFormats = {
   mp4: 'mp4',
   mkv: 'mkv'
@@ -33,10 +32,11 @@ export const mediaFormats = new Set<MediaFormat>([
 const getBookmarkletUrl = (url: string) =>
   new URL(url.startsWith("#") ? url.slice(1) : url);
 
+export const uvxytdlp_format = 'uvxytdlp_format';
+
 export function getBookmarkletFormat(url: string): MediaFormat | undefined {
   try {
-    const format = getBookmarkletUrl(url).searchParams.get("uvxytdlp_format");
-
+    const format = getBookmarkletUrl(url).searchParams.get(uvxytdlp_format);
     return format && mediaFormats.has(format as MediaFormat)
       ? (format as MediaFormat)
       : undefined;

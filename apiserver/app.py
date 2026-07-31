@@ -443,7 +443,6 @@ async def download_via_ytdlp(url: str, args: str):
         uvx_command_parts
         + ["yt-dlp", "-o", f"{download_dir}%(title)s.%(ext)s"]
         + ["--newline"]
-        + ["--no-playlist"]
         + ["--write-thumbnail"]
         + ["--write-description"]
         + ["--write-info-json"]
