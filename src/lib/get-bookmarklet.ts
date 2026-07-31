@@ -5,20 +5,8 @@ export const getBookmarklet = (format?: string) => {
     ? `&uvxytdlp_format=${encodeURIComponent(format)}`
     : '';
 
-  const script = `(function() {
-  const currentUrl = encodeURIComponent(window.location.href);
-  const instantDownloadUrl = '${uvxytlpUrl}#' + currentUrl + '${formatParam}';
-  window.open(instantDownloadUrl, '_blank');
-})();
-`
-
-  return script;
+  return `open('${uvxytlpUrl}#'+encodeURIComponent(location)+'${formatParam}','_blank')`;
 }
 
-export const getMinifiedBookmarklet = (options?: { format?: string }) => {
-  const minifiedScript = getBookmarklet(options?.format)
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  return `javascript:${minifiedScript}`;
-}
+export const getMinifiedBookmarklet = (options?: { format?: string }) =>
+  `javascript:${getBookmarklet(options?.format)}`;
