@@ -1,9 +1,9 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { isUrlValid } from "@/lib/is-url-valid";
 import { OcodoLoaderIcon } from "@/components/ocodo-ui/ocodo-loader-icon";
-import { HeadphonesIcon, List, VideoIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useYtdlpContext } from "@/contexts/ytdlp-context";
+import { isUrlValid } from "@/lib/is-url-valid";
+import { HeadphonesIcon, VideoIcon } from "lucide-react";
 import type { FC } from "react";
 
 export const DownloaderInput: FC = () => {
@@ -14,18 +14,11 @@ export const DownloaderInput: FC = () => {
     audioFormat,
     videoFormat,
     startDownload,
-    setShowQueueInput,
   } = useYtdlpContext();
 
   return (
     <>
       <div className="flex items-center gap-2">
-        <Button
-          onClick={() => setShowQueueInput(true)}
-          aria-label="Download Queue"
-          className={`w-12 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
-          <List className="h-6 w-6" />
-        </Button>
         <Input
           type="url"
           placeholder="Video Page URL to download..."
@@ -59,7 +52,6 @@ export const DownloaderInput: FC = () => {
               className={`w-20 h-12 cursor-pointer rounded-full transition-colors duration-1000`}>
               <HeadphonesIcon className="h-6 w-6" />
             </Button>
-
           </div>
         )}
       </div>
