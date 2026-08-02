@@ -1,1 +1,1 @@
-export const VERSION = "liger-kibble"
+export const VERSION = "reshuffle-deckchairs"
