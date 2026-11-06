@@ -1,1 +1,1 @@
-export const VERSION = "cyberterror-panda"
+export const VERSION = "icy-padlock"
