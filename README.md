@@ -107,3 +107,6 @@ or
 ```sh
 docker stop uvxytdlp-ui-container
 ```
+
+(rebuilt w/docker on Nov 6 2026 Bangkok, Thailand, to patch musl on docker images)
+
